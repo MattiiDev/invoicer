@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition>
+        <ui:include src="/template/messages.xhtml">
+            <ui:param name="source" value="createItem"/>
+        </ui:include>
+        <p:fieldset legend="" style="layout:block" styleClass="noBackground">                                                
+
+            <h:panelGrid columns="2" style="border:0px" columnClasses="noBackground bold textRight noBorder, noBackground noBorder" width="100%" >
+                <h:outputLabel value="Category" for="category" />
+                <h:selectOneMenu id="category" value="#{controller.selected.itemCategory}" title="Category" >
+                    <f:selectItem itemLabel="Product" itemValue="product"/>
+                    <f:selectItem itemLabel="Service" itemValue="service"/>
+                </h:selectOneMenu>
+
+                <p:outputLabel value="Name" for="name" styleClass="bold" rendered="false"/>
+                <h:inputText id="name" value="#{controller.current.name}" title="Name" rendered="false" />
+
+                <h:outputLabel value="Description" for="desc" />
+                <h:inputTextarea id="desc" value="#{controller.current.description}" title="Description" cols="35" rows="3"/>
+
+                <h:outputLabel value="Cost" for="cost" />
+                <p:spinner  id="cost" value="#{controller.current.unitCost}" size="5" min="1" maxlength="5"/>
+
+                <h:outputLabel value="Item Code" for="itemCode" rendered="false"/>
+                <h:inputText id="itemCode" value="#{controller.current.itemCode}" title="Item Code" rendered="false" />
+            </h:panelGrid>
+
+        </p:fieldset>
+
+        <br/>
+
+        <div style="border:1px groove lightgray"></div>
+        <br/>            
+    </ui:composition>
+</html>

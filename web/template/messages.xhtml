@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition>
+        <h:panelGroup id="messagePanel_#{source}" layout="block">
+            <p:growl autoUpdate="true" sticky="true" showDetail="true"/>  
+            <!--<p:messages autoUpdate="true" showDetail="true" showSummary="true"/>-->
+        </h:panelGroup>
+    </ui:composition>
+</html>

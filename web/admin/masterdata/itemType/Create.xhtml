@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.CreateItemTypeTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.CreateItemTypeLabel_itemTypeId}" for="itemTypeId" />
+                    <h:inputText id="itemTypeId" value="#{itemTypeController.selected.itemTypeId}" title="#{bundle.CreateItemTypeTitle_itemTypeId}" required="true" requiredMessage="#{bundle.CreateItemTypeRequiredMessage_itemTypeId}"/>
+                    <h:outputLabel value="#{bundle.CreateItemTypeLabel_code}" for="code" />
+                    <h:inputText id="code" value="#{itemTypeController.selected.code}" title="#{bundle.CreateItemTypeTitle_code}" />
+                    <h:outputLabel value="#{bundle.CreateItemTypeLabel_name}" for="name" />
+                    <h:inputText id="name" value="#{itemTypeController.selected.name}" title="#{bundle.CreateItemTypeTitle_name}" />
+                    <h:outputLabel value="#{bundle.CreateItemTypeLabel_parentItemTypeId}" for="parentItemTypeId" />
+                    <h:inputText id="parentItemTypeId" value="#{itemTypeController.selected.parentItemTypeId}" title="#{bundle.CreateItemTypeTitle_parentItemTypeId}" />
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{itemTypeController.create}" value="#{bundle.CreateItemTypeSaveLink}" />
+                <br />
+                <br />
+                <h:commandLink action="#{itemTypeController.prepareList}" value="#{bundle.CreateItemTypeShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.CreateItemTypeIndexLink}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

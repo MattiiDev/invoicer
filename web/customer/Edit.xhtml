@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditCustomerTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="content">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_customerId}" for="customerId" />
+                    <h:inputText id="customerId" value="#{customerController.selected.customerId}" title="#{bundle.EditCustomerTitle_customerId}" required="true" requiredMessage="#{bundle.EditCustomerRequiredMessage_customerId}"/>
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_createTs}" for="createTs" />
+                    <h:inputText id="createTs" value="#{customerController.selected.createTs}" title="#{bundle.EditCustomerTitle_createTs}" required="true" requiredMessage="#{bundle.EditCustomerRequiredMessage_createTs}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:inputText>
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_firstName}" for="firstName" />
+                    <h:inputText id="firstName" value="#{customerController.selected.firstName}" title="#{bundle.EditCustomerTitle_firstName}" />
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_middleName}" for="middleName" />
+                    <h:inputText id="middleName" value="#{customerController.selected.middleName}" title="#{bundle.EditCustomerTitle_middleName}" />
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_lastName}" for="lastName" />
+                    <h:inputText id="lastName" value="#{customerController.selected.lastName}" title="#{bundle.EditCustomerTitle_lastName}" />
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_givenName}" for="givenName" />
+                    <h:inputText id="givenName" value="#{customerController.selected.givenName}" title="#{bundle.EditCustomerTitle_givenName}" />
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_gender}" for="gender" />
+                    <h:inputText id="gender" value="#{customerController.selected.gender}" title="#{bundle.EditCustomerTitle_gender}" />
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_email}" for="email" />
+                    <h:inputText id="email" value="#{customerController.selected.email}" title="#{bundle.EditCustomerTitle_email}" />
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_addressLine1}" for="addressLine1" />
+                    <h:inputText id="addressLine1" value="#{customerController.selected.addressLine1}" title="#{bundle.EditCustomerTitle_addressLine1}" />
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_addressLine2}" for="addressLine2" />
+                    <h:inputText id="addressLine2" value="#{customerController.selected.addressLine2}" title="#{bundle.EditCustomerTitle_addressLine2}" />
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_city}" for="city" />
+                    <h:inputText id="city" value="#{customerController.selected.city}" title="#{bundle.EditCustomerTitle_city}" />
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_stateProvince}" for="stateProvince" />
+                    <h:inputText id="stateProvince" value="#{customerController.selected.stateProvince}" title="#{bundle.EditCustomerTitle_stateProvince}" />
+                    <h:outputLabel value="#{bundle.EditCustomerLabel_mobileNum}" for="mobileNum" />
+                    <h:inputText id="mobileNum" value="#{customerController.selected.mobileNum}" title="#{bundle.EditCustomerTitle_mobileNum}" />
+                </h:panelGrid>
+                <h:commandLink action="#{customerController.update}" value="#{bundle.EditCustomerSaveLink}"/>
+                <br />
+                <br />
+                <h:link outcome="View" value="#{bundle.EditCustomerViewLink}"/>
+                <br />
+                <h:commandLink action="#{customerController.prepareList}" value="#{bundle.EditCustomerShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.EditCustomerIndexLink}" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

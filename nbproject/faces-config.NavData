@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scene Scope="Project" version="2">
+    <Scope Scope="Faces Configuration Only"/>
+    <Scope Scope="Project">
+        <Node id="admin/masterdata/transactionType/Create.xhtml" x="150" y="150" zoom="true"/>
+        <Node id="admin/masterdata/item/Create.xhtml" x="150" y="450" zoom="true"/>
+        <Node id="invoice/list.xhtml" x="150" y="750" zoom="true"/>
+        <Node id="customer/List.xhtml" x="900" y="150" zoom="true"/>
+        <Node id="admin/masterdata/transactionType/View.xhtml" x="400" y="150" zoom="true"/>
+        <Node id="admin/masterdata/itemType/View.xhtml" x="150" y="300" zoom="true"/>
+        <Node id="customer/View.xhtml" x="650" y="300" zoom="true"/>
+        <Node id="admin/masterdata/item/List.xhtml" x="1400" y="150" zoom="true"/>
+        <Node id="admin/masterdata/itemType/Edit.xhtml" x="1650" y="150" zoom="true"/>
+        <Node id="customer/inc_createCustomer.xhtml" x="650" y="750" zoom="true"/>
+        <Node id="customer/Create.xhtml" x="400" y="750" zoom="true"/>
+        <Node id="customer/Edit.xhtml" x="1150" y="450" zoom="true"/>
+        <Node id="template/header.xhtml" x="400" y="450" zoom="true"/>
+        <Node id="invoice/create.xhtml" x="900" y="600" zoom="true"/>
+        <Node id="admin/masterdata/item/Edit.xhtml" x="400" y="300" zoom="true"/>
+        <Node id="invoice/edit.xhtml" x="650" y="150" zoom="true"/>
+        <Node id="admin/masterdata/transactionType/List.xhtml" x="1900" y="150" zoom="true"/>
+        <Node id="invoice/view.xhtml" x="150" y="1050" zoom="true"/>
+        <Node id="template/messages.xhtml" x="650" y="450" zoom="true"/>
+        <Node id="admin/masterdata/transactionType/Edit.xhtml" x="400" y="900" zoom="true"/>
+        <Node id="index.xhtml" x="400" y="600" zoom="true"/>
+        <Node id="admin/masterdata/itemType/List.xhtml" x="650" y="600" zoom="true"/>
+        <Node id="template/template.xhtml" x="1150" y="150" zoom="true"/>
+        <Node id="admin/masterdata/itemType/Create.xhtml" x="1150" y="300" zoom="true"/>
+        <Node id="invoice/addEdit.xhtml" x="900" y="450" zoom="true"/>
+        <Node id="admin/masterdata/item/View.xhtml" x="150" y="900" zoom="true"/>
+    </Scope>
+    <Scope Scope="All Faces Configurations"/>
+</Scene>

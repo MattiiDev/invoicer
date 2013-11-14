@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>              
+        <h:form prependId="false">                
+            <p:panel id="invoicePanel" styleClass="noBorder" style="width:100%;color: #1584de;background: #e6e6e6 url('');">
+                <h:panelGrid width="100%" columns="1" >  
+                    <h:panelGrid width="55%" columns="2" cellpadding="3" style="margin:auto auto;" columnClasses="label5 textAlignRight noBorder,noBorder" >                        
+                        <h:outputText value="Invoice #" />
+                        <h:inputText id="invoiceNum" value="#{invoiceCtrl.current.invoiceNum}" styleClass="font20"/>
+                        <h:outputText value="Date of Invoice" styleClass="label3 textAlignRight" />
+                        <p:calendar id="ordDateInp" effect="slideDown" navigator="true" showOn="button" pagedate=""
+                                    mode="popup" autocomplete="true" value="#{invoiceCtrl.current.invoiceDate}"
+                                    showButtonPanel="true" pattern="EEE, dd MMM, yyyy"/>  
+                    </h:panelGrid>
+                    <p:separator style="margin: 5px 0 5px 0" />
+                    <h:panelGroup>
+                        <h:panelGrid width="49%" columns="1" columnClasses="noBorder label1 width20pr, noBorder width80pr" styleClass="borderRound10 floatLeft viewInfo">
+                            <h:panelGroup>
+                                <p:outputLabel value="Customer" for="custSugg" styleClass="label1"/>
+                                <p:commandButton id="changeCusBtn" image="change-cust-image"  ajax="true"  rendered="#{not empty invoiceCtrl.current.customerId}"
+                                                 style="font-size: 9px!important;margin-left: 10px; background:url('../resources/images/edit_pen-20.png') no-repeat; background-size: 16px 16px" title="Change"
+                                                 update="invoicePanel" >
+                                    <f:setPropertyActionListener value="" target="#{invoiceCtrl.current.customerId}"/>
+                                </p:commandButton>
+                                <p:commandButton id="addCusBtn" image="add-cust-image" onclick="addCusPopup.show()" ajax="true" rendered="#{empty invoiceCtrl.current.customerId}"
+                                                 style="font-size: 9px!important;margin-left: 10px; background:url('../resources/images/person_add-20.png') no-repeat" title="Add"
+                                                 update="invoicePanel"/>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{empty invoiceCtrl.current.customerId}">
+                                <p:autoComplete id="custSugg" value="#{invoiceCtrl.current.customerId}" completeMethod="#{customerController.suggestCustomer}"  
+                                                var="cust" itemLabel="#{cust.firstName}" itemValue="#{cust}" dropdown="true" size="50" dir="down" >  
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="Company Name" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{cust.companyName}"/> 
+                                    </p:column>  
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="First Name" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{cust.firstName}"/> 
+                                    </p:column>  
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="Last Name" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{cust.lastName}"/> 
+                                    </p:column>  
+                                    <f:ajax event="itemSelect" render="@form"/>
+                                </p:autoComplete>                                                                                      
+                            </h:panelGroup>
+
+                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.firstName} #{invoiceCtrl.current.customerId.lastName}" rendered="#{not empty invoiceCtrl.current.customerId}"/>                               
+                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.addressLine1}" rendered="#{not empty invoiceCtrl.current.customerId}"/>
+                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.addressLine2}" rendered="#{not empty invoiceCtrl.current.customerId}"/>
+                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.city} , #{invoiceCtrl.current.customerId.country}" rendered="#{not empty invoiceCtrl.current.customerId}"/>
+
+                            <p:spacer height="46px" rendered="#{empty invoiceCtrl.current.customerId}"/>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid width="49%" columns="1" columnClasses="noBorder label1 width20pr, noBorder width80pr" styleClass="borderRound10 floatRight viewInfo">
+                            <p:outputLabel value="Invoice Notes" for="invoiceNotes" styleClass="label1"/>
+                            <h:inputTextarea id="invoiceNotes" value="#{invoiceCtrl.current.invoiceDetails}" cols="50" rows="5" style="font-size: 12px" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+
+                    <h:panelGrid width="100%" columns="6" columnClasses="noBorder label1 ,noBorder,noBorder label1 ,noBorder,noBorder label1 ,noBorder " styleClass="borderRound10 viewInfo" >
+
+                        <p:outputLabel value="Model" for="model" styleClass="label1"/>
+                        <h:inputText id="model" />
+
+                        <p:outputLabel value="Mileage" for="mileage" styleClass="label1"/>
+                        <h:inputText id="mileage" />
+
+                        <p:outputLabel value="VIN #" for="vin" styleClass="label1"/>
+                        <h:inputText id="vin" />
+                        <p:spacer/>
+                    </h:panelGrid>     
+                </h:panelGrid>
+                <p:spacer height="10px"/> 
+                <p:dataTable id="ordItemTable" style="width: 100%;" styleClass="invoiceItemClass" 
+                             value="#{invoiceCtrl.current.invoiceItemsAsList}" var="invItem"
+                             rowIndexVar="row">
+                    <p:column >
+                        <h:graphicImage value="Remove item" style="cursor: pointer;padding-top:5px" alt="Remove item" url="/resources/images/trash_grey.png">
+                            <f:ajax event="click" listener="#{invoiceCtrl.removeOrderItem(invItem)}" render="ordItemTable" />
+                        </h:graphicImage>
+                    </p:column>
+                    <p:column headerText="Qty" >
+                        <p:spinner value="#{invItem.quantity}" size="5" min="1" maxlength="5" >
+                            <f:ajax event="change" listener="#{invoiceCtrl.calculateOrderItemPrice(invItem)}" execute="@this" render="itemAmtVal" />
+                        </p:spinner>
+                    </p:column>
+                    <p:column headerText="Description" width="70%" >
+                        <p:autoComplete id="itemSugg" value="#{invItem.item}" completeMethod="#{itemController.suggestItem}" widgetVar="itemSuggComp"
+                                        var="item1" itemLabel="#{item1.description}" itemValue="#{item1}" dropdown="true" size="50" >  
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Item Id" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{item1.itemId}"/> 
+                            </p:column>  
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Item Category" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{item1.itemCategory}"/> 
+                            </p:column>  
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Name" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{item1.name}"/> 
+                            </p:column>  
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Description" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{item1.description}"/> 
+                            </p:column>  
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Cost" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{item1.unitCost}"/> 
+                            </p:column>  
+                            <f:ajax event="itemSelect" listener="#{invoiceCtrl.calculateOrderItemPrice(invItem)}" execute="@this" render="itemAmtVal unitPrice"/>
+
+                        </p:autoComplete>
+                        <p:commandButton id="addItemBtn" image="add-cust-image" onclick="addItemPopup.show()" ajax="true"
+                                                 style="font-size: 9px!important;margin-left: 10px; background:url('../resources/images/plus_grey.png') no-repeat; border: none" title="Add"
+                                                 >
+                            <f:setPropertyActionListener target="#{invoiceCtrl.itemCtrl.current}" value="#{invItem.item}"/>
+                            <f:setPropertyActionListener target="#{invoiceCtrl.currentInvItem}" value="#{invItem}"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column headerText="Unit Price" width="20%" >
+                        <p:spinner id="unitPrice" value="#{invItem.item.unitCost}" size="5" min="1" maxlength="5"  >
+                            <f:ajax event="change" listener="#{invoiceCtrl.calculateOrderItemPrice(invItem)}" execute="@this" render="itemAmtVal" />
+                        </p:spinner>
+                    </p:column>
+                    <p:column headerText="Amount" width="20%" id="itmNetAmt" style="text-align:right;padding-right: 20px">
+                        <h:outputText id="itemAmtVal" value="#{invItem.amount}" >
+                        </h:outputText>
+                    </p:column>                     
+                    <f:facet name="footer"> 
+                        <table class="invoiceTableFooter" cellpadding="0" cellspacing="0" width="100%">
+                            <tfoot style="color:#2e6e9e">
+                                <tr style="border-bottom: 1px solid lightsteelblue;" >
+                                    <td style="float:left;" >
+                                        <p:commandButton id="addRowBtn1" style="text-align: left" 
+                                                         process="@form"
+                                                         icon="ui-icon-plus" action="#{invoiceCtrl.addNewItemToInvoice}"                                                                         
+                                                         update="ordItemTable" /> 
+                                    </td>
+                                    <td >
+                                        <span></span>
+                                    </td>
+                                    <td style="width:70%">
+                                        <span></span>
+                                    </td>
+                                    <td style="width:20%;text-align: right">
+                                        <h:outputText value="Subtotal"/>                                        
+                                    </td>
+                                    <td style="width:20%;text-align: right;">
+                                        <p:outputPanel autoUpdate="true">
+                                            <h:outputText value="#{invoiceCtrl.current.itemTotalAmount}"/>
+                                        </p:outputPanel>
+                                    </td>
+                                </tr>                                
+                                <tr >
+                                    <td  style="width:60%">
+                                        <span></span>
+                                    </td>
+                                    <td style="width:20%;text-align: right">
+                                        <h:outputText value="Discount"/>
+                                    </td>
+                                    <td style="width:20%;text-align: right">
+                                        <p:spinner value="#{invoiceCtrl.current.discount}" size="2" style="float:left;text-align: left" >
+                                            <f:ajax event="change" listener="#{invoiceCtrl.calOrderPrice}"  execute="@this" render="ordItemTable" />
+                                        </p:spinner>
+                                        <p:selectOneMenu styleClass="discountUom" style="font-size: 10px;padding:0;margin:0;text-align: left">
+                                            <f:selectItem itemLabel="SAR" itemValue="currency" />
+                                            <f:selectItem itemLabel="%" itemValue="percent"/>
+                                        </p:selectOneMenu>
+                                    </td>
+                                    <td style="width:20%;text-align: right; font-size: 16px">
+                                        <h:outputText value="Total"/>
+                                    </td>                                    
+                                    <td width="14%" style="width:20%;text-align: right;font-weight: bold;font-size: 16px; color:midnightblue">
+                                        <p:outputPanel autoUpdate="true">
+                                            <h:outputText id="totAmt" value="#{invoiceCtrl.current.amount}">
+                                                <f:convertNumber currencyCode="SAR" maxFractionDigits="2" groupingUsed="true" type="currency" currencySymbol="SAR"/>
+                                            </h:outputText>
+                                        </p:outputPanel>
+                                    </td>
+                                </tr>
+                            </tfoot>                                                      
+                        </table>                           
+                    </f:facet>                        
+                </p:dataTable>                                             
+
+                <p:commandButton style="font-size:22px;float: right;margin-top: 10px;vertical-align: middle " 
+                                     action="#{invoiceCtrl.save}" value="#{source == 'createInvoice'? 'Create' : 'Save'}" icon="ui-icon-circle-check"  />
+            </p:panel>
+
+            <p:dialog id="addCustDg"  widgetVar="addCusPopup" modal="true" width="900" height="400" showEffect="clip">  
+                <ui:include src="/customer/inc_createCustomer.xhtml">
+                    <ui:param name="controller" value="#{invoiceCtrl.custCtrl}"/>
+                </ui:include>
+
+                <p:commandButton action="#{invoiceCtrl.addNewCustomerToInvoice}" value="#{bundle.CreateCustomerSaveLink}" 
+                                 icon="ui-icon-disk" oncomplete="addCusPopup.hide();" />
+
+                <p:ajax event="close" update="invoicePanel" />  
+            </p:dialog> 
+
+            <p:dialog id="addItemDg"  widgetVar="addItemPopup" modal="true" width="900" height="250" showEffect="clip">  
+               <ui:include src="/item/inc_createItem.xhtml">
+                    <ui:param name="controller" value="#{invoiceCtrl.itemCtrl}"/>
+                </ui:include>
+
+                <p:commandButton action="#{invoiceCtrl.createNewItemAndAddToInvoice}" value="Add Item" icon="ui-icon-disk" oncomplete="addItemPopup.hide();" update="invoicePanel" />
+
+                <p:ajax event="close" update="@form" /> 
+            </p:dialog> 
+
+            <p:remoteCommand name="addNewCust" update="invoicePanel" action="#{invoiceCtrl.addNewCustomerToInvoice}"/>  
+
+        </h:form>               
+    </ui:composition>
+</html>

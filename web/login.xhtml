@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title><ui:insert name="title">Login</ui:insert></title>
+        <h:outputStylesheet name="css/jsfcrud.css"/>
+        <h:outputStylesheet name="css/invoicer.css"/>
+        <h:outputScript library="js" name="inconvent.js"/>
+
+    </h:head>
+
+    <h:body styleClass="body">
+        
+        <div id="content-login">
+            <div class="inner-login">
+                <ui:include src="/template/messages.xhtml">
+                    <ui:param name="source" value="login"/>
+                </ui:include>
+
+                <form method="POST" action="j_security_check" > 
+                    <div id="logo" >
+                        <p:graphicImage url="/resources/images/saake_logo1.png" alt="saake" height="100px" style="margin-left: 20px"  />
+                    </div>
+                    <br/>
+                    <p:panel id="loginPanel" styleClass="noBorder" style="color: #1584de;background: #e6e6e6 url(''); padding:10px">
+                        <h:outputText value="Username" styleClass="font16 label1"/>
+                        <br/>
+                        <input type="text" name="j_username" />
+                        <!--<h:inputText value="#" style="width:100%"/>-->
+                        <br/>
+                        <br/>
+                        <h:outputText value="Password" styleClass="font16 label1"/>
+                        <br/>
+                        <input type="password" name="j_password" />
+<!--                        <h:inputText value="#" style="width:100%"/>                    -->
+<!--                        <br/>
+                        <p:selectBooleanCheckbox value="#" style="background: url('');font-size: 10px;float:right" itemLabel="Remember me on this computer" />
+                        <br/>-->
+                    </p:panel>
+                    <br/>
+                    <input type="submit" value="Login" />
+                    <input type="reset" value="Reset" />
+                        <!--<p:commandButton action="#" value="Login" icon="ui-icon-power" style="background: url('')" />--> 
+                </form>  
+            </div>
+        </div>
+    </h:body>
+</html>

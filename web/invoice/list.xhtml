@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="List Invoices"></h:outputText>
+        </ui:define>
+        <ui:define name="content">
+            <h:form>
+                <ui:include src="/template/messages.xhtml"/>
+
+                <p:toolbar styleClass="noBorder invoiceListToolbar noBottomBorderRadius">
+                    <p:toolbarGroup align="left">  
+                        <p:commandButton type="link" value="New Invoice" icon="ui-icon-document"
+                                         action="#{invoiceCtrl.prepareCreate}" />                          
+                    </p:toolbarGroup>                                       
+                    <p:toolbarGroup align="right" style="margin-right: 10px">                                           
+                        <p:commandButton type="button" value="Filter" icon="ui-icon-search" onclick="searchPanel.toggle();advSearchPanel.collapse();" /> 
+                        <p:separator/>
+                        <p:spacer/> 
+                    </p:toolbarGroup>
+                </p:toolbar>
+                
+                <p:panel id="searchPanel" widgetVar="searchPanel" toggleable="true" collapsed="true" styleClass="noBorder noTopBorderRadius noBottomBorderRadius label6"  
+                         style="background: url('') #5c9ccc; overflow: hidden; ">
+                    <p:separator/>
+                    
+                    <h:panelGrid columns="7" width="100%" columnClasses="label6 vAlign textAlignRight,,label6 vAlign textAlignRight,,label6 vAlign textAlignRight,,label6">  
+                        <h:outputText value="Period"  /> 
+                        <p:selectOneMenu value="#{invoiceCtrl.filterCriteria.invoicePeriod}" style="width:111px" 
+                                         valueChangeListener="#{invoiceCtrl.filterList}" >
+                            <f:selectItem itemLabel="All" itemValue=""/>
+                            <f:selectItem itemLabel="Today" itemValue="today"/>
+                            <f:selectItem itemLabel="Yesterday" itemValue="yest"/>
+                            <f:selectItem itemLabel="This Month" itemValue="thisMon"/>
+                            <f:selectItem itemLabel="Last Month" itemValue="lastMon"/>
+                            <f:selectItem itemLabel="This Year" itemValue="thisYr"/>
+                            <f:selectItem itemLabel="Last Year" itemValue="lastYr"/>
+                        </p:selectOneMenu>
+                        <h:outputText value="Customer" /> 
+                        <p:autoComplete id="custSugg" value="#{invoiceCtrl.filterCriteria.customer}" 
+                                        completeMethod="#{customerController.suggestCustomer}"  
+                                        var="cust" itemLabel="#{cust.firstName}" itemValue="#{cust}" dropdown="true" >  
+                            <p:ajax event="change" listener="#{invoiceCtrl.filterList}" process="@form" update="invoiceListTable"/>
+
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Company Name" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{cust.companyName}"/> 
+                            </p:column>  
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="First Name" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{cust.firstName}"/> 
+                            </p:column>  
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Last Name" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{cust.lastName}"/> 
+                            </p:column>  
+                            
+                        </p:autoComplete>
+                        <h:outputText value="Status" />
+                        <p:selectOneButton value="#{invoiceCtrl.filterCriteria.status}" 
+                                           valueChangeListener="#{invoiceCtrl.filterList}">
+                            <f:selectItem itemLabel="All" itemValue="" /> 
+                            <f:selectItem itemLabel="Due" itemValue="pend" /> 
+                            <f:selectItem itemLabel="Draft" itemValue="draft" /> 
+                        </p:selectOneButton>
+                        <h:panelGroup>
+                        <p:commandButton type="link" value="Reset" icon="ui-icon-arrowrefresh-1-w" actionListener="#{invoiceCtrl.resetSearch}"
+                                         update="@form" alt="Reset" style="margin-right: 5px" /> 
+                        <p:commandLink type="button" value="Filter More.." onclick="advSearchPanel.toggle();" style="font-weight: 10px" />
+
+                        </h:panelGroup>
+                    </h:panelGrid>
+                </p:panel> 
+                <p:panel id="advSearchPanel" widgetVar="advSearchPanel" toggleable="true" collapsed="true" styleClass="noBorder noTopBorderRadius label6"  
+                         style="background: url('') #5c9ccc; overflow: hidden ">
+
+                    <h:panelGrid columns="7" width="100%" columnClasses="label6 vAlign textAlignRight,,label6 vAlign textAlignRight,,label6 vAlign textAlignRight,,label6">  
+                    
+                        <h:outputText value="Date Range" styleClass="label6" style="margin-right: 5px"/>
+                        <h:panelGroup>
+                        <p:calendar value="#{invoiceCtrl.filterCriteria.fromDate}" size="8"/>
+                        <h:outputText value=" to "/> 
+                        <p:calendar value="#{invoiceCtrl.filterCriteria.toDate}" size="8"/>
+                        </h:panelGroup>
+                        
+                        <h:outputText value="Amount from"/>
+                        <h:panelGroup>
+                        <p:spinner value="#{invoiceCtrl.filterCriteria.fromAmount}" size="5" min="1" maxlength="5" />
+                        <h:outputText value=" to "/>
+                        <p:spinner value="#{invoiceCtrl.filterCriteria.toAmount}" size="5" min="1" maxlength="5" />
+                        </h:panelGroup>
+                        <p:spacer width="10px"/>
+                        <p:commandButton type="link" value="Search" actionListener="#{invoiceCtrl.filterList}"
+                                         update="invoiceListTable" alt="Search" />      
+                                                <p:spacer width="10px"/>
+
+                    </h:panelGrid>
+                </p:panel>
+
+                <p:spacer height="10"/>
+                <p:dataTable id="invoiceListTable" value="#{invoiceCtrl.model}" var="item" rowStyleClass="evenOddRows" 
+                             styleClass="invoiceList invoiceItemClass font16" selection="#{invoiceCtrl.current}" selectionMode="single"
+                             paginator="true" rows="10" paginatorAlwaysVisible="true" paginatorPosition="bottom"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                             rowsPerPageTemplate="5,10,15" filteredValue="#{invoiceCtrl.invoiceList}" widgetVar="invoiceTable"  >  
+                    <!--                    <f:facet name="header">  
+                                            <p:outputPanel>  
+                                                <h:outputText value="Search all fields:" />  
+                                                <p:inputText id="globalFilter" onkeyup="invoiceTable.filter()" style="width:150px" />  
+                                            </p:outputPanel>  
+                                        </f:facet>-->
+                    <p:column sortBy="#{item.invoiceId}" headerText="ID" filterBy="invoiceId">                              
+                        <h:outputText value="#{item.invoiceId}"/>
+                    </p:column>
+                    <p:column sortBy="#{item.invoiceDate}" headerText="Date" filterBy="invoiceDate">                              
+                        <h:outputText value="#{item.invoiceDate}">
+                            <f:convertDateTime type="date" pattern="dd-MM-YYY"/>
+                        </h:outputText>
+                    </p:column>                    
+                    <p:column sortBy="#{item.customerId.firstName}" headerText="Customer" filterBy="firstName">                              
+                        <h:outputText value="#{item.customerId.firstName} #{item.customerId.firstName}"/>
+                    </p:column>
+                    <p:column sortBy="#{item.amount}" headerText="Amount" filterBy="amount">                              
+                        <h:outputText value="#{item.amount}">
+                            <f:convertNumber type="currency" currencySymbol=" " />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Status" rendered="false">                              
+                        <h:outputText value=""/>
+                    </p:column>
+                    <p:column  width="5%">
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:commandLink action="#{invoiceCtrl.prepareView}" styleClass="editInvoice">
+                            <h:graphicImage url="/resources/images/invoice.png" width="16" height="16" alt="View" styleClass="editInvoice"/>
+                        </h:commandLink>                        
+                    </p:column>
+                    <p:column width="5%" style="float:middle">
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+
+                        <h:commandLink action="#{invoiceCtrl.prepareEdit}" styleClass="editInvoice" >
+                            <h:graphicImage url="/resources/images/edit-black-2.png" width="16" height="16" alt="Edit" styleClass="editInvoice"/>
+                            <f:setPropertyActionListener target="#{invoiceCtrl.current}" value="#{item}"/>
+                        </h:commandLink>                       
+                    </p:column>
+                    <p:column  width="5%">
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+
+                        <h:commandLink action="#{invoiceCtrl.delete}" styleClass="editInvoice">
+                            <h:graphicImage url="/resources/images/black_delete.png" width="12" height="12" alt="Delete" styleClass="editInvoice"/>
+                            <f:setPropertyActionListener target="#{invoiceCtrl.current}" value="#{item}"/>
+                        </h:commandLink>  
+                    </p:column>
+                    <!--                    <f:facet name="footer">  
+                                            Total #{fn:length(invoiceCtrl.invoiceList)} invoices.
+                                        </f:facet>-->
+                </p:dataTable>
+
+                <p:contextMenu for="invoiceListTable">  
+                    <p:menuitem value="View" action="view" includeViewParams="true" 
+                                style="background: url('../resources/images/invoice.png') no-repeat; background-size: 16px 16px; padding-left: 20px; "/>
+                    <p:menuitem value="Edit" action="edit" includeViewParams="true" 
+                                style="background: url('../resources/images/edit-black-2.png') no-repeat ;background-size: 16px 16px; padding-left: 20px; ">
+                                                    <f:setPropertyActionListener target="#{invoiceCtrl.current}" value="#{item}"/>
+
+                    </p:menuitem>
+
+                </p:contextMenu> 
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <ui:composition>
+        <div class="navbar-inner" >
+            <h:form styleClass="container">
+                <div id="logo" title="Go to Search Page" style="margin-right:30px;float: left"
+                     onclick="location.href = '#{facesContext.externalContext.requestContextPath}/';">
+                    <p:graphicImage url="/resources/images/saake_logo1.png" alt="saake"  width="100px" height="45px" />
+                </div>
+                <p:menubar styleClass="transparent navbar-menu" >
+                    <p:menuitem value="Home" url="/invoice/list.jsf" icon="ui-icon-home" styleClass="nav" style="padding-right: 15px" />
+
+                    <p:menuitem value="Invoice" url="/invoice/list.jsf" icon="ui-icon-pencil" style="padding-right: 15px"/>
+
+                    <p:menuitem value="Item" url="/invoice/list.jsf" icon="ui-icon-arrow" style="padding-right: 15px"/>
+
+                    <p:menuitem value="Customer" url="/customer/List.jsf" icon="ui-icon-arrow" style="padding-right: 15px"/>                                            
+                    <f:facet name="options">
+                        <p:splitButton value="Logout" action="#{loginCtrl.logout()}" icon="ui-icon-extlink" style="font-size: 12px" process="@form" update="@form" 
+                                       ajax="true" immediate="true"> 
+                            <p:menuitem value="Account" icon="ui-icon-arrowrefresh-1-w"/>
+                            <p:menuitem value="Settings" icon="ui-icon-arrowrefresh-1-w"/>
+                        </p:splitButton>
+                    </f:facet>
+                </p:menubar>
+            </h:form>
+        </div>
+    </ui:composition>
+</html>
