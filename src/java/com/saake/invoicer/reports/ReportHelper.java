@@ -5,6 +5,8 @@
 package com.saake.invoicer.reports;
 
 import com.saake.invoicer.entity.Invoice;
+import com.saake.invoicer.entity.InvoiceItems;
+import com.saake.invoicer.model.InvoiceItemsData;
 import com.saake.invoicer.model.InvoiceReportData;
 import com.saake.invoicer.util.JsfUtil;
 import com.saake.invoicer.util.Utils;
@@ -59,7 +61,18 @@ public class ReportHelper {
             dat.setDiscount(inv.getDiscount());
             dat.setInvoiceDate(inv.getInvoiceDate());
             dat.setInvoiceNumber(Utils.notBlank(inv.getInvoiceNum())?inv.getInvoiceNum().toString() : "");            
-            dat.setInvoiceItems(inv.getInvoiceItemsAsList());
+            dat.setInvoiceItems(convertInvoiceItems(inv.getInvoiceItemsAsList()));
+            dat.setAddressLine1(inv.getCustomerId().getAddressLine1());
+            dat.setAddressLine2(inv.getCustomerId().getAddressLine2());
+            dat.setCity(inv.getCustomerId().getCity());
+            dat.setCompanyName(inv.getCustomerId().getCompanyName());
+            dat.setEmail(inv.getCustomerId().getEmail());
+            dat.setFirstName(inv.getCustomerId().getFirstName());
+            dat.setLastName(inv.getCustomerId().getLastName());
+            dat.setStateProvince(inv.getCustomerId().getStateProvince());
+            dat.setMobileNum(inv.getCustomerId().getMobileNum());
+            
+            
             dataList.add(dat);
         }
         return dataList;
@@ -68,7 +81,7 @@ public class ReportHelper {
     private static void streamPdf(Invoice inv, Boolean download) throws IOException {
          byte[] pdfByteArray = generatePdfFromJasperTemplate(buildDataListForInvoiceReport(inv), "saakeInvoice.jasper");
 
-        if (pdfByteArray.length > 0) {
+        if (pdfByteArray != null && pdfByteArray.length > 0) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
                 baos.write(pdfByteArray);
@@ -114,6 +127,8 @@ public class ReportHelper {
                 throw new Exception("No data to generate pdf!");
             }
         }catch (Exception e){
+            log.error("",e);
+            System.out.println(e.getMessage());
             JsfUtil.addErrorMessage("Error exporting pdf for template:"+template);
         }
 
@@ -151,6 +166,8 @@ public class ReportHelper {
                     }
                 }
             } catch (Exception e) {
+                System.out.println(e.getMessage());
+
                 throw new Exception("Error generating JR Template:"+templateName,e);
             }
         }
@@ -233,5 +250,22 @@ public class ReportHelper {
 
     public static void viewPDF(Invoice inv) throws IOException {
         streamPdf(inv, Boolean.FALSE);
+    }
+
+    private static List<InvoiceItemsData> convertInvoiceItems(List<InvoiceItems> invoiceItems) {
+        List<InvoiceItemsData> list = new ArrayList<>();
+        
+        for(InvoiceItems invItem : invoiceItems){
+            InvoiceItemsData itData = new InvoiceItemsData();
+            
+            itData.setAmount(invItem.getAmount());
+            itData.setDescription(invItem.getItem().getDescription());
+            itData.setQuantity(invItem.getQuantity());
+            itData.setUnitCost(invItem.getItem().getUnitCost());
+            
+            list.add(itData);
+        }
+        
+        return list;
     }
 }
