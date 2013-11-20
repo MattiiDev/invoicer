@@ -72,12 +72,16 @@
                             </h:panelGrid>
                         </h:panelGroup>         
                         <h:panelGrid width="100%" columns="6" columnClasses="noBorder bold,noBorder textAlignLeft,noBorder bold,noBorder textAlignLeft,noBorder bold ,noBorder textAlignLeft" styleClass="borderRound10 viewInfo" >                                                     
+                            <h:outputText value="Year" />
+                            <h:outputText value="#{invoiceCtrl.custVehicle.year}" />
+                            <h:outputText value="Make" />
+                            <h:outputText value="BMW" />
                             <h:outputText value="Model" />
-                            <h:outputText value="AAA" />
+                            <h:outputText value="#{invoiceCtrl.custVehicle.model}" />
                             <h:outputText value="Mileage" />
-                            <h:outputText value="23232" />
+                            <h:outputText value="#{invoiceCtrl.custVehicle.mileage}"/>
                             <h:outputText value="VIN #" />
-                            <h:outputText value="JJ45454SD565" />
+                            <h:outputText value="#{invoiceCtrl.custVehicle.vin}"/>
                         </h:panelGrid>
                     </h:panelGrid>
                     <p:spacer height="10px"/>                    

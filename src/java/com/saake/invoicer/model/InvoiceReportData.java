@@ -35,6 +35,12 @@ public class InvoiceReportData implements Serializable {
     private Integer zipCode;
     private String country;
     private Integer mobileNum;
+    
+    private String year;
+    private String make;
+    private String model;
+    private String mileage;
+    private String vin;
 
     private List<InvoiceItemsData> invoiceItems;
         
@@ -189,5 +195,44 @@ public class InvoiceReportData implements Serializable {
     public void setInvoiceItems(List<InvoiceItemsData> invoiceItems) {
         this.invoiceItems = invoiceItems;
     }    
-    
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getMake() {
+        return make;
+    }
+
+    public void setMake(String make) {
+        this.make = make;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getMileage() {
+        return mileage;
+    }
+
+    public void setMileage(String mileage) {
+        this.mileage = mileage;
+    }
+
+    public String getVin() {
+        return vin;
+    }
+
+    public void setVin(String vin) {
+        this.vin = vin;
+    }    
 }

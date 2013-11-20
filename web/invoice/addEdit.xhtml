@@ -12,7 +12,10 @@
                 <h:panelGrid width="100%" columns="1" >  
                     <h:panelGrid width="55%" columns="2" cellpadding="3" style="margin:auto auto;" columnClasses="label5 textAlignRight noBorder,noBorder" >                        
                         <h:outputText value="Invoice #" />
-                        <h:inputText id="invoiceNum" value="#{invoiceCtrl.current.invoiceNum}" styleClass="font20"/>
+                        <h:panelGroup>
+                            <h:outputText id="invoiceId" value="#{invoiceCtrl.current.invoiceId} - " styleClass="font20"/>
+                            <h:inputText id="invoiceNum" value="#{invoiceCtrl.current.invoiceNum}" styleClass="font20"/>
+                        </h:panelGroup>
                         <h:outputText value="Date of Invoice" styleClass="label3 textAlignRight" />
                         <p:calendar id="ordDateInp" effect="slideDown" navigator="true" showOn="button" pagedate=""
                                     mode="popup" autocomplete="true" value="#{invoiceCtrl.current.invoiceDate}"
@@ -74,14 +77,20 @@
 
                     <h:panelGrid width="100%" columns="6" columnClasses="noBorder label1 ,noBorder,noBorder label1 ,noBorder,noBorder label1 ,noBorder " styleClass="borderRound10 viewInfo" >
 
+                        <p:outputLabel value="Year" for="year" styleClass="label1"/>
+                        <h:inputText id="year" value="#{invoiceCtrl.custVehicle.year}" />
+
+                        <p:outputLabel value="Make" for="make" styleClass="label1"/>
+                        <h:inputText id="make" value="BMW" disabled="true" />
+
                         <p:outputLabel value="Model" for="model" styleClass="label1"/>
-                        <h:inputText id="model" />
+                        <h:inputText id="model" value="#{invoiceCtrl.custVehicle.model}" />
 
                         <p:outputLabel value="Mileage" for="mileage" styleClass="label1"/>
-                        <h:inputText id="mileage" />
+                        <h:inputText id="mileage" value="#{invoiceCtrl.custVehicle.mileage}" />
 
                         <p:outputLabel value="VIN #" for="vin" styleClass="label1"/>
-                        <h:inputText id="vin" />
+                        <h:inputText id="vin" value="#{invoiceCtrl.custVehicle.vin}" size="30" />
                         <p:spacer/>
                     </h:panelGrid>     
                 </h:panelGrid>
@@ -94,12 +103,10 @@
                             <f:ajax event="click" listener="#{invoiceCtrl.removeOrderItem(invItem)}" render="ordItemTable" />
                         </h:graphicImage>
                     </p:column>
-                    <p:column headerText="Qty" >
-                        <p:spinner value="#{invItem.quantity}" size="5" min="1" maxlength="5" >
-                            <f:ajax event="change" listener="#{invoiceCtrl.calculateOrderItemPrice(invItem)}" execute="@this" render="itemAmtVal" />
-                        </p:spinner>
-                    </p:column>
-                    <p:column headerText="Description" width="70%" >
+                    <p:column>  
+                        <h:outputText value="#{row + 1}"/> 
+                    </p:column>  
+                    <p:column headerText="Description" width="50%" >
                         <p:autoComplete id="itemSugg" value="#{invItem.item}" completeMethod="#{itemController.suggestItem}" widgetVar="itemSuggComp"
                                         var="item1" itemLabel="#{item1.description}" itemValue="#{item1}" dropdown="true" size="50" >  
                             <p:column>  
@@ -142,8 +149,13 @@
                             <f:setPropertyActionListener target="#{invoiceCtrl.currentInvItem}" value="#{invItem}"/>
                         </p:commandButton>
                     </p:column>
-                    <p:column headerText="Unit Price" width="20%" >
-                        <p:spinner id="unitPrice" value="#{invItem.item.unitCost}" size="5" min="1" maxlength="5"  >
+                    <p:column headerText="Qty" width="15%" >
+                        <p:spinner value="#{invItem.quantity}" size="5" min="1" maxlength="5" >
+                            <f:ajax event="change" listener="#{invoiceCtrl.calculateOrderItemPrice(invItem)}" execute="@this" render="itemAmtVal" />
+                        </p:spinner>
+                    </p:column>
+                    <p:column headerText="Unit Price" width="25%" >
+                        <p:spinner id="unitPrice" value="#{invItem.item.unitCost}" size="8" min="1" maxlength="6"  >
                             <f:ajax event="change" listener="#{invoiceCtrl.calculateOrderItemPrice(invItem)}" execute="@this" render="itemAmtVal" />
                         </p:spinner>
                     </p:column>
@@ -184,7 +196,7 @@
                                         <h:outputText value="Discount"/>
                                     </td>
                                     <td style="width:20%;text-align: right">
-                                        <p:spinner value="#{invoiceCtrl.current.discount}" size="2" style="float:left;text-align: left" >
+                                        <p:spinner value="#{invoiceCtrl.current.discount}" size="2" style="float:left;text-align: left" min="1" maxlength="6" >
                                             <f:ajax event="change" listener="#{invoiceCtrl.calOrderPrice}"  execute="@this" render="ordItemTable" />
                                         </p:spinner>
                                         <p:selectOneMenu styleClass="discountUom" style="font-size: 10px;padding:0;margin:0;text-align: left">

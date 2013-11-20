@@ -9,6 +9,7 @@ import com.saake.invoicer.controller.masterdata.CustomerController;
 import com.saake.invoicer.controller.masterdata.ItemController;
 import com.saake.invoicer.controller.masterdata.util.JsfUtil;
 import com.saake.invoicer.entity.Customer;
+import com.saake.invoicer.entity.CustomerVehicle;
 import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
@@ -49,6 +50,9 @@ public class InvoiceController implements Serializable {
 //    private Orders invoiceOrder;
 //    private Transactions orderTransaction;
 //    private Customer orderCustomer;
+
+    private CustomerVehicle custVehicle = new CustomerVehicle();
+    
     private List<Invoice> originalInvoiceList = null;
     private List<Invoice> invoiceList = null;
     
@@ -63,6 +67,7 @@ public class InvoiceController implements Serializable {
 
     @EJB
     private com.saake.invoicer.sessionbean.ItemFacade itemFacade;
+
     private boolean redirect = false;
 
     public InvoiceController() {
@@ -118,7 +123,9 @@ public class InvoiceController implements Serializable {
     public String prepareView() {
 //        current = (Customer) getItems().getRowData();
 //        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        
+        if(current != null && current.getCustomerId() != null && Utils.notEmpty(current.getCustomerId().getCustomerVehicles())){
+            custVehicle = current.getCustomerId().getCustomerVehicles().get(0);
+        }
         return deriveReturnString("view", true);
 
     }
@@ -134,6 +141,7 @@ public class InvoiceController implements Serializable {
         current.setInvoiceDate(new Date());
         current.setAmount(0.0);
         current.setDiscount(0.0);
+        custVehicle = new CustomerVehicle();
     }
     
     public String prepareCreate() {
@@ -157,6 +165,8 @@ public class InvoiceController implements Serializable {
     
     public String create() {
         try {
+            addCustumerVehicle(current.getCustomerId());
+            
             getFacade().create(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("InvoiceCreated"));
             redirect = true;
@@ -190,6 +200,8 @@ public class InvoiceController implements Serializable {
 
     public String update() {
         try {
+            addCustumerVehicle(current.getCustomerId());
+            
             current = getFacade().edit(current);
             
             JsfUtil.addRequestObject("item",current);
@@ -363,8 +375,12 @@ public class InvoiceController implements Serializable {
         String id = JsfUtil.getRequestParameter("id");
         
         if(Utils.notBlank(id)){
-            current = getFacade().find(Integer.parseInt(id));
+            current = getFacade().find(Integer.parseInt(id));                      
         }   
+        
+        if (current != null && current.getCustomerId() != null && Utils.notEmpty(current.getCustomerId().getCustomerVehicles())) {
+            custVehicle = current.getCustomerId().getCustomerVehicles().get(0);
+        }
     }
        
     public void filterList(){   
@@ -461,7 +477,8 @@ public class InvoiceController implements Serializable {
     
     public void addNewCustomerToInvoice(){
         log.info("inside addNewCustomerToInvoice");
-        Customer cust = custCtrl.create(custCtrl.getCurrent());
+        
+        Customer cust = custCtrl.create(custCtrl.getCurrent());        
         current.setCustomerId(cust);        
     }
 
@@ -539,5 +556,25 @@ public class InvoiceController implements Serializable {
     public void setCurrentInvItem(InvoiceItems currentInvItem) {
         this.currentInvItem = currentInvItem;
     }
-       
+
+    public CustomerVehicle getCustVehicle() {
+        return custVehicle;
+    }
+
+    public void setCustVehicle(CustomerVehicle custVehicle) {
+        this.custVehicle = custVehicle;
+    }    
+
+    private Customer addCustumerVehicle(Customer cust) {
+        if(!custVehicle.isEmpty()){
+            custVehicle.setCustomerId(cust);
+            if(cust.getCustomerVehicles() == null){
+                cust.setCustomerVehicles(new ArrayList<CustomerVehicle>());
+            }
+                            
+            custVehicle = custCtrl.saveCustomerVehicle(custVehicle);            
+        }
+        
+        return cust;
+    }
 }
