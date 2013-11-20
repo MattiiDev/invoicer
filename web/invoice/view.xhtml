@@ -47,7 +47,11 @@
                     <h:panelGrid width="100%" columns="1" >                        
                         <h:panelGrid width="33%" columns="2" cellpadding="3" style="margin:auto auto;" columnClasses="label5 textAlignRight noBorder,noBorder" >                        
                             <h:outputText value="Invoice" />
-                            <h:outputText value="#{invoiceCtrl.current.invoiceNum}" styleClass="font20"/>
+                            <h:panelGroup>
+                                <h:outputText id="invoiceId" value="#{invoiceCtrl.current.invoiceId}" styleClass="font20"/>
+                                <h:outputText value=" - " rendered="#{not empty invoiceCtrl.current.invoiceNum}" styleClass="font20"/>
+                                <h:outputText id="invoiceNum" value="#{invoiceCtrl.current.invoiceNum}" styleClass="font20"/>
+                            </h:panelGroup>
                             <h:outputText value="Date of Invoice" styleClass="label3 textAlignRight" />
                             <h:outputText value="#{invoiceCtrl.current.invoiceDate}" styleClass="font16">
                                 <f:convertDateTime type="date"/>

@@ -67,7 +67,7 @@ public class ReportHelper {
             dat.setAmount(inv.getAmount());
             dat.setDiscount(inv.getDiscount());
             dat.setInvoiceDate(inv.getInvoiceDate());
-            dat.setInvoiceNumber(Utils.notBlank(inv.getInvoiceNum())?inv.getInvoiceNum().toString() : "");            
+            dat.setInvoiceNumber(Utils.notBlank(inv.getInvoiceNum())? inv.getInvoiceId() + " - " +inv.getInvoiceNum(): inv.getInvoiceId().toString());            
             dat.setInvoiceItems(convertInvoiceItems(inv.getInvoiceItemsAsList()));
             dat.setAddressLine1(inv.getCustomerId().getAddressLine1());
             dat.setAddressLine2(inv.getCustomerId().getAddressLine2());
