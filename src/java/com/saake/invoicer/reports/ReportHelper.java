@@ -4,6 +4,7 @@
  */
 package com.saake.invoicer.reports;
 
+import com.saake.invoicer.entity.CustomerVehicle;
 import com.saake.invoicer.entity.Invoice;
 import com.saake.invoicer.entity.InvoiceItems;
 import com.saake.invoicer.model.InvoiceItemsData;
@@ -13,10 +14,14 @@ import com.saake.invoicer.util.Utils;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.faces.context.ExternalContext;
@@ -40,6 +45,8 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporter;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporterParameter;
+import net.sf.jasperreports.engine.fill.JRFillParameter;
+import net.sf.jasperreports.engine.util.FileResolver;
 import net.sf.jasperreports.engine.util.JRLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -70,8 +77,14 @@ public class ReportHelper {
             dat.setFirstName(inv.getCustomerId().getFirstName());
             dat.setLastName(inv.getCustomerId().getLastName());
             dat.setStateProvince(inv.getCustomerId().getStateProvince());
-            dat.setMobileNum(inv.getCustomerId().getMobileNum());
+            dat.setMobileNum(inv.getCustomerId().getMobileNum());            
             
+            CustomerVehicle veh = inv.getCustomerId().getCustomerVehicles().get(0);
+            dat.setMake(veh.getMake());            
+            dat.setMileage(veh.getMileage());            
+            dat.setModel(veh.getModel());            
+            dat.setVin(veh.getVin());            
+            dat.setYear(veh.getYear());            
             
             dataList.add(dat);
         }
@@ -115,7 +128,11 @@ public class ReportHelper {
         try{
             if (Utils.notEmpty(dataList) && Utils.notBlank(template)) {
                 try {
-                    JasperPrint jasperPrint = fillJasperTemplate(template, "JAVABEAN", dataList, null);
+                    
+                    Map<String, Object> parameters = new HashMap<String, Object>();
+                    parameters.put(JRFillParameter.REPORT_FILE_RESOLVER, fileResolver);
+                    
+                    JasperPrint jasperPrint = fillJasperTemplate(template, "JAVABEAN", dataList, parameters);
 
                     if (jasperPrint != null) {
                         pdfByteArray = generatePdfBytesFromJasperTemplate(jasperPrint);
@@ -268,4 +285,18 @@ public class ReportHelper {
         
         return list;
     }
+    
+    private static FileResolver fileResolver = new FileResolver() {
+        @Override
+        public File resolveFile(String fileName) {
+            URI uri;
+            try {
+                uri = new URI(this.getClass().getResource(fileName).getPath());
+                return new File(uri.getPath());
+            } catch (URISyntaxException e) {
+                log.error("",e);
+                return null;
+            }
+        }
+    };
 }
