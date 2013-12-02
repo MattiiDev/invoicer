@@ -120,6 +120,10 @@ public class InvoiceController implements Serializable {
         return deriveReturnString("list", false);
     }
 
+    public String redirectToList() {
+        return "list.jsf?faces-redirect=true";
+    }
+
     public String prepareView() {
 //        current = (Customer) getItems().getRowData();
 //        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
@@ -150,7 +154,21 @@ public class InvoiceController implements Serializable {
     }
 
     public String save() {
-        if(current != null){
+        if (current != null) {
+            if (Utils.notEmpty(current.getInvoiceItems())) {
+                List<InvoiceItems> emptyList = new ArrayList<>();
+                for (InvoiceItems items : current.getInvoiceItemsAsList()) {
+                    if (items.isEmpty()) {
+                        emptyList.add(items);
+                    }
+                }
+                current.getInvoiceItems().removeAll(emptyList);
+            }
+            
+            if (Utils.isEmpty(current.getInvoiceItems())) {
+                JsfUtil.addErrorMessage("Please add items to the invoice.");
+                return null;
+            }
             if(current.getInvoiceId() != null){
                 return update();
             }
@@ -227,6 +245,20 @@ public class InvoiceController implements Serializable {
         return deriveReturnString("list", false);
     }
     
+    public String softDelete(){
+        try {
+            getFacade().softDelete(current);
+            
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("InvoiceDeleted"));
+            prepareList();
+                        
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));            
+        }
+        
+        return deriveReturnString("list", false);
+    }
+    
     public String addNewItemToInvoice(){
         InvoiceItems it = new InvoiceItems();
         it.setAmount(0.00);
@@ -251,6 +283,7 @@ public class InvoiceController implements Serializable {
         
         return null;
     }
+    
     public String calOrderPrice(){        
         Double amt = current.getItemTotalAmount();
         
@@ -577,4 +610,15 @@ public class InvoiceController implements Serializable {
         
         return cust;
     }
+
+    public void redirectToView(Integer id) {
+        try {
+            if(id == null || id == 0){
+                id = current.getInvoiceId();
+            }
+            JsfUtil.getExternalContext().redirect("view.jsf?id="+id);
+        } catch (IOException ex) {
+            Logger.getLogger(InvoiceController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }       
 }

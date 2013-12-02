@@ -8,17 +8,26 @@
       xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="/template/template.xhtml">
+        <ui:define name="head">
+            <script type="text/javascript">
+                jQuery(document).ready(function() {
+                    jQuery('.newInvoiceBtn').focus();
+                });
+            </script>
+        </ui:define>
         <ui:define name="title">
             <h:outputText value="List Invoices"></h:outputText>
         </ui:define>
         <ui:define name="content">
             <h:form>
                 <ui:include src="/template/messages.xhtml"/>
+                                
+                <p:hotkey bind="alt+n" action="create.jsf?faces-redirect=true" /> 
 
                 <p:toolbar styleClass="noBorder invoiceListToolbar noBottomBorderRadius">
                     <p:toolbarGroup align="left">  
-                        <p:commandButton type="link" value="New Invoice" icon="ui-icon-document"
-                                         action="#{invoiceCtrl.prepareCreate}" />                          
+                        <p:commandButton value="New Invoice" icon="ui-icon-document" styleClass="newInvoiceBtn"
+                                         action="create.jsf?faces-redirect=true" />                          
                     </p:toolbarGroup>                                       
                     <p:toolbarGroup align="right" style="margin-right: 10px">                                           
                         <p:commandButton type="button" value="Filter" icon="ui-icon-search" onclick="searchPanel.toggle();advSearchPanel.collapse();" /> 
@@ -111,9 +120,9 @@
                 </p:panel>
 
                 <p:spacer height="10"/>
-                <p:dataTable id="invoiceListTable" value="#{invoiceCtrl.model}" var="item" rowStyleClass="evenOddRows" 
+                <p:dataTable id="invoiceListTable" value="#{invoiceCtrl.model}" var="invoice" rowKey="#{invoice.invoiceId}"
                              styleClass="invoiceList invoiceItemClass font16" selection="#{invoiceCtrl.current}" selectionMode="single"
-                             paginator="true" rows="10" paginatorAlwaysVisible="true" paginatorPosition="bottom"
+                             paginator="true" rows="10" paginatorAlwaysVisible="true" paginatorPosition="bottom" 
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                              rowsPerPageTemplate="5,10,15" filteredValue="#{invoiceCtrl.invoiceList}" widgetVar="invoiceTable"  >  
                     <!--                    <f:facet name="header">  
@@ -122,19 +131,22 @@
                                                 <p:inputText id="globalFilter" onkeyup="invoiceTable.filter()" style="width:150px" />  
                                             </p:outputPanel>  
                                         </f:facet>-->
-                    <p:column sortBy="#{item.invoiceId}" headerText="ID" filterBy="invoiceId">                              
-                        <h:outputText value="#{item.invoiceId}"/>
+                    <p:column sortBy="#{invoice.invoiceId}" headerText="ID" filterBy="invoiceId">                              
+                        <h:outputText value="#{invoice.invoiceId}"/>
+                    </p:column>
+                    <p:column sortBy="#{invoice.invoiceNum}" headerText="Invoice #" filterBy="invoiceNum">                              
+                        <h:outputText value="#{invoice.invoiceNum}"/>
                     </p:column>
                     <p:column sortBy="#{item.invoiceDate}" headerText="Date" filterBy="invoiceDate">                              
-                        <h:outputText value="#{item.invoiceDate}">
+                        <h:outputText value="#{invoice.invoiceDate}">
                             <f:convertDateTime type="date" pattern="dd-MM-YYY"/>
                         </h:outputText>
                     </p:column>                    
-                    <p:column sortBy="#{item.customerId.firstName}" headerText="Customer" filterBy="firstName">                              
-                        <h:outputText value="#{item.customerId.firstName} #{item.customerId.firstName}"/>
+                    <p:column sortBy="#{invoice.customerId.firstName}" headerText="Customer" filterBy="firstName">                              
+                        <h:outputText value="#{invoice.customerId.firstName} #{invoice.customerId.firstName}"/>
                     </p:column>
-                    <p:column sortBy="#{item.amount}" headerText="Amount" filterBy="amount">                              
-                        <h:outputText value="#{item.amount}">
+                    <p:column sortBy="#{invoice.amount}" headerText="Amount" filterBy="amount">                              
+                        <h:outputText value="#{invoice.amount}">
                             <f:convertNumber type="currency" currencySymbol=" " />
                         </h:outputText>
                     </p:column>
@@ -156,7 +168,7 @@
 
                         <h:commandLink action="#{invoiceCtrl.prepareEdit}" styleClass="editInvoice" >
                             <h:graphicImage url="/resources/images/edit-black-2.png" width="16" height="16" alt="Edit" styleClass="editInvoice"/>
-                            <f:setPropertyActionListener target="#{invoiceCtrl.current}" value="#{item}"/>
+                            <f:setPropertyActionListener target="#{invoiceCtrl.current}" value="#{invoice}"/>
                         </h:commandLink>                       
                     </p:column>
                     <p:column  width="5%">
@@ -164,26 +176,26 @@
                             <h:outputText value="&nbsp;"/>
                         </f:facet>
 
-                        <h:commandLink action="#{invoiceCtrl.delete}" styleClass="editInvoice">
+                        <p:commandLink action="#{invoiceCtrl.delete}" styleClass="editInvoice" onclick="window.confirm('Are you sure you want to delete this invoice?');"
+                                       update="invoiceListTable">
                             <h:graphicImage url="/resources/images/black_delete.png" width="12" height="12" alt="Delete" styleClass="editInvoice"/>
-                            <f:setPropertyActionListener target="#{invoiceCtrl.current}" value="#{item}"/>
-                        </h:commandLink>  
+                            <f:setPropertyActionListener target="#{invoiceCtrl.current}" value="#{invoice}"/>
+                        </p:commandLink>  
                     </p:column>
                     <!--                    <f:facet name="footer">  
                                             Total #{fn:length(invoiceCtrl.invoiceList)} invoices.
                                         </f:facet>-->
+                    <p:ajax event="rowDblselect" listener="#{invoiceCtrl.redirectToView(invoice.invoiceId)}">
+                    </p:ajax>
                 </p:dataTable>
-
+                
                 <p:contextMenu for="invoiceListTable">  
-                    <p:menuitem value="View" action="view" includeViewParams="true" 
+                    <p:menuitem value="View" action="#{invoiceCtrl.redirectToView(null)}" includeViewParams="true" 
                                 style="background: url('../resources/images/invoice.png') no-repeat; background-size: 16px 16px; padding-left: 20px; "/>
-                    <p:menuitem value="Edit" action="edit" includeViewParams="true" 
-                                style="background: url('../resources/images/edit-black-2.png') no-repeat ;background-size: 16px 16px; padding-left: 20px; ">
-                                                    <f:setPropertyActionListener target="#{invoiceCtrl.current}" value="#{item}"/>
-
-                    </p:menuitem>
-
+                    <p:menuitem value="Edit" action="#{invoiceCtrl.prepareEdit}" includeViewParams="true" 
+                                style="background: url('../resources/images/edit-black-2.png') no-repeat ;background-size: 16px 16px; padding-left: 20px; "/>
                 </p:contextMenu> 
+                
             </h:form>
         </ui:define>
     </ui:composition>

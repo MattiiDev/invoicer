@@ -194,3 +194,20 @@ CREATE TABLE `user_uuid_map` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `customer_vehicle` (
+  `cust_vehicle_id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_id` int(11) DEFAULT NULL,
+  `make` varchar(50) DEFAULT NULL,
+  `model` varchar(50) DEFAULT NULL,
+  `vin` varchar(50) DEFAULT NULL,
+  `create_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `update_ts` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` varchar(20) DEFAULT NULL,
+  `updated_by` varchar(20) DEFAULT NULL,
+  `year` varchar(4) DEFAULT NULL,
+  `mileage` varchar(8) DEFAULT NULL,
+  PRIMARY KEY (`cust_vehicle_id`),
+  KEY `fk_cust_vehicle` (`customer_id`),
+  CONSTRAINT `fk_cust_vehicle` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`CUSTOMER_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+

@@ -4,6 +4,7 @@
  */
 package com.saake.invoicer.entity;
 
+import com.saake.invoicer.util.Utils;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -221,6 +222,13 @@ public class InvoiceItems implements Serializable,Comparable {
         }
         
         return val;
+    }
+
+    public boolean isEmpty() {
+        return (amount == null || amount == 0.0)  && (discount == null || discount == 0.0) && invoiceItemId == null && Utils.isBlank(description) && 
+                (item == null || item.getItemId() == null ) && 
+                //(quantity == null || quantity == 0)  &&
+                 (unitPrice == null || unitPrice == 0.0);
     }
         
    

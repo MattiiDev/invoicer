@@ -14,7 +14,13 @@
             <p:spacer height="150px"/>
 
             <h:form>
-                <div class="edit-link sidebar-right-round" style="float:left">
+                <div class="list-link sidebar-right-round" style="float:left">
+                    <h:commandLink action="#{invoiceCtrl.redirectToList}">
+                        <h:graphicImage id="list-img" styleClass="list-img" url="/resources/images/back_arrow.png" alt="List"/>
+                        <p:tooltip for="list-img" value="Back To List" />
+                    </h:commandLink> 
+                </div>
+                <div class="edit-link sidebar-right-round" style="float:left; clear:left">
                     <h:commandLink action="#{invoiceCtrl.prepareEdit}">
                         <h:graphicImage id="edit-img" styleClass="edit-img" url="/resources/images/edit-black-2.png" alt="Edit"/>
                         <p:tooltip for="edit-img" value="Edit Invoice" />
@@ -45,7 +51,7 @@
                 </f:metadata>
                 <p:panel styleClass="noBorder" style="color: #1584de;background: #e6e6e6 url('');">                  
                     <h:panelGrid width="100%" columns="1" >                        
-                        <h:panelGrid width="33%" columns="2" cellpadding="3" style="margin:auto auto;" columnClasses="label5 textAlignRight noBorder,noBorder" >                        
+                        <h:panelGrid width="66%" columns="2" cellpadding="3" style="margin:auto auto;" columnClasses="label5 textAlignRight noBorder,noBorder" >                        
                             <h:outputText value="Invoice" />
                             <h:panelGroup>
                                 <h:outputText id="invoiceId" value="#{invoiceCtrl.current.invoiceId}" styleClass="font20"/>
@@ -59,20 +65,23 @@
                         </h:panelGrid>
                         <p:separator style="margin: 5px 0 5px 0" />
                         <h:panelGroup>
-                            <h:panelGrid width="49%" columns="1" columnClasses="noBorder" styleClass="borderRound10 floatLeft viewInfo" >                        
+                            <h:panelGrid width="49%" columns="1" columnClasses="noBorder" styleClass="borderRound10 floatLeft viewInfo" style="height: 140px" >                        
                                 <h:outputText value="TO" styleClass="font14 bold"/>
-                                <h:outputText value="1#{invoiceCtrl.current.customerId.firstName} #{invoiceCtrl.current.customerId.lastName}"/>
-                                <h:outputText value="2#{invoiceCtrl.current.customerId.addressLine1}"/>
-                                <h:outputText value="3#{invoiceCtrl.current.customerId.addressLine2}"/>
-                                <h:outputText value="4#{invoiceCtrl.current.customerId.city} , #{invoiceCtrl.current.customerId.country}"/>
-
+                                <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.firstName} #{invoiceCtrl.current.customerId.lastName}" />                               
+                                <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.companyName}" />                               
+                                <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.addressLine1}" />
+                                <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.city}" />
+                                <h:outputText styleClass="viewCust" value=", " rendered="#{not empty invoiceCtrl.current.customerId.country}"/>
+                                <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.country}" />
+                                <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.mobileNum}" />
+                                <p:spacer height="46px" rendered="#{empty invoiceCtrl.current.customerId}"/>
                             </h:panelGrid>
-                            <h:panelGrid width="49%" columns="1" columnClasses="noBorder" styleClass="borderRound10 floatRight viewInfo" >                        
+                            <h:panelGrid width="49%" columns="1" columnClasses="noBorder" styleClass="borderRound10 floatRight viewInfo" style="height: 140px" >                        
                                 <h:outputText value="FROM" styleClass="font14 bold"/>
-                                <h:outputText value="1#{invoiceCtrl.current.customerId.firstName} #{invoiceCtrl.current.customerId.lastName}"/>
-                                <h:outputText value="2#{invoiceCtrl.current.customerId.addressLine1}"/>
-                                <h:outputText value="3#{invoiceCtrl.current.customerId.addressLine2}"/>
-                                <h:outputText value="4#{invoiceCtrl.current.customerId.city} , #{invoiceCtrl.current.customerId.country}"/>
+                                <h:outputText value="Saleh A. Al-Khalaf"/>
+                                <h:outputText value="Jeddah, KSA"/>
+                                <h:outputText value="00966-12-6740031"/>
+                                <h:outputText value="00966-534567373"/>
                             </h:panelGrid>
                         </h:panelGroup>         
                         <h:panelGrid width="100%" columns="6" columnClasses="noBorder bold,noBorder textAlignLeft,noBorder bold,noBorder textAlignLeft,noBorder bold ,noBorder textAlignLeft" styleClass="borderRound10 viewInfo" >                                                     
@@ -159,7 +168,7 @@
                     </h:panelGrid>                                       
                 </p:panel>
                  <h:panelGroup style="width:35%; margin:auto auto; overflow: hidden;" layout="block">
-                     <p:commandButton style="font-size:18px;float: right;margin-top: 10px;vertical-align: middle " ajax="true"
+                     <p:commandButton style="font-size:18px;float: right;margin-top: 10px;vertical-align: middle " ajax="true" rendered="false"
                                          action="#{invoiceCtrl.prepareList()}" value="Back to List" icon="ui-icon-circle-arrow-w"  />
                         <p:commandButton style="font-size:18px;float: left;margin-top: 10px;vertical-align: middle " value="Print" icon="ui-icon-print"
                                          oncomplete="window.location.href = '/invoicer/viewDocument.content?generateInvoicePdf=Y'"

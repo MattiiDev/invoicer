@@ -79,12 +79,14 @@ public class ReportHelper {
             dat.setStateProvince(inv.getCustomerId().getStateProvince());
             dat.setMobileNum(inv.getCustomerId().getMobileNum());            
             
-            CustomerVehicle veh = inv.getCustomerId().getCustomerVehicles().get(0);
-            dat.setMake(veh.getMake());            
-            dat.setMileage(veh.getMileage());            
-            dat.setModel(veh.getModel());            
-            dat.setVin(veh.getVin());            
-            dat.setYear(veh.getYear());            
+            if(Utils.notEmpty(inv.getCustomerId().getCustomerVehicles())){
+                CustomerVehicle veh = inv.getCustomerId().getCustomerVehicles().get(0);
+                dat.setMake(veh.getMake());            
+                dat.setMileage(veh.getMileage());            
+                dat.setModel(veh.getModel());            
+                dat.setVin(veh.getVin());            
+                dat.setYear(veh.getYear());
+            }
             
             dataList.add(dat);
         }

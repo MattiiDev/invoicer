@@ -13,6 +13,11 @@
         <h:outputStylesheet name="css/invoicer.css"/>
         <h:outputScript library="js" name="inconvent.js"/>
 
+        <script type="text/javascript">
+            jQuery(document).ready(function() {
+                jQuery('.login').focus();
+            });
+        </script>
     </h:head>
 
     <h:body styleClass="body">
@@ -44,7 +49,7 @@
                         <br/>-->
                     </p:panel>
                     <br/>
-                    <input type="submit" value="Login" />
+                    <input type="submit" value="Login" class="login" />
                     <input type="reset" value="Reset" />
                         <!--<p:commandButton action="#" value="Login" icon="ui-icon-power" style="background: url('')" />--> 
                 </form>  

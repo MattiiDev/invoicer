@@ -9,6 +9,7 @@
     <ui:composition>              
         <h:form prependId="false">                
             <p:panel id="invoicePanel" styleClass="noBorder" style="width:100%;color: #1584de;background: #e6e6e6 url('');">
+                <p:focus context="invoicePanel"/> 
                 <h:panelGrid width="100%" columns="1" >  
                     <h:panelGrid width="55%" columns="2" cellpadding="3" style="margin:auto auto;" columnClasses="label5 textAlignRight noBorder,noBorder" >                        
                         <h:outputText value="Invoice #" />
@@ -22,8 +23,8 @@
                                     showButtonPanel="true" pattern="EEE, dd MMM, yyyy"/>  
                     </h:panelGrid>
                     <p:separator style="margin: 5px 0 5px 0" />
-                    <h:panelGroup>
-                        <h:panelGrid width="49%" columns="1" columnClasses="noBorder label1 width20pr, noBorder width80pr" styleClass="borderRound10 floatLeft viewInfo">
+                    <h:panelGroup id="customerPanelGroup">
+                        <h:panelGrid width="49%" columns="1" columnClasses="noBorder label1 width20pr, noBorder width80pr" styleClass="borderRound10 floatLeft viewInfo" style="height: 140px">
                             <h:panelGroup>
                                 <p:outputLabel value="Customer" for="custSugg" styleClass="label1"/>
                                 <p:commandButton id="changeCusBtn" image="change-cust-image"  ajax="true"  rendered="#{not empty invoiceCtrl.current.customerId}"
@@ -37,39 +38,46 @@
                             </h:panelGroup>
                             <h:panelGroup rendered="#{empty invoiceCtrl.current.customerId}">
                                 <p:autoComplete id="custSugg" value="#{invoiceCtrl.current.customerId}" completeMethod="#{customerController.suggestCustomer}"  
-                                                var="cust" itemLabel="#{cust.firstName}" itemValue="#{cust}" dropdown="true" size="50" dir="down" >  
+                                                var="cust" itemLabel="#{cust.firstName}" itemValue="#{cust}" dropdown="true" size="50" dir="up" 
+                                                queryDelay="2">                                        
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="Customer Name" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{cust.firstName} #{cust.lastName}"/> 
+                                    </p:column> 
                                     <p:column>  
                                         <f:facet name="header">
                                             <h:outputText value="Company Name" styleClass="bold"/>
                                         </f:facet>
                                         <h:outputText value="#{cust.companyName}"/> 
-                                    </p:column>  
+                                    </p:column>
                                     <p:column>  
                                         <f:facet name="header">
-                                            <h:outputText value="First Name" styleClass="bold"/>
+                                            <h:outputText value="Address" styleClass="bold"/>
                                         </f:facet>
-                                        <h:outputText value="#{cust.firstName}"/> 
-                                    </p:column>  
-                                    <p:column>  
-                                        <f:facet name="header">
-                                            <h:outputText value="Last Name" styleClass="bold"/>
-                                        </f:facet>
-                                        <h:outputText value="#{cust.lastName}"/> 
+                                        <h:outputText value="#{cust.addressLine1}"/> 
+                                        <br/>
+                                        <h:outputText value="#{cust.city}"/> 
+                                        <h:outputText value=", " rendered="#{not empty cust.country}"/> 
+                                        <h:outputText value="#{cust.country}"/> 
+                                        <br/>
+                                        <h:outputText value="#{cust.mobileNum}"/> 
                                     </p:column>  
                                     <f:ajax event="itemSelect" render="@form"/>
                                 </p:autoComplete>                                                                                      
                             </h:panelGroup>
 
-                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.firstName} #{invoiceCtrl.current.customerId.lastName}" rendered="#{not empty invoiceCtrl.current.customerId}"/>                               
-                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.addressLine1}" rendered="#{not empty invoiceCtrl.current.customerId}"/>
-                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.addressLine2}" rendered="#{not empty invoiceCtrl.current.customerId}"/>
-                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.city} , #{invoiceCtrl.current.customerId.country}" rendered="#{not empty invoiceCtrl.current.customerId}"/>
-
-                            <p:spacer height="46px" rendered="#{empty invoiceCtrl.current.customerId}"/>
-
+                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.firstName} #{invoiceCtrl.current.customerId.lastName}" />                               
+                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.companyName}" />                               
+                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.addressLine1}" />
+                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.city}" />
+                            <h:outputText styleClass="viewCust" value=", " rendered="#{not empty invoiceCtrl.current.customerId.country}"/>
+                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.country}" />
+                            <h:outputText styleClass="viewCust" value="#{invoiceCtrl.current.customerId.mobileNum}" />
                         </h:panelGrid>
 
-                        <h:panelGrid width="49%" columns="1" columnClasses="noBorder label1 width20pr, noBorder width80pr" styleClass="borderRound10 floatRight viewInfo">
+                        <h:panelGrid width="49%" columns="1" columnClasses="noBorder label1 width20pr, noBorder width80pr" styleClass="borderRound10 floatRight viewInfo" style="height: 140px">
                             <p:outputLabel value="Invoice Notes" for="invoiceNotes" styleClass="label1"/>
                             <h:inputTextarea id="invoiceNotes" value="#{invoiceCtrl.current.invoiceDetails}" cols="50" rows="5" style="font-size: 12px" />
                         </h:panelGrid>
@@ -111,21 +119,9 @@
                                         var="item1" itemLabel="#{item1.description}" itemValue="#{item1}" dropdown="true" size="50" >  
                             <p:column>  
                                 <f:facet name="header">
-                                    <h:outputText value="Item Id" styleClass="bold"/>
-                                </f:facet>
-                                <h:outputText value="#{item1.itemId}"/> 
-                            </p:column>  
-                            <p:column>  
-                                <f:facet name="header">
-                                    <h:outputText value="Item Category" styleClass="bold"/>
+                                    <h:outputText value="Category" styleClass="bold"/>
                                 </f:facet>
                                 <h:outputText value="#{item1.itemCategory}"/> 
-                            </p:column>  
-                            <p:column>  
-                                <f:facet name="header">
-                                    <h:outputText value="Name" styleClass="bold"/>
-                                </f:facet>
-                                <h:outputText value="#{item1.name}"/> 
                             </p:column>  
                             <p:column>  
                                 <f:facet name="header">
@@ -220,11 +216,11 @@
                     </f:facet>                        
                 </p:dataTable>                                             
 
-                <p:commandButton style="font-size:22px;float: right;margin-top: 10px;vertical-align: middle " 
+                <p:commandButton style="font-size:22px;float: right;margin-top: 10px;vertical-align: middle " rendered="false" 
                                      action="#{invoiceCtrl.save}" value="#{source == 'createInvoice'? 'Create' : 'Save'}" icon="ui-icon-circle-check"  />
             </p:panel>
 
-            <p:dialog id="addCustDg"  widgetVar="addCusPopup" modal="true" width="900" height="400" showEffect="clip">  
+            <p:dialog id="addCustDg" header="New Customer"  widgetVar="addCusPopup" modal="true" width="900" height="370" showEffect="clip" resizable="false">  
                 <ui:include src="/customer/inc_createCustomer.xhtml">
                     <ui:param name="controller" value="#{invoiceCtrl.custCtrl}"/>
                 </ui:include>
