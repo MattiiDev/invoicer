@@ -14,98 +14,77 @@
         <ui:define name="content">
             <h:form>
                 <ui:include src="/template/messages.xhtml"/>
-                                  
-                <p:dataTable value="#{customerController.items}" var="item" rowStyleClass="jsfcrud_even_row" 
+
+                <p:toolbar styleClass="noBorder invoiceListToolbar noBottomBorderRadius">
+                    <p:toolbarGroup align="left">  
+                        <p:commandButton value="New Customer" icon="ui-icon-person" styleClass="newInvoiceBtn"
+                                         action="#{customerController.prepareCreate}" />                          
+                    </p:toolbarGroup>                                       
+                    <p:toolbarGroup align="right" style="margin-right: 10px" rendered="false">                                           
+                        <p:commandButton type="button" value="Filter" icon="ui-icon-search" onclick="searchPanel.toggle();advSearchPanel.collapse();" /> 
+                        <p:separator/>
+                        <p:spacer/> 
+                    </p:toolbarGroup>
+                </p:toolbar>
+                
+                <p:dataTable id="customerTable" value="#{customerController.items}" var="item" rowStyleClass="jsfcrud_even_row" 
                              paginator="true" rows="10"
-                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 rowsPerPageTemplate="5,10,15">
-                        <p:column sortBy="#{item.companyName}" headerText="Company Name">  
-                            <f:facet name="header">
-                                <h:outputText value="Company Name"/>
-                            </f:facet>
-                            <h:outputText value="#{item.companyName}"/>
-                        </p:column>
-                        <p:column headerText="Address">  
-                            <f:facet name="header">
-                                <h:outputText value="Address"/>
-                            </f:facet>
-                            <h:outputText value="#{item.addressLine1}"/>
-                                <br/>
-                                <h:outputText value="#{item.addressLine2}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListCustomerTitle_firstName}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.firstName}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListCustomerTitle_middleName}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.middleName}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListCustomerTitle_lastName}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.lastName}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListCustomerTitle_givenName}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.givenName}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListCustomerTitle_gender}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.gender}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListCustomerTitle_email}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.email}"/>
-                        </p:column>                       
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListCustomerTitle_city}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.city}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListCustomerTitle_stateProvince}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.stateProvince}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListCustomerTitle_mobileNum}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.mobileNum}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="&nbsp;"/>
-                            </f:facet>
-                            <h:commandLink action="#{customerController.prepareView}" value="#{bundle.ListCustomerViewLink}"/>
-                            <h:outputText value=" "/>
-                            <h:commandLink action="#{customerController.prepareEdit}" value="#{bundle.ListCustomerEditLink}"/>
-                            <h:outputText value=" "/>
-                            <h:commandLink action="#{customerController.destroy}" value="#{bundle.ListCustomerDestroyLink}"/>
-                        </p:column>
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                             rowsPerPageTemplate="5,10,15">
+                    <p:column sortBy="#{item.lastName}" headerText="Customer Name">
+                        <f:facet name="header">
+                            <h:outputText value="Customer Name"/>
+                        </f:facet>
+                        <h:outputText value="#{item.firstName}"/>
+                        <h:outputText value="#{item.middleName}"/>
+                        <h:outputText value="#{item.lastName}"/>
+                    </p:column>                       
+                    <p:column sortBy="#{item.companyName}" headerText="Company Name">  
+                        <f:facet name="header">
+                            <h:outputText value="Company Name"/>
+                        </f:facet>
+                        <h:outputText value="#{item.companyName}"/>
+                    </p:column>
+                    <p:column sortBy="item.addressLine1" headerText="Address">  
+                        <f:facet name="header">
+                            <h:outputText value="Address"/>
+                        </f:facet>
+                        <h:outputText value="#{item.addressLine1}"/>
+                        <h:outputText value="#{item.addressLine2}"/>
+                        <br/>
+                        <h:outputText value="#{item.city}"/>
+                        <h:outputText value=", }" rendered="#{not empty item.stateProvince}"/>
+                        <h:outputText value="#{item.stateProvince}"/>
+                        <h:outputText value=", }" rendered="#{not empty item.country}"/>
+                        <h:outputText value="#{item.country}"/>
+                    </p:column>                       
+                    <p:column sortBy="#{item.mobileNum}" headerText="Contact Info">
+                        <f:facet name="header">
+                            <h:outputText value="Contact Info"/>
+                        </f:facet>
+                        <h:outputText value="#{item.email}"/>
+                        <br/>
+                        <h:outputText value="#{item.mobileNum}"/>                            
+                    </p:column>                                               
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:commandLink action="#{customerController.prepareView}" >
+                            <h:graphicImage url="/resources/images/invoice.png" width="16" height="16" alt="View" />
+                        </h:commandLink> 
+                        <h:commandLink action="#{customerController.prepareEdit}" styleClass="editInvoice" >
+                            <h:graphicImage url="/resources/images/edit-black-2.png" width="16" height="16" alt="Edit" styleClass="editInvoice"/>
+                        </h:commandLink> 
+                        <p:commandLink action="#{customerController.destroy}" styleClass="editInvoice" onclick="window.confirm('Are you sure you want to delete this customer?');"
+                                       update="customerTable">
+                            <h:graphicImage url="/resources/images/black_delete.png" width="12" height="12" alt="Delete" styleClass="editInvoice"/>
+                        </p:commandLink> 
+                    </p:column>
                     <f:facet name="footer">  
                         In total there are #{fn:length(customerController.items)} customers.
                     </f:facet>
                 </p:dataTable>
-                <br />
-                <h:commandLink action="#{customerController.prepareCreate}" value="#{bundle.ListCustomerCreateLink}"/>
-                <br />
-                <br />
-                <h:link outcome="/index" value="#{bundle.ListCustomerIndexLink}"/>
             </h:form>
         </ui:define>
     </ui:composition>

@@ -8,10 +8,13 @@ import com.saake.invoicer.util.Utils;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -50,19 +53,13 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Customer.findByStateProvince", query = "SELECT c FROM Customer c WHERE c.stateProvince = :stateProvince"),
     @NamedQuery(name = "Customer.findByMobileNum", query = "SELECT c FROM Customer c WHERE c.mobileNum = :mobileNum")})
 public class Customer implements Serializable {
-    @OneToMany(mappedBy = "customerId")
-    private Collection<Orders> order1Collection;
     private static final long serialVersionUID = 1L;
     
     @Id
-//    @Basic(optional = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @NotNull
     @Column(name = "CUSTOMER_ID")
     private Integer customerId;
     
-//    @Basic(optional = false)
-//    @NotNull
     @Column(name = "CREATE_TS")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTs;
@@ -73,45 +70,33 @@ public class Customer implements Serializable {
     @Column(name = "FIRST_NAME")
     private String firstName;
     
-//    @Size(max = 50)
     @Column(name = "MIDDLE_NAME")
     private String middleName;
     
-//    @Size(max = 50)
     @Column(name = "LAST_NAME")
     private String lastName;
     
-//    @Size(max = 150)
     @Column(name = "GIVEN_NAME")
     private String givenName;
-    
-//    @Size(max = 1)
+
     @Column(name = "GENDER")
     private String gender;
     
 //    @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
-//    @Size(max = 50)
     @Column(name = "EMAIL")
     private String email;
     
-//    @Size(max = 250)
     @Column(name = "ADDRESS_LINE_1")
     private String addressLine1;
     
-//    @Size(max = 250)
     @Column(name = "ADDRESS_LINE_2")
     private String addressLine2;
     
-//    @Size(max = 50)
     @Column(name = "CITY")
     private String city;
     
-//    @Size(max = 50)
     @Column(name = "STATE_PROVINCE")
     private String stateProvince;
-    
-    @Column(name = "ZIP_CODE")
-    private Integer zipCode;
     
     @Column(name = "COUNTRY")
     private String country;
@@ -128,6 +113,15 @@ public class Customer implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerId")
     private Collection<Account> accountCollection;
 
+    @Column(name = "ZIP_CODE")
+    private String zipCode;
+
+    @OneToMany(mappedBy = "customerId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<CustomerVehicle> customerVehicles;
+    
+    @OneToMany(mappedBy = "customerId")
+    private Collection<Orders> order1Collection;
+    
     public Customer() {
     }
 
@@ -276,14 +270,6 @@ public class Customer implements Serializable {
         this.notes = notes;
     }
 
-    public Integer getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(Integer zipCode) {
-        this.zipCode = zipCode;
-    }
-        
     @XmlTransient
     public Collection<Account> getAccountCollection() {
         return accountCollection;
@@ -329,6 +315,23 @@ public class Customer implements Serializable {
 
     public boolean empty() {
         return this.customerId == null && Utils.isBlank(this.companyName) && Utils.isBlank(this.firstName);
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    @XmlTransient
+    public List<CustomerVehicle> getCustomerVehicles() {
+        return customerVehicles;
+    }
+
+    public void setCustomerVehicles(List<CustomerVehicle> customerVehicleCollection) {
+        this.customerVehicles = customerVehicleCollection;
     }
     
 }

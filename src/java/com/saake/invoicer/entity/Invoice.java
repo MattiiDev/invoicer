@@ -4,6 +4,7 @@
  */
 package com.saake.invoicer.entity;
 
+import com.saake.invoicer.util.Utils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -236,5 +237,11 @@ public class Invoice implements Serializable, SelectableDataModel<Invoice> {
     @Override
     public Invoice getRowData(String string) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public boolean isEmpty() {
+        return  this.customerId == null && (this.amount == null || this.amount == 0) && this.invoiceDate == null && (this.discount == null ||  this.discount == 0)
+                && Utils.isBlank(this.invoiceDetails) && this.invoiceId == null && Utils.isEmpty(this.invoiceItems) && this.invoiceNum == null &&
+                Utils.isBlank(this.status);
     }
 }

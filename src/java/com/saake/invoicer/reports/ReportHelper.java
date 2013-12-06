@@ -4,17 +4,24 @@
  */
 package com.saake.invoicer.reports;
 
+import com.saake.invoicer.entity.CustomerVehicle;
 import com.saake.invoicer.entity.Invoice;
+import com.saake.invoicer.entity.InvoiceItems;
+import com.saake.invoicer.model.InvoiceItemsData;
 import com.saake.invoicer.model.InvoiceReportData;
 import com.saake.invoicer.util.JsfUtil;
 import com.saake.invoicer.util.Utils;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.faces.context.ExternalContext;
@@ -38,6 +45,8 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporter;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporterParameter;
+import net.sf.jasperreports.engine.fill.JRFillParameter;
+import net.sf.jasperreports.engine.util.FileResolver;
 import net.sf.jasperreports.engine.util.JRLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,8 +67,27 @@ public class ReportHelper {
             dat.setAmount(inv.getAmount());
             dat.setDiscount(inv.getDiscount());
             dat.setInvoiceDate(inv.getInvoiceDate());
-            dat.setInvoiceNumber(Utils.notBlank(inv.getInvoiceNum())?inv.getInvoiceNum().toString() : "");            
-            dat.setInvoiceItems(inv.getInvoiceItemsAsList());
+            dat.setInvoiceNumber(Utils.notBlank(inv.getInvoiceNum())? inv.getInvoiceId() + " - " +inv.getInvoiceNum(): inv.getInvoiceId().toString());            
+            dat.setInvoiceItems(convertInvoiceItems(inv.getInvoiceItemsAsList()));
+            dat.setAddressLine1(inv.getCustomerId().getAddressLine1());
+            dat.setAddressLine2(inv.getCustomerId().getAddressLine2());
+            dat.setCity(inv.getCustomerId().getCity());
+            dat.setCompanyName(inv.getCustomerId().getCompanyName());
+            dat.setEmail(inv.getCustomerId().getEmail());
+            dat.setFirstName(inv.getCustomerId().getFirstName());
+            dat.setLastName(inv.getCustomerId().getLastName());
+            dat.setStateProvince(inv.getCustomerId().getStateProvince());
+            dat.setMobileNum(inv.getCustomerId().getMobileNum());            
+            
+            if(Utils.notEmpty(inv.getCustomerId().getCustomerVehicles())){
+                CustomerVehicle veh = inv.getCustomerId().getCustomerVehicles().get(0);
+                dat.setMake(veh.getMake());            
+                dat.setMileage(veh.getMileage());            
+                dat.setModel(veh.getModel());            
+                dat.setVin(veh.getVin());            
+                dat.setYear(veh.getYear());
+            }
+            
             dataList.add(dat);
         }
         return dataList;
@@ -68,7 +96,7 @@ public class ReportHelper {
     private static void streamPdf(Invoice inv, Boolean download) throws IOException {
          byte[] pdfByteArray = generatePdfFromJasperTemplate(buildDataListForInvoiceReport(inv), "saakeInvoice.jasper");
 
-        if (pdfByteArray.length > 0) {
+        if (pdfByteArray != null && pdfByteArray.length > 0) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
                 baos.write(pdfByteArray);
@@ -102,7 +130,11 @@ public class ReportHelper {
         try{
             if (Utils.notEmpty(dataList) && Utils.notBlank(template)) {
                 try {
-                    JasperPrint jasperPrint = fillJasperTemplate(template, "JAVABEAN", dataList, null);
+                    
+                    Map<String, Object> parameters = new HashMap<String, Object>();
+                    parameters.put(JRFillParameter.REPORT_FILE_RESOLVER, fileResolver);
+                    
+                    JasperPrint jasperPrint = fillJasperTemplate(template, "JAVABEAN", dataList, parameters);
 
                     if (jasperPrint != null) {
                         pdfByteArray = generatePdfBytesFromJasperTemplate(jasperPrint);
@@ -114,6 +146,8 @@ public class ReportHelper {
                 throw new Exception("No data to generate pdf!");
             }
         }catch (Exception e){
+            log.error("",e);
+            System.out.println(e.getMessage());
             JsfUtil.addErrorMessage("Error exporting pdf for template:"+template);
         }
 
@@ -151,6 +185,8 @@ public class ReportHelper {
                     }
                 }
             } catch (Exception e) {
+                System.out.println(e.getMessage());
+
                 throw new Exception("Error generating JR Template:"+templateName,e);
             }
         }
@@ -234,4 +270,35 @@ public class ReportHelper {
     public static void viewPDF(Invoice inv) throws IOException {
         streamPdf(inv, Boolean.FALSE);
     }
+
+    private static List<InvoiceItemsData> convertInvoiceItems(List<InvoiceItems> invoiceItems) {
+        List<InvoiceItemsData> list = new ArrayList<>();
+        
+        for(InvoiceItems invItem : invoiceItems){
+            InvoiceItemsData itData = new InvoiceItemsData();
+            
+            itData.setAmount(invItem.getAmount());
+            itData.setDescription(invItem.getItem().getDescription());
+            itData.setQuantity(invItem.getQuantity());
+            itData.setUnitCost(invItem.getItem().getUnitCost());
+            
+            list.add(itData);
+        }
+        
+        return list;
+    }
+    
+    private static FileResolver fileResolver = new FileResolver() {
+        @Override
+        public File resolveFile(String fileName) {
+            URI uri;
+            try {
+                uri = new URI(this.getClass().getResource(fileName).getPath());
+                return new File(uri.getPath());
+            } catch (URISyntaxException e) {
+                log.error("",e);
+                return null;
+            }
+        }
+    };
 }

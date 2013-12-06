@@ -1,17 +1,24 @@
 package com.saake.invoicer.controller.masterdata;
 
+import com.saake.invoicer.controller.InvoiceController;
 import com.saake.invoicer.entity.Item;
 import com.saake.invoicer.controller.masterdata.util.JsfUtil;
 import com.saake.invoicer.controller.masterdata.util.PaginationHelper;
 import com.saake.invoicer.entity.Customer;
 import com.saake.invoicer.sessionbean.ItemFacade;
 import com.saake.invoicer.util.Utils;
+import java.io.IOException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
@@ -33,9 +40,32 @@ public class ItemController implements Serializable {
     private ItemFacade ejbFacade;
     private int selectedItemIndex;
 
+    private boolean redirect = false;
+
     public ItemController() {
     }
 
+    @PostConstruct
+    private void initialize() {
+        if ( JsfUtil.getViewId().contains("create")){
+            newItemInit();
+        }
+        else
+        if ( JsfUtil.getViewId().contains("edit")){
+            editItemInit();
+        }
+        else
+        if ( JsfUtil.getViewId().contains("view")){
+            viewItemInit();
+        }
+        else
+        if ( JsfUtil.getViewId().contains("list")){
+            prepareList();
+        }        
+        
+        redirect = false;
+    }
+    
     public Item getSelected() {
         if (current == null) {
             current = new Item();
@@ -50,19 +80,19 @@ public class ItemController implements Serializable {
 
     public String prepareList() {
         recreateModel();
-        return "List";
+        return "list";
     }
 
     public String prepareView() {
 //        current = (Item) getItems().getRowData();
 //        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return "View";
+        return "view";
     }
 
     public String prepareCreate() {
         current = new Item();
         selectedItemIndex = -1;
-        return "Create";
+        return "create";
     }
 
     public String create() {
@@ -90,14 +120,14 @@ public class ItemController implements Serializable {
     public String prepareEdit() {
 //        current = (Item) getItems().getRowData();
 //        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return "Edit";
+        return "edit";
     }
 
     public String update() {
         try {
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ItemUpdated"));
-            return "View";
+            return "view";
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
@@ -196,8 +226,36 @@ public class ItemController implements Serializable {
     public void setCurrent(Item current) {
         this.current = current;
     }
+
+    private void newItemInit() {
+        current = new Item();
+        current.setCreateTs(new Date());
+    }
+
+    private void viewItemInit() {
+        String id = JsfUtil.getRequestParameter("id");
+        
+        if(Utils.notBlank(id)){
+            current = getFacade().find(Integer.parseInt(id));                      
+        }   
+    }
+
+    private void editItemInit() {
+        viewItemInit();
+    }
       
-        @FacesConverter(forClass = Item.class)
+    public void redirectToView(Integer id) {
+        try {
+            if(id == null || id == 0){
+                id = current.getItemId();
+            }
+            JsfUtil.getExternalContext().redirect("view.jsf?id="+id);
+        } catch (IOException ex) {
+            Logger.getLogger(InvoiceController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }     
+    
+    @FacesConverter(forClass = Item.class)
     public static class ItemControllerConverter implements Converter {
 
         @Override

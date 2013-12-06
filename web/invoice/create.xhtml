@@ -10,15 +10,21 @@
         <ui:define name="title">
             <h:outputText value="Create Invoice"></h:outputText>
         </ui:define>
-        <ui:define name="sidebar-right">
-            <p:spacer height="150px"/>
+        <ui:define name="sidebar-right">                        
+            <p:spacer height="300px"/>
             <h:form>
-                <div class="cancel-link sidebar-right-round">
-                    <h:commandLink action="#{invoiceCtrl.prepareList()}">
-                        <h:graphicImage id="cancel-img" class="cancel-img" url="/resources/images/cancel_black.png" alt="Cancel"/>
-                        <p:tooltip for="cancel-img" value="Cancel Create Invoice" />
+                <div class="save-link sidebar-right-round" style="float:left; ">
+                    <h:commandLink action="#{invoiceCtrl.save}">                    
+                        <h:graphicImage id="save-img" class="save-img" url="/resources/images/check_black.png" alt="Save"/>
+                        <p:tooltip for="save-img" value="Save Invoice" />
                     </h:commandLink> 
                 </div>               
+                <div class="cancel-link sidebar-right-round" style="float:left; clear:left;">
+                    <h:commandLink action="list.jsf?faces-redirect=true">
+                        <h:graphicImage id="cancel-img" class="cancel-img" url="/resources/images/cancel_black.png" alt="Cancel"/>
+                        <p:tooltip for="cancel-img" value="Cancel Edit Invoice" />
+                    </h:commandLink> 
+                </div>                               
             </h:form>
         </ui:define>
         <ui:define name="content">  

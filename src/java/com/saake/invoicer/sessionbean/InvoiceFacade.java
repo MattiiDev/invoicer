@@ -5,12 +5,19 @@
 package com.saake.invoicer.sessionbean;
 
 import com.saake.invoicer.entity.Invoice;
+import com.saake.invoicer.reports.ReportHelper;
+import com.saake.invoicer.util.InvoiceStatusEnum;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
@@ -18,7 +25,9 @@ import javax.persistence.criteria.Root;
  */
 
 @Stateless
-public class InvoiceFacade extends AbstractFacade<Invoice> {
+public class InvoiceFacade extends AbstractFacade<Invoice> {        
+    private static final Log log = LogFactory.getLog(ReportHelper.class);
+
     @PersistenceContext(unitName = "invoicerPU")
     private EntityManager em;
 
@@ -32,14 +41,27 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
         
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         javax.persistence.criteria.CriteriaQuery cq = cb.createQuery();
+        
         Root<Invoice> invRoot = cq.from(Invoice.class);
         cq.select(invRoot);
+        
+        ParameterExpression<String> status = cb.parameter(String.class);
+//        cq.where(cb.notEqual(invRoot.get("status"), status));
         cq.orderBy(cb.desc(invRoot.get("invoiceId")));
-        return (List<Invoice>)getEntityManager().createQuery(cq).getResultList();
+        Query query = getEntityManager().createQuery(cq);
+//        query.setParameter(status, InvoiceStatusEnum.DELETE.getValue());
+        
+        return (List<Invoice>)query.getResultList();
     }
 
     public InvoiceFacade() {
         super(Invoice.class);
+    }
+
+    public void softDelete(Invoice current) {
+        current.setStatus(InvoiceStatusEnum.DELETE.name());
+
+        em.merge(current);
     }
     
 }

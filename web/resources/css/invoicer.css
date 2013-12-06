@@ -482,11 +482,21 @@ a:hover .edit-img{
     /*background-color: #c8dffe!important;*/
 }
 
-a:hover .cancel-img{
+a:hover .list-img{
     width:38px!important;
     height:38px!important;
     /*opacity: 1!important;*/
     /*background-color: #c8dffe!important;*/
+}
+
+a:hover .save-img{
+    width:38px!important;
+    height:38px!important;
+}
+
+a:hover .cancel-img{
+    width:38px!important;
+    height:38px!important;
 }
 
 .pad10{
@@ -572,6 +582,10 @@ div.edit-link.sidebar-right-round{
     /*padding-top: 80px;*/
 }
 
+div.list-link.sidebar-right-round{
+    /*padding-top: 80px;*/
+}
+
 .sidebar-right-round{
     background-color: white;
     width: 50px; 
@@ -598,22 +612,32 @@ div.edit-link.sidebar-right-round{
     border-right: none;    
 }
 
+.list-img{
+    padding-left: 8px;
+    padding-top:20px;
+}
+
 .edit-img{
-    padding-left: 10px;
+    padding-left: 8px;
     padding-top:20px;
 }
 
 .print-img{
-    padding-left: 5px;
+    padding-left: 8px;
 }
 
 .pdf-img{
-    padding-left: 5px;
+    padding-left: 3px;
 }
 
 .cancel-img{
-    padding-left: 5px;
-    padding-top:15px;
+    padding-left: 3px;
+    padding-top:18px;
+}
+
+.save-img{
+    padding-left: 3px;
+    padding-top:18px;
 }
 
 .border-black{

@@ -12,8 +12,32 @@ and open the template in the editor.
             <ui:include src="/template/messages.xhtml">
                 <ui:param name="source" value="createCustomer"/>
             </ui:include>
-            <p:panel header="New Customer" styleClass="noBorder" style="color: #1584de;background: #e6e6e6 url('');" toggleable="true">
-                <h:panelGrid columns="2" style="border:0px" columnClasses="noBackground textRight noBorder, noBackground noBorder" width="100%" >
+            <p:panel styleClass="noBorder" style="color: #1584de;background: #e6e6e6 url('');" >
+                <h:panelGrid columns="2" style="border:0px" columnClasses="noBackground textRight noBorder, noBackground noBorder" width="100%" >                    
+                    <p:fieldset legend="Contact Info" style="layout:block" toggleable="true" styleClass="noBackground">                                                
+                        <h:panelGrid columns="2" style="border:0px" columnClasses="noBackground textRight noBorder, noBackground noBorder" >
+                            <h:outputLabel value="First Name" for="firstName" styleClass="bold" />
+                            <h:inputText id="firstName" value="#{controller.selected.firstName}"  styleClass="width98p" title="First Name" />
+
+                            <h:outputLabel value="Middle Name" for="middleName" />
+                            <h:inputText id="middleName" value="#{controller.selected.middleName}" styleClass="width98p" title="Middle Name" />
+
+                            <h:outputLabel value="Last Name" for="lastName" styleClass="bold" />
+                            <h:inputText id="lastName" value="#{controller.selected.lastName}" styleClass="width98p" title="Last Name" />
+
+                            <h:outputLabel value="Gender" for="gender" />
+                            <h:inputText id="gender" value="#{controller.selected.gender}" styleClass="width98p" title="Gender" />
+
+                            <h:outputLabel value="Email" for="email" styleClass="bold" />
+                            <h:inputText id="email" value="#{controller.selected.email}" styleClass="width98p" title="Email" />
+
+                            <h:outputLabel value="Cell Phone Number" for="mobileNum" styleClass="bold" />                            
+                            <h:inputText id="mobileNum" value="#{controller.selected.mobileNum}" styleClass="width98p" title="Cell Phone Number" />
+
+                            <h:outputLabel value="Office Phone Number" for="officeNum" />                            
+                            <h:inputText id="officeNum" value="#{controller.selected.officePhoneNum}" styleClass="width98p" title="Office Phone Number" />
+                        </h:panelGrid>
+                    </p:fieldset>
                     <p:fieldset legend="Company Info" style="layout:block" toggleable="true" styleClass="noBackground">                                                
                         <h:panelGrid columns="2" style="border:0px" columnClasses="noBackground textRight noBorder, noBackground noBorder" >
                             <p:outputLabel value="Company Name" for="companyName" styleClass="bold"/>
@@ -36,30 +60,6 @@ and open the template in the editor.
 
                             <h:outputLabel value="Country" for="country" />
                             <h:inputText id="country" value="#{controller.selected.country}" styleClass="width98p" title="Country" />
-                        </h:panelGrid>
-                    </p:fieldset>
-                    <p:fieldset legend="Contact Info" style="layout:block" toggleable="true" styleClass="noBackground">                                                
-                        <h:panelGrid columns="2" style="border:0px" columnClasses="noBackground textRight noBorder, noBackground noBorder" >
-                            <h:outputLabel value="First Name" for="firstName" styleClass="bold" />
-                            <h:inputText id="firstName" value="#{controller.selected.firstName}"  styleClass="width98p" title="First Name" />
-
-                            <h:outputLabel value="Middle Name" for="middleName" />
-                            <h:inputText id="middleName" value="#{controller.selected.middleName}" styleClass="width98p" title="Middle Name" />
-
-                            <h:outputLabel value="Last Name" for="lastName" styleClass="bold" />
-                            <h:inputText id="lastName" value="#{controller.selected.lastName}" styleClass="width98p" title="Last Name" />
-
-                            <h:outputLabel value="Gender" for="gender" />
-                            <h:inputText id="gender" value="#{controller.selected.gender}" styleClass="width98p" title="Gender" />
-
-                            <h:outputLabel value="Email" for="email" />
-                            <h:inputText id="email" value="#{controller.selected.email}" styleClass="width98p" title="Email" />
-
-                            <h:outputLabel value="Cell Phone Number" for="mobileNum" />                            
-                            <h:inputText id="mobileNum" value="#{controller.selected.mobileNum}" styleClass="width98p" title="Cell Phone Number" />
-
-                            <h:outputLabel value="Office Phone Number" for="officeNum" />                            
-                            <h:inputText id="officeNum" value="#{controller.selected.officePhoneNum}" styleClass="width98p" title="Office Phone Number" />
                         </h:panelGrid>
                     </p:fieldset>
                 </h:panelGrid>

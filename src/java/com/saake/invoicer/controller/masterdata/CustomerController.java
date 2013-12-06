@@ -3,8 +3,10 @@ package com.saake.invoicer.controller.masterdata;
 import com.saake.invoicer.controller.InvoiceController;
 import com.saake.invoicer.entity.Customer;
 import com.saake.invoicer.controller.masterdata.util.JsfUtil;
+import com.saake.invoicer.entity.CustomerVehicle;
 import com.saake.invoicer.sessionbean.CustomerFacade;
 import com.saake.invoicer.util.Utils;
+import com.sun.xml.rpc.processor.modeler.j2ee.xml.emptyType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +112,10 @@ public class CustomerController implements Serializable {
         }
     }
 
+    public Customer update(Customer cust) {
+        return getFacade().edit(current);
+    }
+
     public String destroy() {
 //        current = (Customer) getItems().getRowData();
 //        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
@@ -193,6 +199,10 @@ public class CustomerController implements Serializable {
 
     public Customer getCustomer(java.lang.Integer id) {
         return ejbFacade.find(id);
+    }
+
+    public CustomerVehicle saveCustomerVehicle(CustomerVehicle custVehicle) {
+        return ejbFacade.saveCustomerVehicle(custVehicle);
     }
 
     @FacesConverter(forClass = Customer.class)
