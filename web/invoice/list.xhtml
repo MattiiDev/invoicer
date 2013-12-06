@@ -24,12 +24,16 @@
                                 
                 <p:hotkey bind="alt+n" action="create.jsf?faces-redirect=true" /> 
 
+                <p:panel styleClass="noBorder noBottomBorderRadius textAlignCenter"  
+                         style="background: url('') #5c9ccc; overflow: hidden; width: 15%; margin: auto">
+                    <h:outputText value="Invoices" styleClass="font20" />                          
+                </p:panel>
                 <p:toolbar styleClass="noBorder invoiceListToolbar noBottomBorderRadius">
                     <p:toolbarGroup align="left">  
                         <p:commandButton value="New Invoice" icon="ui-icon-document" styleClass="newInvoiceBtn"
                                          action="create.jsf?faces-redirect=true" />                          
                     </p:toolbarGroup>                                       
-                    <p:toolbarGroup align="right" style="margin-right: 10px">                                           
+                     <p:toolbarGroup align="right" style="margin-right: 10px">                                           
                         <p:commandButton type="button" value="Filter" icon="ui-icon-search" onclick="searchPanel.toggle();advSearchPanel.collapse();" /> 
                         <p:separator/>
                         <p:spacer/> 
