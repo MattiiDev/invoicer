@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewItemTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="content">
+             <ui:include src="/template/messages.xhtml">
+                <ui:param name="source" value="viewItem"/>
+            </ui:include>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditItemLabel_itemId}" styleClass="bold font14 padRight10" />
+                    <h:outputText value="#{itemController.selected.itemId}" title="#{bundle.ViewItemTitle_itemId}"/>
+                    <h:outputLabel value="#{bundle.EditItemLabel_itemCode}" for="itemCode" styleClass="bold font14 padRight10" />
+                    <h:outputText value="#{itemController.selected.itemCode}" title="#{bundle.ViewItemTitle_itemCode}"/>
+                    <h:outputLabel value="#{bundle.EditItemLabel_description}" for="description" styleClass="bold font14 padRight10" />
+                    <h:outputText value="#{itemController.selected.description}" title="#{bundle.ViewItemTitle_description}" />
+                    <h:outputLabel value="#{bundle.EditItemLabel_unitCost}" for="unitCost" styleClass="bold font14 padRight10" />
+                                        <h:outputText value="#{itemController.selected.unitCost}" title="#{bundle.ViewItemTitle_unitCost}"/>
+                </h:panelGrid>
+                <br />                
+                <h:link outcome="edit" value="#{bundle.ViewItemEditLink}"/>
+                <br />
+                <h:commandLink action="#{itemController.prepareList}" value="#{bundle.ViewItemShowAllLink}"/>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
