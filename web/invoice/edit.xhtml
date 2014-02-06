@@ -10,29 +10,20 @@
         <ui:define name="title">
             <h:outputText value="Edit Invoice"></h:outputText>
         </ui:define>
-        <ui:define name="sidebar-right">                        
+<!--        <ui:define name="sidebar-right">                        
             <p:spacer height="350px"/>
             <h:form>
-                <div class="save-link sidebar-right-round" style="float:left; ">
-                    <h:commandLink action="#{invoiceCtrl.save}">                    
-                        <h:graphicImage id="save-img" class="save-img" url="/resources/images/check_black.png" alt="Save"/>
-                        <p:tooltip for="save-img" value="Save Invoice" />
-                    </h:commandLink> 
-                </div>               
-                <div class="cancel-link sidebar-right-round" style="float:left; clear:left;">
-                    <h:commandLink action="list.jsf?faces-redirect=true">
-                        <h:graphicImage id="cancel-img" class="cancel-img" url="/resources/images/cancel_black.png" alt="Cancel"/>
-                        <p:tooltip for="cancel-img" value="Cancel Edit Invoice" />
-                    </h:commandLink> 
-                </div>                               
+                            
+                                             
             </h:form>
-        </ui:define>
+        </ui:define>-->
         <ui:define name="content">  
             <ui:include src="/template/messages.xhtml">
                 <ui:param name="source" value="editInvoice"/>
             </ui:include>
 
             <ui:include src="addEdit.xhtml"/>
+            
         </ui:define>                        
     </ui:composition>
 </html>

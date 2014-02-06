@@ -10,14 +10,17 @@ package com.saake.invoicer.util;
  */
 public enum InvoiceStatusEnum {
     
-    DRAFT ("DRFT"),
-    PAID ("PAID"),
-    DELETE ("DEL");
+    DRAFT ("Draft" ),
+    PAID ("Paid" ),
+    PARTIALPAY ("Partial Paid"),
+    OVERPAY ("Over Paid"),
+    DELETED ("Deleted"),
+    CLOSED ("Closed");
     
     private String value;
 
-    private InvoiceStatusEnum(String status) {
-        this.value = status;
+    private InvoiceStatusEnum(String value) {
+        this.value = value;
     }
 
     public String getValue() {

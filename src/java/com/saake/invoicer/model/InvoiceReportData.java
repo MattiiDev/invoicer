@@ -23,6 +23,8 @@ public class InvoiceReportData implements Serializable {
     private Date invoiceDate;    
     private Double discount;    
     private Double amount;
+    private Double paidAmount;
+    private Double balanceAmount;
 
     private String companyName;
     private String firstName;
@@ -235,4 +237,21 @@ public class InvoiceReportData implements Serializable {
     public void setVin(String vin) {
         this.vin = vin;
     }    
+
+    public Double getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(Double paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    public Double getBalanceAmount() {
+        return balanceAmount;
+    }
+
+    public void setBalanceAmount(Double balanceAmount) {
+        this.balanceAmount = balanceAmount;
+    }
+   
 }

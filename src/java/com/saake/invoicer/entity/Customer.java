@@ -9,8 +9,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,9 +22,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -58,11 +53,7 @@ public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CUSTOMER_ID")
-    private Integer customerId;
-    
-    @Column(name = "CREATE_TS")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createTs;
+    private Integer customerId;    
     
     @Column(name = "COMPANY_NAME")
     private String companyName;
@@ -116,11 +107,31 @@ public class Customer implements Serializable {
     @Column(name = "ZIP_CODE")
     private String zipCode;
 
+    @Column(name = "STATUS")
+    private String status;
+
+    @Column(name = "CREATE_TS")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createTs;
+        
+    @Column(name = "UPDATE_TS")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTs;
+    
+    @Column(name = "CREATED_BY")
+    private String createdBy;
+    
+    @Column(name = "UPDATED_BY")
+    private String updatedBy;
+    
     @OneToMany(mappedBy = "customerId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<CustomerVehicle> customerVehicles;
+    private List<Vehicle> customerVehicles;
     
     @OneToMany(mappedBy = "customerId")
     private Collection<Orders> order1Collection;
+    
+    @OneToMany(mappedBy = "customerId")
+    private Collection<Invoice> invoices;
     
     public Customer() {
     }
@@ -326,12 +337,117 @@ public class Customer implements Serializable {
     }
 
     @XmlTransient
-    public List<CustomerVehicle> getCustomerVehicles() {
+    public List<Vehicle> getCustomerVehicles() {
         return customerVehicles;
     }
 
-    public void setCustomerVehicles(List<CustomerVehicle> customerVehicleCollection) {
+    public void setCustomerVehicles(List<Vehicle> customerVehicleCollection) {
         this.customerVehicles = customerVehicleCollection;
     }
+
+    public Collection<Invoice> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(Collection<Invoice> invoices) {
+        this.invoices = invoices;
+    }       
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+        
+    public Double getTotalInvoiceAmount(){
+        Double tot = 0.0;
+         for (Invoice inv : invoices) {
+            if (inv.getAmount()!= null) {
+                tot = tot + inv.getAmount();
+            }
+        }
+         
+         return tot;
+    }   
+
+    public String getInvoiceListDisplayName(){
+        StringBuilder displayName = new StringBuilder();
+        if(firstName.length() >= 30){
+            displayName.append(firstName.substring(0, 30));
+            displayName.append("..");
+//            displayName.append(System.lineSeparator());
+//            displayName.append("..");
+//            displayName.append(firstName.substring(30));
+        }
+        else{
+            displayName.append(firstName);
+            displayName.append(" ");
+            if (displayName.length() + lastName.length() >= 30) {
+                displayName.append(lastName.substring(0, 30 - firstName.length()));
+                displayName.append("..");
+//            displayName.append("&lt;br/&gt;");
+//            displayName.append("..");
+//            displayName.append(lastName.substring(30 - firstName.length() + 1));
+            } else {
+                displayName.append(lastName);
+            }
+        }
+               
+        return displayName.toString();
+    }
     
+    public String listDisplayName(String lengthStr){
+        StringBuilder displayName = new StringBuilder();
+        int length = 12;
+        if(lengthStr != null){
+            try{
+                length = Integer.parseInt(lengthStr);
+            }
+            catch(Exception e){
+//                log.error("",e);
+            }
+        }
+        if(firstName.length() >= length){
+            displayName.append(firstName.substring(0, length));
+            displayName.append("..");
+        }
+        else{
+            displayName.append(firstName);
+            displayName.append(" ");
+            if (displayName.length() + lastName.length() >= length) {
+                displayName.append(lastName.substring(0, length - firstName.length()));
+                displayName.append("..");
+            } else {
+                displayName.append(lastName);
+            }
+        }
+               
+        return displayName.toString();
+    }
 }

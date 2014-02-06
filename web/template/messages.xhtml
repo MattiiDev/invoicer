@@ -9,9 +9,9 @@ and open the template in the editor.
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui">
     <ui:composition>
-        <h:panelGroup id="messagePanel_#{source}" layout="block">
-            <p:growl autoUpdate="true" sticky="true" showDetail="false"/>  
-            <!--<p:messages autoUpdate="true" showDetail="true" showSummary="true"/>-->
+        <h:panelGroup id="messagePanel_#{source}" layout="block" >
+            <!--<p:growl autoUpdate="true" showDetail="false" />-->  
+            <p:messages autoUpdate="true" showDetail="true" showSummary="true"/>
         </h:panelGroup>
     </ui:composition>
 </html>

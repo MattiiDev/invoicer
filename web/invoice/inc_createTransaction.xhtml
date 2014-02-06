@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition>
+        <ui:include src="/template/messages.xhtml">
+            <ui:param name="source" value="createTransaction"/>
+        </ui:include>
+        <p:fieldset legend="Transasction" style="layout:block" styleClass="noBackground">                                                
+
+            <h:panelGrid id="transPanel" columns="2" style="border:0px" columnClasses="noBackground textRight noBorder, noBackground noBorder" width="100%" >
+                <h:outputText value="Type" styleClass="bold"/>
+                <h:selectOneMenu value="#{invoiceCtrl.currentTransaction.transType}">
+                    <f:selectItems value="#{invoiceCtrl.transTypeList}"/>
+                </h:selectOneMenu>
+
+                <h:outputText value="Amount" styleClass="bold"/>
+                <p:spinner value="#{invoiceCtrl.currentTransaction.amount}" size="8" min="0" maxlength="6" />
+
+                <h:outputText value="Date" styleClass="bold"/>
+                <p:calendar effect="slideDown" navigator="true" showOn="button" pagedate=""
+                            mode="popup" autocomplete="true" value="#{invoiceCtrl.currentTransaction.transDate}"
+                            showButtonPanel="true" pattern="EEE, dd MMM, yyyy"/>  
+            </h:panelGrid>
+
+            <br/>
+            <p:commandButton value="Post and Close" action="#{invoiceCtrl.postTransactionAndClose}" 
+                             update="@form" style="margin-right: 20px" />
+            <p:commandButton value="Post and Add Another" action="#{invoiceCtrl.postTransactionAndAddAgain}"  
+                             update="@form" style="margin-right: 20px"/>
+            <p:commandButton value="Close" />
+
+
+            <br/>
+            <br/>
+                <div style="border:1px groove lightgray"></div>
+
+        <br/>
+
+            <p:dataTable style="width: 100%;" styleClass="invoiceItemClass" 
+                         value="#{invoiceCtrl.current.transactions}" var="trans"
+                         rowIndexVar="row">
+                <p:column headerText="#" >
+                    <h:outputText value="#{row + 1}" />                            
+                </p:column>
+                <p:column headerText="Transaction" >
+                    <h:outputText value="#{trans.transType}" />
+                </p:column>
+                <p:column headerText="Amount" style="text-align:right;padding-right: 20px">
+                    <h:outputText value="#{trans.amount}"/>
+                </p:column>                        
+                <p:column headerText="Date" style="text-align:right;padding-right: 20px">
+                    <h:outputText value="#{trans.transDate}" styleClass="font16">
+                                <f:convertDateTime type="date"/>
+                            </h:outputText>
+                </p:column>                        
+                <p:column headerText="Notes" style="text-align:right;padding-right: 20px">
+                    <h:outputText value="#{trans.comments}"/>
+                </p:column>                        
+                <f:facet name="footer">     
+                    <table class="invoiceTableFooter" cellpadding="0" cellspacing="0" width="100%">
+                        <tfoot style="color:#2e6e9e">                                                        
+                            <tr >
+                                <td  style="width:80%">
+                                    <span></span>
+                                </td>
+                                <td style="width:20%;text-align: right">
+                                    <span></span>
+                                </td>
+                                <td style="width:20%;text-align: right; font-size: 16px">
+                                    <h:outputText value="Total"/>
+                                </td>                                    
+                                <td width="14%" style="width:20%;text-align: right;font-weight: bold;font-size: 16px; color:midnightblue">
+                                    <h:outputText value="#{invoiceCtrl.current.transactionAmount}">
+                                        <f:convertNumber currencyCode="SAR" maxFractionDigits="2" groupingUsed="true" type="currency" currencySymbol="SAR"/>
+                                    </h:outputText>
+                                </td>
+                            </tr>                                       
+                        </tfoot>                                                      
+                    </table>                                                                                                                 
+                </f:facet>                        
+            </p:dataTable>       
+        </p:fieldset>                
+    </ui:composition>
+</html>

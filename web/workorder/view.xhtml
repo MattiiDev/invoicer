@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <ui:composition template="/template/template.xhtml">       
+        <ui:define name="title">
+            <h:outputText value="View WorkOrder"></h:outputText>
+        </ui:define>
+
+        <ui:define name="content">  
+            <ui:include src="/template/messages.xhtml">
+                <ui:param name="source" value="viewWorkOrder"/>
+            </ui:include>
+
+            <h:form prependId="false"> 
+                <div class="right-tab" style="top: 5%;">
+                    <h:commandLink action="#{workOrderCtrl.redirectToList}" styleClass="sidebar-right-round">
+                        <h:graphicImage id="list-img" styleClass="list-img" url="/resources/images/back_arrow.png" alt="List"/>
+                        <p:tooltip for="list-img" value="Back To List" showEffect="size" />
+                    </h:commandLink> 
+                    <h:commandLink action="#{workOrderCtrl.prepareEdit}" styleClass="sidebar-right-round" style="margin-top:225px;margin-right:-50px">
+                        <h:graphicImage id="edit-img" styleClass="edit-img" url="/resources/images/edit-black-2.png" alt="Edit"/>
+                        <p:tooltip for="edit-img" value="Edit WorkOrder" showEffect="size"/>
+                    </h:commandLink> 
+                   
+                    <h:commandLink action="#{workOrderCtrl.convertToInvoice}" styleClass="sidebar-right-round" style="margin-top:75px;margin-right:-50px">
+                        <h:graphicImage id="convert-img" styleClass="convert-img" url="/resources/images/convert.png" alt="Convert"/>
+                        <p:tooltip for="convert-img" value="Convert to Invoice" showEffect="size"/>                            
+                        <h:graphicImage style="float:right; margin-top: 5px; margin-left: -22px " alt="Converted" url="/resources/images/green_tick_16.png" rendered="#{workOrderCtrl.current.invoiced}"/>
+                    </h:commandLink> 
+                    
+<!--                    <h:commandLink action="#" styleClass="sidebar-right-round" style="margin-top:225px;margin-right:-50px" rendered="false">
+                        <h:graphicImage id="assign-img" styleClass="assign-img" url="/resources/images/assign_user.png" alt="Assign"/>
+                        <p:tooltip for="assign-img" value="Assign Work Order" showEffect="size"/>                            
+                        <h:graphicImage style="float:right; margin-top: 5px; margin-left: -22px " alt="Assigned" url="/resources/images/green_tick_16.png" rendered="#{workOrderCtrl.current.assigned}"/>
+                    </h:commandLink> -->
+                    
+                    <div class="pay-div sidebar-right-round" style="margin-top:150px;margin-right:-50px;cursor: pointer">
+                        <div class="payFullAmtClass floatLeft hidden" >
+                            <p:autoComplete id="userSugg" value="#{workOrderCtrl.current.assignedUser}" completeMethod="#{userCtrl.suggestUser}"  
+                                            var="user" itemLabel="#{user.firstName}" dropdown="true" itemValue="#{user}" size="10" 
+                                                queryDelay="2">                                        
+                                <p:column>  
+                                    <f:facet name="header">
+                                        <h:outputText value="Name" styleClass="bold"/>
+                                    </f:facet>
+                                    <h:outputText value="#{user.firstName} #{user.lastName}"/> 
+                                </p:column>              
+
+                                <p:ajax event="itemSelect" listener="#{workOrderCtrl.assignWorkOrder}" update="@form" onsuccess="jQuery('.pay-div').css('margin-right', '-50px');jQuery('.pay-div').css('width', '50px');jQuery('.payFullAmtClass').addClass('hidden')"/>
+                            </p:autoComplete>  
+                        </div>
+                        <h:graphicImage id="assign-img" styleClass="assign-img" 
+                                        onclick="jQuery('.pay-div').css('margin-right', '-180px');jQuery('.pay-div').css('width', '180px');jQuery('.payFullAmtClass').removeClass('hidden')" 
+                                        ondblclick="jQuery('.pay-div').css('margin-right', '-50px');jQuery('.pay-div').css('width', '50px');jQuery('.payFullAmtClass').addClass('hidden')" 
+                                        url="/resources/images/assign_user.png" alt="Assign" style="margin-right:12px;padding-top: 15px;" />
+                        <p:tooltip for="assign-img" value="Assign Work Order" />
+                        <h:graphicImage style="float:right; margin-top: -40px; margin-left: -22px " alt="Assigned" url="/resources/images/green_tick_16.png" rendered="#{workOrderCtrl.current.assigned}"/>
+
+                    </div>
+                   
+                    <h:commandLink action="#{workOrderCtrl.printWorkOrder}" styleClass="sidebar-right-round" style="margin-top:300px;margin-right:-50px" >
+                        <h:graphicImage id="print-img" url="/resources/images/print.png" alt="Print" width="24" height="24" styleClass="print-img" style="padding-top: 24px;padding-left:5px" />
+                        <p:tooltip for="print-img" value="Print WorkOrder" showEffect="size"/>
+                    </h:commandLink> 
+                    <h:commandLink action="#{workOrderCtrl.viewPdf}" target="_new" styleClass="sidebar-right-round" style="margin-top:375px;margin-right:-50px">
+                        <h:graphicImage id="pdf-img" url="/resources/images/pdficon_large.png" alt="PDF" styleClass="pdf-img" style="padding-top: 20px;vertical-align: middle"  />
+                        <p:tooltip for="pdf-img" value="View WorkOrder as PDF" showEffect="size"/>
+                    </h:commandLink>                      
+                </div>
+                <f:metadata>
+                    <f:viewParam name="id" value="#{workOrderCtrl.current.workOrderId}" />
+                </f:metadata>
+                <p:panel id="workOrderPanel" styleClass="noBorder" style="color: #1584de;background: #e6e6e6 url('');">                  
+                    <h:panelGrid width="100%" columns="1" >                        
+                        <h:panelGroup layout="block" style="text-align: center;">
+                            <h:outputText value="WorkOrder" styleClass="label5 padRight10"  />
+                            <h:panelGroup>
+                                <h:outputText id="workOrderId" value="#{workOrderCtrl.current.workOrderId}" styleClass="font20"/>
+                                <h:outputText value=" - " rendered="#{not empty workOrderCtrl.current.workOrderNum}" styleClass="font20"/>
+                                <h:outputText id="workOrderNum" value="#{workOrderCtrl.current.workOrderNum}" styleClass="font20"/>
+                            </h:panelGroup>                            
+                        </h:panelGroup>
+                        <p:separator style="margin: 5px 0 5px 0" />
+                        <h:panelGroup layout="block" style="text-align: center;margin: auto auto;width: 98%; " styleClass="borderRound10 floatLeft viewInfo" >
+                            <h:panelGroup layout="block" style="float:left">
+                                <h:outputText value="Date " styleClass="label3 padRight10" />
+                                <h:outputText value="#{workOrderCtrl.current.workOrderDate}" styleClass="font16">
+                                    <f:convertDateTime type="date"/>
+                                </h:outputText>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" style="float:right">
+                                <h:outputText value="Status" styleClass="label3 padRight10" />
+                                <h:outputText value="#{workOrderCtrl.current.statusDisplay}" style="color:#{workOrderCtrl.current.statusColor}; " styleClass="font16 bold" />
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:panelGrid width="49%" columns="1" columnClasses="noBorder" styleClass="borderRound10 floatLeft viewInfo" style="height: 140px" >                        
+                                <h:outputText value="TO" styleClass="font14 bold"/>
+                                <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.firstName} #{workOrderCtrl.current.customerId.lastName}" />                               
+                                <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.companyName}" />                               
+                                <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.addressLine1}" />
+                                <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.city}" />
+                                <h:outputText styleClass="viewCust" value=", " rendered="#{not empty workOrderCtrl.current.customerId.country}"/>
+                                <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.country}" />
+                                <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.mobileNum}" />
+                                <p:spacer height="46px" rendered="#{empty workOrderCtrl.current.customerId}"/>
+                            </h:panelGrid>
+                            <h:panelGrid width="49%" columns="1" columnClasses="noBorder" styleClass="borderRound10 floatRight viewInfo" style="height: 140px" >                        
+                                <h:outputText value="FROM" styleClass="font14 bold"/>
+                                <h:outputText value="Saleh A. Al-Khalaf"/>
+                                <h:outputText value="Jeddah, KSA"/>
+                                <h:outputText value="00966-12-6740031"/>
+                                <h:outputText value="00966-534567373"/>
+                            </h:panelGrid>
+                        </h:panelGroup>         
+                        <h:panelGrid width="100%" columns="6" columnClasses="noBorder bold,noBorder textAlignLeft,noBorder bold,noBorder textAlignLeft,noBorder bold ,noBorder textAlignLeft" styleClass="borderRound10 viewInfo" >                                                     
+                            <h:outputText value="Year" />
+                            <h:outputText value="#{workOrderCtrl.current.vehicle.year}" />
+                            <h:outputText value="Make" />
+                            <h:outputText value="#{workOrderCtrl.current.vehicle.make}" />
+                            <h:outputText value="Model" />
+                            <h:outputText value="#{workOrderCtrl.current.vehicle.model}" />
+                            <h:outputText value="Mileage" />
+                            <h:outputText value="#{workOrderCtrl.current.vehicle.mileage}"/>
+                            <h:outputText value="VIN #" />
+                            <h:outputText value="#{workOrderCtrl.current.vehicle.vin}"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <p:spacer height="10px"/>      
+                    <h:panelGrid width="100%" columns="1" columnClasses="noBorder" styleClass="borderRound10 viewInfo" >                        
+                        <h:outputText value="Assignment" styleClass="font14 bold"/>
+                        <h:outputText value="#{workOrderCtrl.current.assignedUser.firstName} #{workOrderCtrl.current.assignedUser.lastName}" rendered="#{workOrderCtrl.current.assigned}"/>
+                        <h:outputText value="-- Not Assigned --" rendered="#{!workOrderCtrl.current.assigned}"/>
+                    </h:panelGrid> 
+                    <p:spacer height="10px"/>      
+                    <h:panelGrid width="100%" columns="1" columnClasses="noBorder" styleClass="borderRound10 viewInfo" >                        
+                        <h:outputText value="Notes" styleClass="font14 bold"/>
+                        <h:outputText value="#{workOrderCtrl.current.notes}"/>
+                    </h:panelGrid> 
+                    <p:spacer height="10px"/> 
+                        <p:dataTable style="width: 100%;" styleClass="estimateItemClass invoiceItemClass" 
+                                     value="#{workOrderCtrl.current.workOrderItems}" var="woItem"
+                                     rowIndexVar="row">
+                            <p:column headerText="#" >
+                                <h:outputText value="#{row + 1}" style="font-size: 10px; color: steelblue"  />                            
+                            </p:column>                            
+                            <p:column headerText="Description" width="70%" >
+                                <h:outputText value="#{woItem.description}" style="width:100%"/>
+                            </p:column>
+                            <p:column headerText="Qty" >
+                                <h:outputText value="#{woItem.quantity}" />                            
+                            </p:column>
+                            <p:column headerText="Unit Price" width="20%" >
+                                <h:outputText value="#{woItem.unitPrice}" />                             
+                            </p:column>
+                            <p:column headerText="Amount" width="20%" style="text-align:right;padding-right: 20px">
+                                <h:outputText value="#{woItem.amount}"/>
+                            </p:column>                        
+                            <f:facet name="footer">     
+                                <table class="invoiceTableFooter" cellpadding="0" cellspacing="0" width="100%">
+                                    <tfoot style="color:#2e6e9e">
+                                        <tr style="border-bottom: 1px solid lightsteelblue;" >
+                                            <td >
+                                                <span></span>
+                                            </td>
+                                            <td >
+                                                <span></span>
+                                            </td>
+                                            <td style="width:80%">
+                                                <span></span>
+                                            </td>
+                                            <td style="width:10%;text-align: right">
+                                                <h:outputText value="Subtotal"/>                                        
+                                            </td>
+                                            <td style="width:10%;text-align: right;">
+                                                <h:outputText value="#{workOrderCtrl.current.itemTotalAmount}"/>
+                                            </td>
+                                        </tr>                                
+                                        <tr >
+                                            <td  style="width:80%">
+                                                <span></span>
+                                            </td>
+                                            <td style="width:20%;text-align: right">
+                                                <span></span>
+                                            </td>
+                                            <td style="width:20%;text-align: right">
+                                                <span></span>
+                                            </td>
+                                            <td style="width:20%;text-align: right; font-size: 16px">
+                                                <h:outputText value="Total"/>
+                                            </td>                                    
+                                            <td width="14%" style="width:20%;text-align: right;font-weight: bold;font-size: 16px; color:midnightblue">
+                                                <h:outputText value="SAR "/>
+
+                                                <h:outputText value="#{workOrderCtrl.current.amount}">
+                                                    <f:convertNumber maxFractionDigits="2" groupingUsed="true"/>
+                                                </h:outputText>
+                                            </td>
+                                        </tr>                                        
+                                    </tfoot>                                                      
+                                </table>                                                                                                                 
+                            </f:facet>                        
+                        </p:dataTable>   
+                    <p:spacer height="20px"/>        
+                    
+                </p:panel>
+                <h:panelGroup style="width:35%; margin:auto auto; overflow: hidden;" layout="block">
+                    <p:commandButton style="font-size:18px;float: right;margin-top: 10px;vertical-align: middle " ajax="true" rendered="false"
+                                     action="#{workOrderCtrl.prepareList()}" value="Back to List" icon="ui-icon-circle-arrow-w"  />
+                    <p:commandButton style="font-size:18px;float: left;margin-top: 10px;vertical-align: middle " value="Print" icon="ui-icon-print"
+                                     oncomplete="window.location.href = '/workOrderr/viewDocument.content?generateWorkOrderPdf=Y'"
+                                     action="#{workOrderCtrl.generateWorkOrderPdfAction}" rendered="false"/>                       
+
+                    <p:commandButton style="font-size:18px;float: left;margin-top: 10px;vertical-align: middle " value="PDF" icon="ui-icon-print" ajax="false"
+                                     action="#{workOrderCtrl.downloadPdf}" rendered="false"/>
+                    <p:commandButton style="font-size:18px;float: left;margin-top: 10px;vertical-align: middle " value="Print" icon="ui-icon-print" ajax="false"
+                                     action="#{workOrderCtrl.printWorkOrder}" rendered="false" />
+
+                </h:panelGroup>
+              
+            </h:form>  
+        </ui:define>                           
+    </ui:composition>
+</html>

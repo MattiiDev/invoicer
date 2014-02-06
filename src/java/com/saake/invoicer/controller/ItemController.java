@@ -1,4 +1,4 @@
-package com.saake.invoicer.controller.masterdata;
+package com.saake.invoicer.controller;
 
 import com.saake.invoicer.controller.InvoiceController;
 import com.saake.invoicer.entity.Item;
@@ -99,7 +99,7 @@ public class ItemController implements Serializable {
         try {
             getFacade().create(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ItemCreated"));
-            return prepareCreate();
+            return "view.jsf?faces-redirect=true&id="+current.getItemId();
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
@@ -127,11 +127,24 @@ public class ItemController implements Serializable {
         try {
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ItemUpdated"));
-            return "view";
+            return "view.jsf?faces-redirect=true&id="+current.getItemId();
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
         }
+    }
+    
+    public String softDelete() {
+        try {
+            getFacade().softDelete(current);
+
+            JsfUtil.addSuccessMessage("Item Deleted");
+
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+        }
+
+        return "list?faces-redirect=true";
     }
 
     public List<Item> getItems() {
@@ -253,49 +266,5 @@ public class ItemController implements Serializable {
         } catch (IOException ex) {
             Logger.getLogger(InvoiceController.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }     
-    
-    @FacesConverter(forClass = Item.class)
-    public static class ItemControllerConverter implements Converter {
-
-        @Override
-        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
-            if (value == null || value.length() == 0) {
-                return null;
-            }
-            ItemController controller = (ItemController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "itemController");
-            return controller.getItem(getKey(value));
-        }
-
-        java.lang.Integer getKey(String value) {
-            if(Utils.notBlank(value)){
-                java.lang.Integer key;
-                key = Integer.valueOf(value);
-                return key;
-            }
-            else{
-                return null;
-            }
-        }
-
-        String getStringKey(java.lang.Integer value) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(value);
-            return sb.toString();
-        }
-
-        @Override
-        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
-            if (object == null) {
-                return null;
-            }
-            if (object instanceof Item) {
-                Item o = (Item) object;
-                return getStringKey(o.getItemId());
-            } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Item.class.getName());
-            }
-        }
-    }
+    }            
 }

@@ -4,9 +4,11 @@
  */
 package com.saake.invoicer.entity;
 
+import com.saake.invoicer.util.Utils;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import javax.annotation.PostConstruct;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,7 +43,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Item.findByItemCode", query = "SELECT i FROM Item i WHERE i.itemCode = :itemCode"),
     @NamedQuery(name = "Item.findByName", query = "SELECT i FROM Item i WHERE i.name = :name"),
     @NamedQuery(name = "Item.findByDescription", query = "SELECT i FROM Item i WHERE i.description = :description"),
-    @NamedQuery(name = "Item.findByUnitCost", query = "SELECT i FROM Item i WHERE i.unitCost = :unitCost")})
+    @NamedQuery(name = "Item.findByUnitPrice", query = "SELECT i FROM Item i WHERE i.unitPrice = :unitPrice")})
 public class Item implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,11 +59,17 @@ public class Item implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
     
-    @Column(name = "UNIT_COST")
-    private Double unitCost;
+    @Column(name = "UNIT_PRICE")
+    private Double unitPrice;
+
+    @Column(name = "COST_PRICE")
+    private Double costPrice;
     
     @Column(name = "ITEM_CATEGORY")
     private String itemCategory;
+    
+    @Column(name = "STATUS")
+    private String status;
     
     @Column(name = "CREATE_TS")
     @Temporal(TemporalType.TIMESTAMP)
@@ -88,6 +97,17 @@ public class Item implements Serializable {
 //    @ManyToOne
 //    private ItemType itemTypeId;
 
+    @PostConstruct
+    private void init(){
+        setCreateTs(new Date());
+        
+    }
+    
+    @PreUpdate
+    private void preupdate(){
+        setUpdateTs(new Date());
+    }
+    
     public Item() {
     }
 
@@ -96,14 +116,20 @@ public class Item implements Serializable {
     }
 
     public Item(Double unitCost) {
-        this.unitCost = unitCost;
+        this.unitPrice = unitCost;
     }        
 
     public Item(Integer itemId,String description) {
         this.itemId = itemId;
         this.description = description;
     }
-    
+
+    public Item(String description, Double unitCost, String itemCategory) {
+        this.description = description;
+        this.unitPrice = unitCost;
+        this.itemCategory = itemCategory;
+    }
+        
     public Integer getItemId() {
         return itemId;
     }
@@ -136,14 +162,22 @@ public class Item implements Serializable {
         this.description = description;
     }
 
-    public Double getUnitCost() {
-        return unitCost;
+    public Double getUnitPrice() {
+        return unitPrice;
     }
 
-    public void setUnitCost(Double unitCost) {
-        this.unitCost = unitCost;
+    public void setUnitPrice(Double unitPrice) {
+        this.unitPrice = unitPrice;
     }
 
+    public Double getCostPrice() {
+        return costPrice;
+    }
+
+    public void setCostPrice(Double costPrice) {
+        this.costPrice = costPrice;
+    }
+   
     //    @XmlTransient
     //    public Collection<OrderItem> getOrderItemCollection() {
     //        return orderItemCollection;
@@ -166,6 +200,14 @@ public class Item implements Serializable {
     public void setItemCategory(String itemCategory) {
         this.itemCategory = itemCategory;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }    
     
     @Override
     public int hashCode() {
@@ -232,5 +274,15 @@ public class Item implements Serializable {
     public void setItemHistCollection(Collection<ItemHist> itemHistCollection) {
         this.itemHistCollection = itemHistCollection;
     }
-    
+
+    public boolean isEmptyForUse() {
+        return (unitPrice == null || unitPrice == 0.0)  
+//                && (discount == null || discount == 0.0) 
+//                && invoiceItemId == null 
+                && Utils.isBlank(description) 
+//                && (item == null || item.getItemId() == null ) && 
+                //(quantity == null || quantity == 0)  
+//                && (unitPrice == null || unitPrice == 0.0)
+                ;
+    } 
 }

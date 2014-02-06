@@ -23,19 +23,20 @@
                 <ui:include src="/template/messages.xhtml"/>
                                 
                 <p:hotkey bind="alt+n" action="create.jsf?faces-redirect=true" /> 
-
-                <p:panel styleClass="noBorder noBottomBorderRadius textAlignCenter"  
-                         style="background: url('') #5c9ccc; overflow: hidden; width: 15%; margin: auto">
-                    <h:outputText value="Invoices" styleClass="font20" />                          
-                </p:panel>
+               
                 <p:toolbar styleClass="noBorder invoiceListToolbar noBottomBorderRadius">
                     <p:toolbarGroup align="left">  
                         <p:commandButton value="New Invoice" icon="ui-icon-document" styleClass="newInvoiceBtn"
                                          action="create.jsf?faces-redirect=true" />                          
                     </p:toolbarGroup>                                       
                      <p:toolbarGroup align="right" style="margin-right: 10px">                                           
-                        <p:commandButton type="button" value="Filter" icon="ui-icon-search" onclick="searchPanel.toggle();advSearchPanel.collapse();" /> 
+                         <p:inputText widgetVar="searchTxt" value="#{invoiceCtrl.filterCriteria.searchText}" styleClass="searchTxt hidden"/>
+                         <p:commandButton type="button" styleClass="searchBtn1" value="Search" icon="ui-icon-search" onclick="jQuery('.searchTxt').removeClass('hidden') " /> 
+                         <p:commandButton type="button" styleClass="searchBtn2" value="Search" icon="ui-icon-search" 
+                                          action="#{invoiceCtrl.filterList}"/> 
                         <p:separator/>
+                        <p:commandButton type="button" icon="ui-icon-search" action="#{invoiceCtrl.filterList}"
+                                         update="invoiceListTable" alt="Search"  /> 
                         <p:spacer/> 
                     </p:toolbarGroup>
                 </p:toolbar>
@@ -47,7 +48,7 @@
                     <h:panelGrid columns="7" width="100%" columnClasses="label6 vAlign textAlignRight,,label6 vAlign textAlignRight,,label6 vAlign textAlignRight,,label6">  
                         <h:outputText value="Period"  /> 
                         <p:selectOneMenu value="#{invoiceCtrl.filterCriteria.invoicePeriod}" style="width:111px" 
-                                         valueChangeListener="#{invoiceCtrl.filterList}" >
+                                         >
                             <f:selectItem itemLabel="All" itemValue=""/>
                             <f:selectItem itemLabel="Today" itemValue="today"/>
                             <f:selectItem itemLabel="Yesterday" itemValue="yest"/>
@@ -55,13 +56,13 @@
                             <f:selectItem itemLabel="Last Month" itemValue="lastMon"/>
                             <f:selectItem itemLabel="This Year" itemValue="thisYr"/>
                             <f:selectItem itemLabel="Last Year" itemValue="lastYr"/>
+                            
+                            <p:ajax event="change" listener="#{invoiceCtrl.filterList}" process="@form" update="@form"/>
                         </p:selectOneMenu>
                         <h:outputText value="Customer" /> 
                         <p:autoComplete id="custSugg" value="#{invoiceCtrl.filterCriteria.customer}" 
                                         completeMethod="#{customerController.suggestCustomer}"  
                                         var="cust" itemLabel="#{cust.firstName}" itemValue="#{cust}" dropdown="true" >  
-                            <p:ajax event="change" listener="#{invoiceCtrl.filterList}" process="@form" update="invoiceListTable"/>
-
                             <p:column>  
                                 <f:facet name="header">
                                     <h:outputText value="Company Name" styleClass="bold"/>
@@ -80,14 +81,15 @@
                                 </f:facet>
                                 <h:outputText value="#{cust.lastName}"/> 
                             </p:column>  
-                            
+                            <p:ajax event="change" listener="#{invoiceCtrl.filterList}" process="@form" update="@form"/>
                         </p:autoComplete>
                         <h:outputText value="Status" />
                         <p:selectOneButton value="#{invoiceCtrl.filterCriteria.status}" 
-                                           valueChangeListener="#{invoiceCtrl.filterList}">
+                                            >
                             <f:selectItem itemLabel="All" itemValue="" /> 
                             <f:selectItem itemLabel="Due" itemValue="pend" /> 
                             <f:selectItem itemLabel="Draft" itemValue="draft" /> 
+                            <p:ajax event="change" listener="#{invoiceCtrl.filterList}" process="@form" update="@form"/>
                         </p:selectOneButton>
                         <h:panelGroup>
                         <p:commandButton type="link" value="Reset" icon="ui-icon-arrowrefresh-1-w" actionListener="#{invoiceCtrl.resetSearch}"
@@ -125,10 +127,10 @@
 
                 <p:spacer height="10"/>
                 <p:dataTable id="invoiceListTable" value="#{invoiceCtrl.model}" var="invoice" rowKey="#{invoice.invoiceId}"
-                             styleClass="invoiceList invoiceItemClass font16" selection="#{invoiceCtrl.current}" selectionMode="single"
-                             paginator="true" rows="10" paginatorAlwaysVisible="true" paginatorPosition="bottom" 
+                             styleClass="invoiceList viewInvoiceItems invoiceItemClass font16" selection="#{invoiceCtrl.current}" selectionMode="single"
+                             paginator="true" rows="10" paginatorAlwaysVisible="true" paginatorPosition="bottom" style="overflow: auto;width:870px" 
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                             rowsPerPageTemplate="5,10,15" filteredValue="#{invoiceCtrl.invoiceList}" widgetVar="invoiceTable"  >  
+                             rowsPerPageTemplate="5,10,15,25,50,100" filteredValue="#{invoiceCtrl.invoiceList}" widgetVar="invoiceTable"  >  
                     <!--                    <f:facet name="header">  
                                             <p:outputPanel>  
                                                 <h:outputText value="Search all fields:" />  
@@ -147,22 +149,25 @@
                         </h:outputText>
                     </p:column>                    
                     <p:column sortBy="#{invoice.customerId.firstName}" headerText="Customer" filterBy="firstName">                              
-                        <h:outputText value="#{invoice.customerId.firstName} #{invoice.customerId.firstName}"/>
+                        <h:outputText value="#{invoice.customerId.firstName} #{invoice.customerId.lastName}" rendered="#{fn:length(invoice.customerId.firstName) + fn:length(invoice.customerId.lastName) le 30}"/>
+                        <h:outputLabel value="#{invoice.customerId.invoiceListDisplayName}" 
+                                      rendered="#{fn:length(invoice.customerId.firstName) + fn:length(invoice.customerId.lastName) gt 30}"/>
                     </p:column>
                     <p:column sortBy="#{invoice.amount}" headerText="Amount" filterBy="amount">                              
                         <h:outputText value="#{invoice.amount}">
                             <f:convertNumber type="currency" currencySymbol=" " />
                         </h:outputText>
                     </p:column>
-                    <p:column headerText="Status" rendered="false">                              
-                        <h:outputText value=""/>
+                    <p:column headerText="Status" >                              
+                        <h:outputText value="#{invoice.statusDisplay}" style="color: #{invoice.statusColor}; "/>
                     </p:column>
                     <p:column  width="5%">
                         <f:facet name="header">
                             <h:outputText value="&nbsp;"/>
                         </f:facet>
-                        <h:commandLink action="#{invoiceCtrl.prepareView}" styleClass="editInvoice">
+                        <h:commandLink action="#{invoiceCtrl.redirectToView(invoice.invoiceId)}" styleClass="editInvoice">
                             <h:graphicImage url="/resources/images/invoice.png" width="16" height="16" alt="View" styleClass="editInvoice"/>
+                            <f:setPropertyActionListener target="#{invoiceCtrl.current}" value="#{invoice}"/>                            
                         </h:commandLink>                        
                     </p:column>
                     <p:column width="5%" style="float:middle">
@@ -180,7 +185,7 @@
                             <h:outputText value="&nbsp;"/>
                         </f:facet>
 
-                        <p:commandLink action="#{invoiceCtrl.delete}" styleClass="editInvoice" onclick="window.confirm('Are you sure you want to delete this invoice?');"
+                        <p:commandLink action="#{invoiceCtrl.delete}" styleClass="editInvoice" onclick="if(!confirm('Are you sure you want to delete ?')) return false;"
                                        update="invoiceListTable">
                             <h:graphicImage url="/resources/images/black_delete.png" width="12" height="12" alt="Delete" styleClass="editInvoice"/>
                             <f:setPropertyActionListener target="#{invoiceCtrl.current}" value="#{invoice}"/>

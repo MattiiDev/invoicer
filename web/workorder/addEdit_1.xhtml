@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <ui:composition>              
+        <h:form prependId="false"> 
+            <div class="right-tab">
+                
+                <h:commandLink action="#{workOrderCtrl.save}" styleClass="sidebar-right-round">                    
+                    <h:graphicImage id="save-img1" styleClass="save-img"  url="/resources/images/check_black.png" alt="Save"/>
+                        <p:tooltip for="save-img1" value="Save WorkOrder" />
+                    </h:commandLink>
+                <h:commandLink action="list.jsf?faces-redirect=true" styleClass="sidebar-right-round" style="margin-top:75px;margin-right:-50px">
+                        <h:graphicImage id="cancel-img" class="cancel-img" url="/resources/images/cancel_black.png" alt="Cancel"/>
+                        <p:tooltip for="cancel-img" value="Cancel Edit WorkOrder" />
+                    </h:commandLink> 
+            </div>
+                
+            <p:panel id="workOrderPanel" styleClass="noBorder" style="width:100%;color: #1584de;background: #e6e6e6 url('');">
+                <p:focus context="workOrderPanel"/> 
+                <h:panelGrid width="100%" columns="1" >  
+                    <h:panelGrid width="55%" columns="2" cellpadding="3" style="margin:auto auto;" columnClasses="label5 textAlignRight noBorder,noBorder" >                        
+                        <h:outputText value="WorkOrder #" />
+                        <h:panelGroup>
+                            <h:outputText rendered="#{not empty workOrderCtrl.current.workOrderId}" value="#{workOrderCtrl.current.workOrderId}" styleClass="font20"/>
+                            <h:outputText rendered="#{empty workOrderCtrl.current.workOrderId}" value="--Auto Generated--" />
+                        </h:panelGroup>
+                        <h:outputText value="Date " styleClass="label3 textAlignRight" />
+                        <p:calendar id="ordDateInp" effect="slideDown" navigator="true" showOn="button" pagedate=""
+                                    mode="popup" autocomplete="true" value="#{workOrderCtrl.current.workOrderDate}"
+                                    showButtonPanel="true" pattern="EEE, dd MMM, yyyy"/>  
+                    </h:panelGrid>
+                    <p:separator style="margin: 5px 0 5px 0" />
+                    <h:panelGroup id="customerPanelGroup">
+                        <h:panelGrid width="49%" columns="1" columnClasses="noBorder label1 width20pr, noBorder width80pr" styleClass="borderRound10 floatLeft viewInfo" style="height: 140px">
+                            <h:panelGroup>
+                                <p:outputLabel value="Customer" for="custSugg" styleClass="label1"/>
+                                <p:commandButton id="changeCusBtn" image="change-cust-image"  ajax="true"  rendered="#{not empty workOrderCtrl.current.customerId}"
+                                                 style="font-size: 9px!important;margin-left: 10px; background:url('../resources/images/edit_pen-20.png') no-repeat; background-size: 16px 16px" title="Change"
+                                                 actionListener="#{workOrderCtrl.changeCustomer}" update="customerPanelGroup" >
+                                </p:commandButton>
+                                <p:commandButton id="addCusBtn" image="add-cust-image" onclick="addCusPopup.show()" ajax="true" rendered="#{empty workOrderCtrl.current.customerId}"
+                                                 style="font-size: 9px!important;margin-left: 10px; background:url('../resources/images/person_add-20.png') no-repeat" title="Add"
+                                                 update="customerPanelGroup"/>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{empty workOrderCtrl.current.customerId}">
+                                <p:autoComplete id="custSugg" value="#{workOrderCtrl.current.customerId}" completeMethod="#{customerController.suggestCustomer}"  
+                                                var="cust" itemLabel="#{cust.firstName}" dropdown="true" itemValue="#{cust}" size="50"
+                                                queryDelay="2">                                        
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="Customer Name" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{cust.firstName} #{cust.lastName}"/> 
+                                    </p:column> 
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="Company Name" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{cust.companyName}"/> 
+                                    </p:column>
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="Address" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{cust.addressLine1}"/> 
+                                        <br/>
+                                        <h:outputText value="#{cust.city}"/> 
+                                        <h:outputText value=", " rendered="#{not empty cust.country}"/> 
+                                        <h:outputText value="#{cust.country}"/> 
+                                        <br/>
+                                        <h:outputText value="#{cust.mobileNum}"/> 
+                                    </p:column>  
+                                    <f:ajax event="itemSelect" listener="#{workOrderCtrl.identifyVehicle}" render="customerPanelGroup"/>
+                                </p:autoComplete>                                                                                      
+                            </h:panelGroup>
+
+                            <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.firstName} #{workOrderCtrl.current.customerId.lastName}" />                               
+                            <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.companyName}" />                               
+                            <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.addressLine1}" />
+                            <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.city}" />
+                            <h:outputText styleClass="viewCust" value=", " rendered="#{not empty workOrderCtrl.current.customerId.country}"/>
+                            <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.country}" />
+                            <h:outputText styleClass="viewCust" value="#{workOrderCtrl.current.customerId.mobileNum}" />
+
+                        </h:panelGrid>
+
+                        <h:panelGrid styleClass="borderRound10 floatRight viewInfo" style="height: 140px; width:49%"
+                                     columnClasses="noBorder">
+                            <h:panelGroup>
+                            <p:outputLabel value="Vehicle" for="vehSugg" styleClass="label1"/>
+                            <p:commandButton image="change-cust-image"  ajax="true"  rendered="#{workOrderCtrl.changeVehicleIndicator}"
+                                             style="font-size: 9px!important;margin-left: 10px; background:url('../resources/images/edit_pen-20.png') no-repeat; background-size: 16px 16px" title="Change"
+                                             update="invVehPanel" action="#{workOrderCtrl.changeVehicle}" >
+                            </p:commandButton>
+                            </h:panelGroup>
+                        <h:panelGrid id="invVehPanel"  columns="2" 
+                                     rendered="#{empty workOrderCtrl.current.vehicle and not empty workOrderCtrl.current.customerId and not empty workOrderCtrl.current.customerId.customerVehicles and not workOrderCtrl.addNewVechicle}"
+                                     columnClasses="bold colWidth15 noBorder ,bold label1 colWidth15 noBorder " 
+                                     >
+
+                                <p:autoComplete id="vehSugg" value="#{workOrderCtrl.current.vehicle}" completeMethod="#{workOrderCtrl.suggestVehicle}"  
+                                                var="veh" itemLabel="#{veh.model}" dropdown="true" itemValue="#{veh}" size="30"
+                                                queryDelay="2">                                        
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="Year" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{veh.year}"/> 
+                                    </p:column> 
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="Make" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{veh.make}"/> 
+                                    </p:column> 
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="Model" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{veh.model}"/> 
+                                    </p:column>
+                                    <p:column>  
+                                        <f:facet name="header">
+                                            <h:outputText value="VIN" styleClass="bold"/>
+                                        </f:facet>
+                                        <h:outputText value="#{veh.vin}"/> 
+                                    </p:column>  
+                                    <f:ajax event="itemSelect" render="@form"/>
+                                </p:autoComplete>  
+                                <p:commandButton image="add-cust-image" ajax="true"
+                                                 style="margin-left:10px;font-size: 9px!important;background:url('../resources/images/plus_black.png') no-repeat" title="Add"
+                                                 actionListener="#{workOrderCtrl.initNewVehicleToWorkOrder}" update="invVehPanel"/>
+
+                            <p:spacer/>
+                            <p:spacer/>
+                            <p:spacer/>
+                        </h:panelGrid>
+                        
+                            <h:panelGrid id="invVehPanel1" columns="4" width="100%"
+                                     rendered="#{not empty workOrderCtrl.current.vehicle and not workOrderCtrl.addNewVechicle}"
+                                     columnClasses="bold noBorder colWidth25,noBorder ,bold noBorder label1 colWidth25, noBorder " 
+                                     >
+                                <h:outputLabel value="Year:" styleClass="viewCust"  />
+                                <h:outputText value="#{workOrderCtrl.current.vehicle.year}" styleClass=""  />
+                                <h:outputLabel value="Make:" styleClass="viewCust " />
+                                <h:outputText value="#{workOrderCtrl.current.vehicle.make}" styleClass="" />
+                                <h:outputLabel value="Model:" styleClass="viewCust " />
+                                <h:outputText value="#{workOrderCtrl.current.vehicle.model}" styleClass="" />
+                                <h:outputLabel value="VIN:" styleClass="viewCust" />
+                                <h:outputText value="#{workOrderCtrl.current.vehicle.vin}" />                            
+                                <h:outputLabel value="Mileage:" styleClass="viewCust" />
+                                <h:outputText value="#{workOrderCtrl.current.vehicle.mileage}" />                            
+                        </h:panelGrid>
+                        <h:panelGrid id="invVehPanel2" columns="4" width="100%"
+                                     rendered="#{workOrderCtrl.addNewVechicle}"
+                                     columnClasses="bold noBorder colWidth15,noBorder ,bold noBorder label1 colWidth15, noBorder " 
+                                     >
+                                <h:outputLabel value="Year:" styleClass="viewCust"  />                               
+                                <h:inputText value="#{workOrderCtrl.current.vehicle.year}" styleClass="" size="5" />
+                                <h:outputLabel value="Make:" styleClass="viewCust " />
+                                <h:inputText value="#{workOrderCtrl.current.vehicle.make}" styleClass="" disabled="true" size="5" />
+                                <h:outputLabel value="Model:" styleClass="viewCust " />
+                                <h:inputText value="#{workOrderCtrl.current.vehicle.model}" styleClass="" size="10"/>
+                                <h:outputLabel value="Mileage:" styleClass="viewCust" />                                
+                                <h:inputText value="#{workOrderCtrl.current.vehicle.mileage}" size="8"/>   
+                                <h:outputLabel value="VIN:" styleClass="viewCust" />
+                                <h:inputText value="#{workOrderCtrl.current.vehicle.vin}" size="17" />                            
+
+                        </h:panelGrid>
+                        </h:panelGrid>
+
+                    </h:panelGroup>
+
+                    <h:panelGrid width="100%" columns="1" columnClasses="noBorder label1 ,noBorder,noBorder label1" styleClass="borderRound10 viewInfo" >
+                        <p:outputLabel value="Notes" for="workOrderNotes" styleClass="label1"/>
+                            
+                        <p:inputTextarea id="workOrderNotes" value="#{workOrderCtrl.current.notes}" cols="110" rows="4" style="font-size: 12px" />
+                        
+                    </h:panelGrid>     
+                </h:panelGrid>
+                <p:spacer height="10px"/> 
+                <p:dataTable id="ordItemTable" style="width: 100%;margin-bottom:0" styleClass="invoiceItemClass" 
+                             value="#{workOrderCtrl.current.workOrderItems}" var="woItem"
+                             rowIndexVar="row">
+                    <p:column >
+                        <h:graphicImage value="Remove item" style="cursor: pointer;padding-top:5px" alt="Remove item" url="/resources/images/trash_grey.png">
+                            <f:ajax event="click" listener="#{workOrderCtrl.removeOrderItem(woItem)}" render="ordItemTable" />
+                        </h:graphicImage>
+                    </p:column>
+                    <p:column>  
+                        <h:outputText value="#{row + 1}" style="font-size: 10px; color: steelblue" /> 
+                    </p:column>  
+                    <p:column headerText="Description" width="50%"  >
+                                               
+                        <h:panelGroup layout="block" style=" float: left; ">
+
+                        <p:inputTextarea rows="2" cols="40" value="#{woItem.description}" rendered="#{woItem.addItem or (empty woItem.item and not empty woItem.description)}"/>
+
+                        <p:autoComplete id="itemSugg" value="#{woItem.item}" completeMethod="#{itemController.suggestItem}" widgetVar="itemSuggComp"
+                                        var="item1" itemLabel="#{woItem.description}" itemValue="#{item1}" dropdown="true" size="49" 
+                                        rendered="#{not (woItem.addItem or (empty woItem.item and not empty woItem.description))}">  
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Category" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{item1.itemCategory}"/> 
+                            </p:column>  
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Description" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{item1.description}"/> 
+                            </p:column>  
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Cost" styleClass="bold"/>
+                                </f:facet>
+                                <h:outputText value="#{item1.unitCost}"/> 
+                            </p:column>  
+                            <f:ajax event="itemSelect" listener="#{workOrderCtrl.populateItemOnWorkOrder(woItem)}" render="itemSugg itemAmtVal unitPrice"/>
+
+                        </p:autoComplete>
+                                                </h:panelGroup>
+                        
+                        <h:panelGroup layout="block" style=" float: right;margin-left: 1px">
+
+                        <p:commandButton id="addItemBtn" image="add-btn-image" action="#{workOrderCtrl.addNewItemToWorkOrder(woItem)}"
+                                         rendered="#{empty woItem.addItem or not woItem.addItem}"
+                                         style="font-size: 9px!important; background:url('../resources/images/plus_grey.png') no-repeat; border: none" 
+                                         title="Add" update="ordItemTable">
+                            
+                        </p:commandButton>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup layout="block" style=" float: right;margin-left: 1px">
+
+                            <p:commandButton id="undoAddItemBtn" image="add-btn-image" 
+                                             rendered="#{woItem.addItem}" action="#{workOrderCtrl.undoAddItemToWorkOrder(woItem)}"
+                                             style="font-size: 9px!important; background:url('../resources/images/undo.png') no-repeat; border: none" 
+                                             title="Undo Add" update="ordItemTable"
+                                             >
+                            </p:commandButton>
+                            <br/>
+                            <p:selectBooleanCheckbox id="addItemCheckbox" value="#{woItem.addItem}" rendered="#{woItem.addItem}" 
+                                                     style="font-size: 9px!important;"/>
+                            <p:tooltip for="addItemCheckbox" value="Add to Item List" />
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column headerText="Qty" width="15%" >
+                        <p:spinner value="#{woItem.quantity}" size="5" min="1" maxlength="5" >
+                            <f:ajax event="change" listener="#{workOrderCtrl.calculateOrderItemPrice(woItem)}" execute="@this" render="itemAmtVal" />
+                        </p:spinner>
+                    </p:column>
+                    <p:column headerText="Unit Price" width="25%" >
+                        <p:spinner id="unitPrice" value="#{woItem.unitPrice}" size="8" min="1" maxlength="6"  >
+                            <f:ajax event="change" listener="#{workOrderCtrl.calculateOrderItemPrice(woItem)}" execute="@this" render="itemAmtVal" />
+                        </p:spinner>
+                    </p:column>
+                    <p:column headerText="Amount" width="20%" id="itmNetAmt" style="text-align:right;padding-right: 20px">
+                        <h:outputText id="itemAmtVal" value="#{woItem.amount}" >
+                        </h:outputText>
+                    </p:column>                     
+                    <f:facet name="footer"> 
+                        <table class="workOrderTableFooter" cellpadding="0" cellspacing="0" width="100%">
+                            <tfoot style="color:#2e6e9e">
+                                <tr style="border-bottom: 1px solid lightsteelblue;" >
+                                    <td style="float:left;" >
+                                        <p:commandButton id="addRowBtn1" style="text-align: left" 
+                                                         process="@form"
+                                                         icon="ui-icon-plus" action="#{workOrderCtrl.addNewItemToWorkOrder}"                                                                         
+                                                         update="ordItemTable" /> 
+                                    </td>
+                                    <td >
+                                        <span></span>
+                                    </td>
+                                    <td style="width:70%">
+                                        <span></span>
+                                    </td>
+                                    <td style="width:20%;text-align: right">
+                                        <h:outputText value="Subtotal"/>                                        
+                                    </td>
+                                    <td style="width:20%;text-align: right;">
+                                        <p:outputPanel autoUpdate="true">
+                                            <h:outputText value="#{workOrderCtrl.current.itemTotalAmount}"/>
+                                        </p:outputPanel>
+                                    </td>
+                                </tr>                                
+                                <tr >
+                                    <td  style="width:60%">
+                                        <span></span>
+                                    </td>
+                                    <td style="width:20%;text-align: right">
+                                        <span></span>
+                                    </td>
+                                    <td style="width:20%;text-align: right">
+                                        <span></span>
+                                    </td>
+                                    <td style="width:20%;text-align: right; font-size: 16px">
+                                        <h:outputText value="Total"/>
+                                    </td>                                    
+                                    <td width="14%" style="width:20%;text-align: right;font-weight: bold;font-size: 16px; color:midnightblue">
+                                        <p:outputPanel autoUpdate="true">
+                                            <h:outputText id="totAmt" value="#{workOrderCtrl.current.amount}">
+                                                <f:convertNumber currencyCode="SAR" maxFractionDigits="2" groupingUsed="true" type="currency" currencySymbol="SAR"/>
+                                            </h:outputText>
+                                        </p:outputPanel>
+                                    </td>
+                                </tr>                                
+                            </tfoot>                                                      
+                        </table>                           
+                    </f:facet>                        
+                </p:dataTable>                                             
+
+                <p:commandButton style="font-size:22px;float: right;margin-top: 10px;vertical-align: middle " rendered="false" 
+                                 action="#{workOrderCtrl.save}" value="#{source == 'createWorkOrder'? 'Create' : 'Save'}" icon="ui-icon-circle-check"  />
+                                   
+            </p:panel>
+
+            <p:dialog id="addCustDg" header="New Customer" widgetVar="addCusPopup" modal="true" 
+                      width="930" closeOnEscape="true" height="550" showEffect="clip" 
+                      resizable="true">  
+                <ui:include src="/customer/inc_createCustomer.xhtml">
+                    <ui:param name="controller" value="#{workOrderCtrl.custCtrl}"/>
+                </ui:include>
+
+                <p:commandButton action="#{workOrderCtrl.addNewCustomerToWorkOrder}" value="#{bundle.CreateCustomerSaveLink}" 
+                                 icon="ui-icon-disk" oncomplete="addCusPopup.hide();" />
+
+                <p:ajax event="close" update="workOrderPanel" />  
+            </p:dialog> 
+
+            <p:dialog id="addItemDg"  widgetVar="addItemPopup" modal="true" width="900" height="350" showEffect="clip">  
+                <ui:include src="/item/inc_createItem.xhtml">
+                    <ui:param name="controller" value="#{workOrderCtrl.itemCtrl}"/>
+                </ui:include>
+
+                <p:commandButton action="#{workOrderCtrl.createNewItemAndAddToWorkOrder}" value="Add Item" icon="ui-icon-disk" oncomplete="addItemPopup.hide();" 
+                                 update="workOrderPanel" />
+
+                <p:ajax event="close" update="workOrderPanel" /> 
+            </p:dialog> 
+
+            <p:remoteCommand name="addNewCust" update="workOrderPanel" action="#{workOrderCtrl.addNewCustomerToWorkOrder}"/>  
+
+        </h:form>               
+    </ui:composition>
+</html>

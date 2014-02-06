@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title><ui:insert name="title">Default Title</ui:insert></title>
@@ -10,11 +11,16 @@
         <h:outputStylesheet name="css/invoicer.css"/>
         <h:outputScript library="js" name="inconvent.js"/>
                 
+        <script type="text/javascript">
+                jQuery(document).ready(function() {
+                    jQuery('.#{menuCtrl.menuItemFocus}').addClass('navclick');
+                });
+            </script>
     </h:head>
 
     <h:body styleClass="body">
         <div class="header">
-            <div class="navbar navbar-fixed-top">
+            <div class="navbar ">
                 <ui:include src="header.xhtml"/>
             </div>
         </div>
@@ -22,14 +28,14 @@
             <ui:insert name="sidebar-left">
             </ui:insert>
         </div> 
-        <div id="content">
-            <div class="inner">
+        <div id="content">            
+            <div class="inner">               
                 <ui:insert name="content">
                     
                 </ui:insert>
             </div>
         </div>
-        <div id="sidebar-right">
+        <div id="sidebar-right" style="">
             <ui:insert name="sidebar-right">
             </ui:insert>
         </div>        

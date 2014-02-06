@@ -11,27 +11,14 @@
             <h:outputText value="#{bundle.EditItemTitle}"></h:outputText>
         </ui:define>
         <ui:define name="content">
-            <h:panelGroup id="messagePanel" layout="block">
-                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
-            </h:panelGroup>
-            <h:form>
-                <h:panelGrid columns="2">
-                    <h:outputLabel value="#{bundle.EditItemLabel_itemId}" for="itemId" styleClass="bold font14 padRight10" />
-                    <h:outputText id="itemId" value="#{itemController.selected.itemId}" title="#{bundle.EditItemTitle_itemId}" />
-                    <h:outputLabel value="#{bundle.EditItemLabel_itemCode}" for="itemCode" styleClass="bold font14 padRight10" />
-                    <h:inputText id="itemCode" value="#{itemController.selected.itemCode}" title="#{bundle.EditItemTitle_itemCode}" />
-                    <h:outputLabel value="#{bundle.EditItemLabel_description}" for="description" styleClass="bold font14 padRight10" />
-                    <h:inputTextarea id="description" value="#{itemController.selected.description}" cols="30" rows="5" title="#{bundle.EditItemTitle_description}" />
-                    <h:outputLabel value="#{bundle.EditItemLabel_unitCost}" for="unitCost" styleClass="bold font14 padRight10" />
-                    <p:spinner id="unitPrice" value="#{itemController.selected.unitCost}" size="8" min="1" maxlength="6" />
-                </h:panelGrid>
-                
+            <h:form>                
+                <ui:include src="/item/inc_createItem.xhtml">
+                    <ui:param name="controller" value="#{itemController}"/>
+                </ui:include>                
                 <br />
-                <p:commandButton action="#{customerController.update}" value="#{bundle.CreateCustomerSaveLink}" icon="ui-icon-disk" />
-
-                <br />
+                <p:commandButton action="#{itemController.update}" value="#{bundle.CreateCustomerSaveLink}" icon="ui-icon-disk" />
                 
-                <h:commandLink action="#{itemController.prepareList}" value="Back to List" immediate="true"/>
+                <h:link outcome="list?faces-redirect=true" value="Back to List" style="padding-left: 15px" />
                 
             </h:form>
         </ui:define>

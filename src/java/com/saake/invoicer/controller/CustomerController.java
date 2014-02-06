@@ -1,16 +1,19 @@
-package com.saake.invoicer.controller.masterdata;
+package com.saake.invoicer.controller;
 
 import com.saake.invoicer.controller.InvoiceController;
 import com.saake.invoicer.entity.Customer;
 import com.saake.invoicer.controller.masterdata.util.JsfUtil;
-import com.saake.invoicer.entity.CustomerVehicle;
+import com.saake.invoicer.entity.Vehicle;
+import com.saake.invoicer.entity.Item;
 import com.saake.invoicer.sessionbean.CustomerFacade;
 import com.saake.invoicer.util.Utils;
 import com.sun.xml.rpc.processor.modeler.j2ee.xml.emptyType;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -38,6 +41,26 @@ public class CustomerController implements Serializable {
     private int selectedItemIndex;
     private int rowKeyVar;
 
+    @PostConstruct
+    private void initialize() {
+        if ( JsfUtil.getViewId().contains("create")){
+            newInit();
+        }
+        else
+        if ( JsfUtil.getViewId().contains("edit")){
+            editInit();
+        }
+        else
+        if ( JsfUtil.getViewId().contains("view")){
+            viewInit();
+        }
+        else
+        if ( JsfUtil.getViewId().contains("list")){
+            prepareList();
+        }        
+        
+    }
+    
     public CustomerController() {
     }
 
@@ -55,28 +78,28 @@ public class CustomerController implements Serializable {
 
     public String prepareList() {
         recreateModel();
-        return "List";
+        return "list";
     }
 
     public String prepareView() {
 //        current = (Customer) getItems().getRowData();
 //        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return "View?includeViewParams=true";
+        return "view?includeViewParams=true";
     }
 
     public String prepareCreate() {
         current = new Customer();
         selectedItemIndex = -1;
-        return "Create";
+        return "create";
     }
 
     public String create() {
         try {
             getFacade().create(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CustomerCreated"));
-            JsfUtil.addRequestObject("cust", current);
-            JsfUtil.addRequestParameter("cust", current.getCustomerId().toString());
-            return prepareView();
+//            JsfUtil.addRequestObject("cust", current);
+//            JsfUtil.addRequestParameter("cust", current.getCustomerId().toString());
+            return "view.jsf?faces-redirect=true&id="+current.getCustomerId();
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
@@ -105,7 +128,7 @@ public class CustomerController implements Serializable {
         try {
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CustomerUpdated"));
-            return "View";
+            return "view.jsf?faces-redirect=true&id="+current.getCustomerId();
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
@@ -116,35 +139,36 @@ public class CustomerController implements Serializable {
         return getFacade().edit(current);
     }
 
-    public String destroy() {
-//        current = (Customer) getItems().getRowData();
-//        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        performDestroy();
-//        recreatePagination();
-        recreateModel();
-        return "List";
-    }
-
-    public String destroyAndView() {
-        performDestroy();
-        recreateModel();
-        updateCurrentItem();
-        if (selectedItemIndex >= 0) {
-            return "View";
-        } else {
-            // all items were removed - go back to list
-            recreateModel();
-            return "List";
-        }
-    }
-
-    private void performDestroy() {
+    public String softDelete() {
         try {
-            getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CustomerDeleted"));
+            getFacade().softDelete(current);
+
+            prepareList();
+            
+            JsfUtil.addSuccessMessage("Customer Deleted");
+
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
         }
+
+        return null; //"list?faces-redirect=true";
+    }    
+    
+    private void newInit() {
+        current = new Customer();
+        current.setCreateTs(new Date());
+    }
+
+    private void viewInit() {
+        String id = JsfUtil.getRequestParameter("id");
+        
+        if(Utils.notBlank(id)){
+            current = getFacade().find(Integer.parseInt(id));                      
+        }   
+    }
+
+    private void editInit() {
+        viewInit();
     }
 
     private void updateCurrentItem() {
@@ -201,47 +225,12 @@ public class CustomerController implements Serializable {
         return ejbFacade.find(id);
     }
 
-    public CustomerVehicle saveCustomerVehicle(CustomerVehicle custVehicle) {
-        return ejbFacade.saveCustomerVehicle(custVehicle);
+    public Vehicle getVehicle(java.lang.Integer id) {
+        return ejbFacade.getVehicle(id);
     }
 
-    @FacesConverter(forClass = Customer.class)
-    public static class CustomerControllerConverter implements Converter {
-
-        @Override
-        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
-            if (value == null || value.length() == 0) {
-                return null;
-            }
-            CustomerController controller = (CustomerController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "customerController");
-            return controller.getCustomer(getKey(value));
-        }
-
-        java.lang.Integer getKey(String value) {
-            java.lang.Integer key;
-            key = Integer.valueOf(value);
-            return key;
-        }
-
-        String getStringKey(java.lang.Integer value) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(value);
-            return sb.toString();
-        }
-
-        @Override
-        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
-            if (object == null) {
-                return null;
-            }
-            if (object instanceof Customer) {
-                Customer o = (Customer) object;
-                return getStringKey(o.getCustomerId());
-            } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Customer.class.getName());
-            }
-        }
+    public Vehicle saveCustomerVehicle(Vehicle custVehicle) {
+        return ejbFacade.saveCustomerVehicle(custVehicle);
     }
 
     public List<Customer> getItems() {        
@@ -285,7 +274,7 @@ public class CustomerController implements Serializable {
         }
         
         return suggestCustomerList;
-    }
+    }        
     
     public void setItems(List<Customer> items) {
         this.items = items;
@@ -307,4 +296,23 @@ public class CustomerController implements Serializable {
         return current;
     }
     
+    public void addVehicleToCustomer(){
+        if(current != null){
+            if(Utils.isEmpty(current.getCustomerVehicles())){
+                current.setCustomerVehicles(new ArrayList<Vehicle>());
+            }
+            
+            Vehicle veh = new Vehicle();
+            veh.setCustomerId(current);
+            current.getCustomerVehicles().add(veh);
+        }
+    }
+    
+    public void removeCustomerVehicle(Vehicle veh){
+        if(current != null){
+            if(!Utils.isEmpty(current.getCustomerVehicles())){
+                current.getCustomerVehicles().remove(veh);
+            }            
+        }
+    }
 }

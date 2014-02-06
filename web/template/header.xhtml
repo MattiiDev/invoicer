@@ -7,20 +7,26 @@
       xmlns:ui="http://java.sun.com/jsf/facelets">
 
     <ui:composition>
-        <div class="navbar-inner" >
             <h:form styleClass="container">
                 <div id="logo" title="Go to Search Page" style="margin-right:30px;float: left;"
                      onclick="window.location.href = 'invoicer/';">
                     <p:graphicImage url="/resources/images/saake_logo1.png" alt="saake"  width="100px" height="45px" style="cursor:pointer" />
                 </div>
-                <p:menubar styleClass="transparent navbar-menu" >
-                    <p:menuitem value="Home" url="/invoice/list.jsf" icon="ui-icon-home" styleClass="nav" style="padding-right: 15px" />
+                <p:menubar styleClass="transparent navbar-menu" style="" >
+                    <p:menuitem value="Home" url="/home.jsf" icon="ui-icon-home" style="padding-right: 15px;" styleClass="homeMenu" />
 
-                    <p:menuitem value="Invoice" url="/invoice/list.jsf" icon="ui-icon-pencil" style="padding-right: 15px"/>
+                    <p:menuitem value="Work Order" url="/workorder/list.jsf" icon="ui-icon-pencil" style="padding-right: 15px; " styleClass="workorderMenu"/>
 
-                    <p:menuitem value="Item" url="/item/list.jsf" icon="ui-icon-key" style="padding-right: 15px"/>
+                    <p:menuitem value="Invoice" url="/invoice/list.jsf" icon="ui-icon-document" style="padding-right: 15px" styleClass="invoiceMenu"/>
 
-                    <p:menuitem value="Customer" url="/customer/list.jsf" icon="ui-icon-person" style="padding-right: 15px"/>                                            
+                    <p:menuitem value="Item" url="/item/list.jsf" icon="ui-icon-key" style="padding-right: 15px" styleClass="itemMenu"/>
+
+                    <p:menuitem value="Customer" url="/customer/list.jsf" icon="ui-icon-person" style="padding-right: 15px" styleClass="customerMenu"/>                                            
+                    
+                    <p:submenu icon="ui-icon-note" label="Reports" style="padding-right: 15px" styleClass="reportsMenu">
+                        <p:menuitem value="Customer Invoices" url="/customer/invoiceReport.jsf" rendered="false" />
+                    </p:submenu>                    
+                        
                     <f:facet name="options">
                         <p:splitButton value="Logout" action="#{loginCtrl.logout()}" icon="ui-icon-extlink" style="font-size: 12px" process="@form" update="@form" 
                                        ajax="true" immediate="true"> 
@@ -30,6 +36,5 @@
                     </f:facet>
                 </p:menubar>
             </h:form>
-        </div>
     </ui:composition>
 </html>

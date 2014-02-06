@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template/template.xhtml">
+
+        <ui:define name="title">
+            <h:outputText value="Invoicer | Home"></h:outputText>
+        </ui:define>
+        <ui:define name="content">
+            <h:form >
+                <ui:include src="/template/messages.xhtml"/>
+
+                <p:hotkey bind="alt+n" action="/invoice/create.jsf?faces-redirect=true" /> 
+
+                <div style="width: 100%; overflow: hidden ">
+                    <p:fieldset  legend="New Work Orders" style="width:400px; float: left;" styleClass="widgetBorder" >
+                        <h:outputLink id="addItemBtn"  value="/invoicer/workorder/create.jsf"  
+                                             style="border: 1px solid #c5dbec;background: #dfeffc;font-size: 9px!important; float:right; margin-top: -40px; margin-left: -22px " 
+                                             title="Add" styleClass="ui-fieldset-legend ui-corner-all ui-state-default" >
+                            <h:graphicImage style="cursor: pointer;" alt="Add" url="/resources/images/plus_grey.png"/>
+                        </h:outputLink>
+                    
+                        <p:dataTable id="estimateListTable" value="#{workOrderCtrl.model}" var="workOrder" rowKey="#{workOrder.workOrderId}"
+                                     styleClass="viewInvoiceItems estimateItemClass invoiceItemClass font12 noBackgroundAtAll" 
+                                     selection="#{workOrderCtrl.current}" selectionMode="single"
+                                     paginator="false" rows="5" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                     paginatorTemplate="{PreviousPageLink} {NextPageLink} " style="height: 300px; width:400px; overflow: auto"  
+                                     rowsPerPageTemplate="5,10,15,25,50,100" filteredValue="#{workOrderCtrl.workOrderList}" widgetVar="workOrderTable" 
+                                     sortBy="#{workOrder.workOrderDate}" sortOrder="descending">  
+
+                            <p:column sortBy="#{workOrder.workOrderId}" headerText="#" filterBy="workOrderId" styleClass="font11" >        
+                                <h:commandLink action="#{workOrderCtrl.redirectToView(workOrder.workOrderId)}" >
+                                    <h:outputText value="#{workOrder.workOrderId}"/>
+                                </h:commandLink>
+                                
+                            </p:column>   
+                            <p:column sortBy="#{workOrder.customerId.firstName}" headerText="Customer" filterBy="firstName" styleClass="font12">                              
+                                 <h:outputText value="#{workOrder.customerId.firstName} #{workOrder.customerId.lastName}" rendered="#{fn:length(workOrder.customerId.firstName) + fn:length(workOrder.customerId.lastName) le 11}"/>
+                                 <h:outputText value="#{fn:substring(workOrder.customerId.firstName.concat(' ').concat(workOrder.customerId.lastName),0,9).concat('..')}" 
+                                      rendered="#{fn:length(workOrder.customerId.firstName) + fn:length(workOrder.customerId.lastName) gt 11}"/>
+                            </p:column>
+                            
+                            <p:column sortBy="#{workOrder.amount}" headerText="Amount" filterBy="amount" styleClass="font12">                              
+                                <h:outputText value="#{workOrder.amount}">
+                                    <f:convertNumber type="currency" currencySymbol=" " />
+                                </h:outputText>
+                            </p:column>
+                            <p:column sortBy="#{workOrder.workOrderDate}" headerText="Date" styleClass="font11" >                                        
+                                <h:outputText value="#{workOrder.workOrderDate}">
+                                    <f:convertDateTime type="date" pattern="d/M/YY"/>
+                                </h:outputText>
+                            </p:column>                    
+                            <p:column headerText="Status" styleClass="font12" >  
+                                <h:graphicImage id="statDraftImg" style="width:16px; height:16px" alt="Draft" url="/resources/images/doc_draft.png"
+                                                rendered="#{workOrder.draft}">
+                                    <p:tooltip for="statDraftImg" value="Draft" showEffect="size"/>
+                                </h:graphicImage>
+                                <p:spacer width="5px"/>
+                                
+                                <h:graphicImage id="statAcceptImg" style="width:16px; height:16px" alt="Accepted" url="/resources/images/checked_user.png"
+                                                rendered="#{workOrder.accepted}">
+                                    <p:tooltip for="statAcceptImg" value="Accepted" showEffect="size"/>
+                                </h:graphicImage>
+                                <p:spacer width="5px"/>
+                                <h:graphicImage id="statInvImg" alt="Invoiced" url="/resources/images/invoice.png"
+                                                rendered="#{workOrder.invoiced}">
+                                    <p:tooltip for="statInvImg" value="Invoiced" showEffect="size"/>
+                                </h:graphicImage>
+                                <h:outputText value="#{workOrder.statusDisplay}" style="color: #{workOrder.statusColor}; " rendered="false" />
+                            </p:column>
+                            <p:ajax  event="rowDblselect" listener="#{workOrderCtrl.redirectToView(workOrder.workOrderId)}">
+                            </p:ajax>
+                        </p:dataTable>
+                    </p:fieldset>
+                    <p:fieldset  legend="New Invoices" style="width:400px; float: right;" styleClass="widgetBorder" >
+                                
+                        <h:outputLink  value="/invoicer/invoice/create.jsf"  
+                                             style="border: 1px solid #c5dbec;background: #dfeffc;font-size: 9px!important; float:right; margin-top: -40px; margin-left: -22px " 
+                                             title="Add" styleClass="ui-fieldset-legend ui-corner-all ui-state-default" >
+                            <h:graphicImage style="cursor: pointer;" alt="Add" url="/resources/images/plus_grey.png"/>
+                        </h:outputLink>
+                        <p:dataTable id="invoiceListTable" value="#{invoiceCtrl.model}" var="invoice" rowKey="#{invoice.invoiceId}" 
+                                     styleClass="noBackgroundAtAll font12 viewInvoiceItems invoiceItemClass" selection="#{invoiceCtrl.current}" selectionMode="single"
+                                     paginator="false" rows="7" paginatorAlwaysVisible="true" paginatorPosition="bottom" style="height: 300px; width:400px; overflow: auto"  
+                                     rowsPerPageTemplate="5,10,15,25,50,100" filteredValue="#{invoiceCtrl.invoiceList}" widgetVar="invoiceTable" 
+                                     sortBy="#{invoice.invoiceDate}" sortOrder="descending">                             
+                            <p:column sortBy="#{invoice.invoiceId}" headerText="#" filterBy="invoiceId" styleClass="font11">    
+                                <h:commandLink action="#{invoiceCtrl.redirectToView(invoice.invoiceId)}" >
+                                    <h:outputText value="#{invoice.invoiceId} - #{invoice.invoiceNum}"/>
+                                </h:commandLink>
+                            </p:column>
+                            <p:column sortBy="#{invoice.customerId.firstName}" headerText="Customer" filterBy="firstName" styleClass="font12" >                              
+                                 <h:outputText value="#{invoice.customerId.firstName} #{invoice.customerId.lastName}" rendered="#{fn:length(invoice.customerId.firstName) + fn:length(invoice.customerId.lastName) le 11}"/>
+                                 <h:outputText value="#{fn:substring(invoice.customerId.firstName.concat(' ').concat(invoice.customerId.lastName),0,9).concat('..')}" 
+                                      rendered="#{fn:length(invoice.customerId.firstName) + fn:length(invoice.customerId.lastName) gt 11}"/>
+                            </p:column>
+                            <p:column sortBy="#{invoice.amount}" headerText="Amount" filterBy="amount" styleClass="font12">                              
+                                <h:outputText value="#{invoice.amount}">
+                                    <f:convertNumber type="currency" currencySymbol=" " />
+                                </h:outputText>
+                            </p:column>    
+                            
+                            <p:column sortBy="#{invoice.invoiceDate}" headerText="Date" styleClass="font11">
+                                <h:outputText value="#{invoice.invoiceDate}">
+                                    <f:convertDateTime type="date" pattern="d/M/YY"/>
+                                </h:outputText>
+
+                            </p:column>
+                            
+                            <p:column headerText="Status" styleClass="font12">                       
+                                <h:graphicImage id="statDraftImg" style="width:16px; height:16px" alt="Draft" url="/resources/images/doc_draft.png"
+                                                rendered="#{invoice.draft}">
+                                    <p:tooltip for="statDraftImg" value="Draft" showEffect="size"/>
+                                </h:graphicImage>
+                                <h:graphicImage id="statPayImg" style="width:16px; height:16px" alt="Paid" url="/resources/images/pay-notes.png"
+                                                rendered="#{invoice.paid}">
+                                    <p:tooltip for="statPayImg" value="Paid" showEffect="size"/>
+                                </h:graphicImage>
+                                <p:spacer width="5px"/>                                
+                                <h:outputText value="#{invoice.statusDisplay}" style="color: #{invoice.statusColor};" rendered="false"/>
+                            </p:column>
+                            <p:ajax event="rowDblselect" listener="#{invoiceCtrl.redirectToView(invoice.invoiceId)}">
+                            </p:ajax>
+                        </p:dataTable>
+                        
+                    </p:fieldset>
+                </div>
+
+                <p:contextMenu >  
+                    <p:menuitem value="View" action="#{invoiceCtrl.redirectToView(null)}" includeViewParams="true" 
+                                style="background: url('../resources/images/invoice.png') no-repeat; background-size: 16px 16px; padding-left: 20px; "/>
+                    <p:menuitem value="Edit" action="#{invoiceCtrl.prepareEdit}" includeViewParams="true" 
+                                style="background: url('../resources/images/edit-black-2.png') no-repeat ;background-size: 16px 16px; padding-left: 20px; "/>
+                </p:contextMenu> 
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -127,7 +127,15 @@ public class JsfUtil {
     public static void addAttributeInRequest(String attbributeName, Object attribute) {
         getHttpServletRequest().setAttribute(attbributeName, attribute);
     }
+    
+        public static Object getRequestObject(String key) {
+        return FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get(key);
+    }
 
+        public static void addRequestObject(String key, Object obj) {
+        FacesContext.getCurrentInstance().getExternalContext().getRequestMap().put(key, obj);
+    }
+    
     public static void addRequestParameter(String key, String val) {
         FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().put(key, val);
     }
@@ -230,4 +238,17 @@ public class JsfUtil {
         }   return null;
     }
 
+     public static boolean isErrorRaised() {
+        boolean errorMessage = false;
+        Iterator<FacesMessage> messages = FacesContext.getCurrentInstance().getMessages();
+        while(messages.hasNext()) {
+            FacesMessage msg = messages.next();
+            if(msg.getSeverity()== FacesMessage.SEVERITY_ERROR) {
+                errorMessage = true;
+                break;
+            }
+        }
+
+        return errorMessage;
+    }
 }

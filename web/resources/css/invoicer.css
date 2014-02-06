@@ -19,11 +19,11 @@ body {
     font-family: Segoe UI, Tahoma, Arial, Verdana,sans-serif;
     /*font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;*/
     font-size: 12px;
-    line-height: 20px;
+    /*line-height: 20px;*/
     background-color: #e6e6e6;
     color: #333;
     overflow: auto;
-    padding-bottom: 192px;
+    /*padding-bottom: 192px;*/
     min-height: 100%;
     min-width: 100%;
     width: 100%;
@@ -47,7 +47,7 @@ div article{
     background-color: white;
     padding-right:10px;
     padding-left:10px;
-    height:990px;
+    height:800px!important;
 }
 
 div#content{
@@ -55,6 +55,7 @@ div#content{
     margin-left: auto;
     margin-right: auto;
     background-color: white;
+    /*margin-top: 19px;*/
 }
 
 div#content-login{
@@ -89,7 +90,7 @@ div#sidebar-left{
 }
 
 div#sidebar-right{
-    float:left;
+    margin-right: 550px;;
 }
 
 div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, .sidebar-left-round, .gradient-grey{
@@ -119,6 +120,10 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
     width: 20%;
 }
 
+.colWidth15{
+    width: 15%;
+}
+
 .colWidth25 {
     font-family: verdana, sans-serif;
     vertical-align: middle;
@@ -144,9 +149,9 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
 }
 
 .header{
-    margin-bottom: 60px;
+    /*margin-bottom: 15px;*/
     color: #0080FF!important;
-    
+    /*height: 68px;*/    
 }
 
 .gradient-blue1, .top-header-bar, .navbar, .navbar-inner{
@@ -197,12 +202,11 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
     position: fixed;
     right: 0;
     left: 0;
-    /*z-index: 1030;*/
     margin-bottom: 0;
 }
 
 .navbar-inner{
-    padding-top: 10px;
+    padding-top: 5px;
     border-bottom: 1px solid darkblue;    
 }
 
@@ -214,24 +218,41 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
 .navbar-menu{
     font-size: 1.3em;
     display: inline;
-    padding: 7px;
+    /*padding: 7px;*/
     margin-right: 4px;    
 }
 
 .navbar, .navbar-inner{
-    height: 60px;
+/*    height: 68px;*/
+    padding: 10px 0px 10px 0px;
     overflow: visible;
     min-width: 100%;
+    z-index: 2000;
+}
+
+.navclick{
+    background-color: #4c4c4c!important;
+    -moz-border-radius: 13px!important;
+    border-radius: 13px!important;
+    /*background-repeat:repeat-x!important;*/
+    /*height: 40px!important;*/
+    /*color: #4876FF!important;*/
+    /*margin-left: 3px;*/
+    /*margin-right: 3px;*/        
 }
 
 .top-header-bar{
-    height: 45px;
+    /*height: 45px;*/
     overflow: visible;
     min-width: 100%;
 }
 
 .noBackground{
     background: #e6e6e6 url('')!important;
+}
+
+.noBackgroundAtAll{
+    background: url('') transparent!important ;
 }
 
 .noBorder{
@@ -244,6 +265,22 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
 
 .padRight10{
     padding-right:10px;
+}
+
+.padRight25{
+    padding-right:25px;
+}
+
+.padRight50{
+    padding-right:50px;
+}
+
+.padLeft50{
+    padding-left:20px;
+}
+
+.padRight100{
+    padding-right:100px;
 }
 
 .label1{
@@ -272,7 +309,15 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
 }
 
 .font9{
-    font-size: 9px;
+    font-size: 9px!important;
+}
+
+.font12{
+    font-size: 12px!important;
+}
+
+.font11{
+    font-size: 11px!important;
 }
 
 .font16{
@@ -290,7 +335,7 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
 .label2{
     font-size: 18px;
     font-weight: bold;
-    color:navy;
+    color: navy
     /*padding-right:10px;*/
 }
 
@@ -328,10 +373,21 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
     border-right:none!important;
 }
 
+.noLeftBorder{
+    border-left:none!important;
+}
+
 .invoiceItemClass table > thead > tr > th{
-    /*border:none!important;*/
     background-image: url('')!important;
     background-color: #FFE5CC!important;
+    font-weight: bold!important;
+    text-align: left!important;
+}
+
+.estimateItemClass table > thead > tr > th{
+    /*border:none!important;*/
+    background-image: url('')!important;
+    background-color: #ffcccd!important;
     font-weight: bold!important;
     text-align: left!important;
 }
@@ -340,11 +396,32 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
     border-top-left-radius: 10px!important;
 }
 
+.customerListClass table > thead > tr > th:first-child{
+    border-top-left-radius: 10px!important;
+}
+
 .invoiceItemClass table > thead > tr > th:last-child{
     border-top-right-radius: 10px!important;
 }
 
+
+.widgetBorder {
+    border: 1px solid lightgray!important;
+    border-radius: 10px!important;
+    
+}
+
+.customerListClass table > thead > tr > th:last-child{
+    border-top-right-radius: 10px!important;
+}
+
 .invoiceItemClass > .ui-datatable-footer.ui-widget-header.ui-corner-bottom 
+{
+    background: linear-gradient(to bottom, white 0%, #dfeffc 80%)!important; /* W3C */
+    background-color: #dfeffc!important 
+}
+
+.dataListStyle1 > .ui-paginator
 {
     background: linear-gradient(to bottom, white 0%, #dfeffc 80%)!important; /* W3C */
     background-color: #dfeffc!important 
@@ -366,14 +443,36 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
     border:none!important;
 }
 
+.dataListStyle1 thead th, .dataListStyle1 tbody, .dataListStyle1 tbody tr, 
+.dataListStyle1 tbody td, .dataListStyle1 table tfoot tr td, 
+.dataListStyle1 > div.ui-datatable-footer,.dataListStyle1 >.ui-paginator  {
+    background-image: url('')!important;
+    border-style: none!important;
+    border:none!important;
+    border-bottom: 1px solid lightblue!important;
+}
+
+.dataListStyle1 tbody tr:hover{
+    background-color: lightyellow!important;
+}
+
+.invoiceItemClass tbody tr:hover{
+    background-color: lightyellow!important;
+}
+
+.viewInvoiceItems tbody, .viewInvoiceItems tbody tr, 
+.viewInvoiceItems tbody td{
+    border-bottom: 1px solid lightblue!important;
+}
+
 /*.invoiceItemClass >.ui-paginator{
     background-color: thistle!important;
     font-size: 12px!important;
 }*/
 
-.invoiceItemClass tbody td{
+.invoiceItemClass tbody td, .dataListStyle1 tbody td{
     /*padding:10px!important;*/
-    height:35px!important;
+    height:25px!important;
     font-size: 14px;
 }
 
@@ -382,6 +481,14 @@ div#content div.inner, div#content-login div.inner-login, .sidebar-right-round, 
 }
 
 .invoiceList tr:hover .editInvoice{
+    display:block;
+}
+
+.hoverActions{
+    display:none;
+}
+
+table tr:hover .hoverActions{
     display:block;
 }
 
@@ -464,22 +571,26 @@ a:hover .editInvoice{
 a:hover .print-img{
     width:28px!important;
     height:28px!important;
-    /*opacity: 1!important;*/
-    /*background-color: #c8dffe!important;*/
 }
 
 a:hover .pdf-img{
     width:36px!important;
     height:36px!important;
-    /*opacity: 1!important;*/
-    /*background-color: #c8dffe!important;*/
 }
 
 a:hover .edit-img{
     width:32px!important;
     height:32px!important;
-    /*opacity: 1!important;*/
-    /*background-color: #c8dffe!important;*/
+}
+
+a:hover .convert-img{
+    width:34px!important;
+    height:34px!important;
+}
+
+a:hover .pay-img{
+    width:36px!important;
+    height:36px!important;
 }
 
 a:hover .list-img{
@@ -501,6 +612,10 @@ a:hover .cancel-img{
 
 .pad10{
     padding:10px;
+}
+
+.pad0{
+    padding:0px;
 }
 
 .hidden {
@@ -535,6 +650,13 @@ a:hover .cancel-img{
     height: 16px!important;
     border:none!important;
     
+}
+
+.add-btn-image {
+    background:url('') no-repeat !important;
+    width: 16px!important;
+    height: 16px!important;
+    border:none!important;    
 }
 
 .change-cust-image {
@@ -590,8 +712,8 @@ div.list-link.sidebar-right-round{
     background-color: white;
     width: 50px; 
     height: 75px;
-    float: left!important; 
-    z-index: 1000!important;
+    float: right!important; 
+    /*z-index: 1000!important;*/
     -moz-border-bottom-left-radius: 50px;
     -moz-border-top-right-radius: 50px;
     border-bottom-right-radius: 50px;
@@ -613,31 +735,40 @@ div.list-link.sidebar-right-round{
 }
 
 .list-img{
-    padding-left: 8px;
+    /*padding-left: 8px;*/
+    padding-right: 10px;
     padding-top:20px;
 }
 
-.edit-img{
-    padding-left: 8px;
+.edit-img, .convert-img{
+    /*padding-left: 8px;*/
+    padding-right: 15px;
     padding-top:20px;
+}
+
+.assign-img{
+    padding-top:20px;
+    padding-right: 15px;
 }
 
 .print-img{
-    padding-left: 8px;
+    /*padding-left: 8px;*/
+    padding-right: 15px;
 }
 
 .pdf-img{
-    padding-left: 3px;
+    /*padding-left: 3px;*/
+    padding-right: 10px;
 }
 
 .cancel-img{
-    padding-left: 3px;
+    padding-right: 10px;
     padding-top:18px;
 }
 
 .save-img{
-    padding-left: 3px;
-    padding-top:18px;
+    padding-right: 10px;
+    padding-top:16px;
 }
 
 .border-black{
@@ -646,4 +777,30 @@ div.list-link.sidebar-right-round{
 
 .invoiceListToolbar{
     background: url('') #5c9ccc;
+    /*background: url('') #cce6ff;*/
+}
+
+.hoverMagnify{
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.borderBottom{
+    border-bottom: 1px solid grey!important;
+}
+
+.right-tab {
+    position: fixed;
+    width: 970px;
+    text-align: right;
+    padding-top: 200px;
+    z-index: -10;        
+}
+
+.invoice-status {
+    margin:auto auto;
+    width:100%;
+    text-align: center;
+    
+        
 }

@@ -4,11 +4,14 @@
  */
 package com.saake.invoicer.reports;
 
-import com.saake.invoicer.entity.CustomerVehicle;
+import com.saake.invoicer.entity.Vehicle;
 import com.saake.invoicer.entity.Invoice;
 import com.saake.invoicer.entity.InvoiceItems;
+import com.saake.invoicer.entity.WorkOrder;
+import com.saake.invoicer.entity.WorkOrderItems;
 import com.saake.invoicer.model.InvoiceItemsData;
 import com.saake.invoicer.model.InvoiceReportData;
+import com.saake.invoicer.model.WorkOrderReportData;
 import com.saake.invoicer.util.JsfUtil;
 import com.saake.invoicer.util.Utils;
 import java.awt.print.PageFormat;
@@ -21,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +69,8 @@ public class ReportHelper {
             InvoiceReportData dat = new InvoiceReportData();
             
             dat.setAmount(inv.getAmount());
+            dat.setPaidAmount(inv.getTransactionAmount());
+            dat.setBalanceAmount(inv.getAmount() - inv.getTransactionAmount());
             dat.setDiscount(inv.getDiscount());
             dat.setInvoiceDate(inv.getInvoiceDate());
             dat.setInvoiceNumber(Utils.notBlank(inv.getInvoiceNum())? inv.getInvoiceId() + " - " +inv.getInvoiceNum(): inv.getInvoiceId().toString());            
@@ -78,9 +84,10 @@ public class ReportHelper {
             dat.setLastName(inv.getCustomerId().getLastName());
             dat.setStateProvince(inv.getCustomerId().getStateProvince());
             dat.setMobileNum(inv.getCustomerId().getMobileNum());            
+            dat.setInvoiceDetails(inv.getInvoiceDetails());            
             
             if(Utils.notEmpty(inv.getCustomerId().getCustomerVehicles())){
-                CustomerVehicle veh = inv.getCustomerId().getCustomerVehicles().get(0);
+                Vehicle veh = inv.getCustomerId().getCustomerVehicles().get(0);
                 dat.setMake(veh.getMake());            
                 dat.setMileage(veh.getMileage());            
                 dat.setModel(veh.getModel());            
@@ -93,8 +100,52 @@ public class ReportHelper {
         return dataList;
     }
         
-    private static void streamPdf(Invoice inv, Boolean download) throws IOException {
-         byte[] pdfByteArray = generatePdfFromJasperTemplate(buildDataListForInvoiceReport(inv), "saakeInvoice.jasper");
+    public static List<WorkOrderReportData> buildDataListForWorkOrderReport(WorkOrder wo) {
+    
+        List<WorkOrderReportData> dataList = new ArrayList<>();
+        if(wo != null){
+            WorkOrderReportData dat = new WorkOrderReportData();
+            
+            dat.setAmount(wo.getAmount());
+            dat.setWorkOrderDate(wo.getWorkOrderDate());
+            dat.setWorkOrderItems(convertWorkOrderItems(wo.getWorkOrderItems()));
+            dat.setAddressLine1(wo.getCustomerId().getAddressLine1());
+            dat.setAddressLine2(wo.getCustomerId().getAddressLine2());
+            dat.setCity(wo.getCustomerId().getCity());
+            dat.setCompanyName(wo.getCustomerId().getCompanyName());
+            dat.setEmail(wo.getCustomerId().getEmail());
+            dat.setFirstName(wo.getCustomerId().getFirstName());
+            dat.setLastName(wo.getCustomerId().getLastName());
+            dat.setStateProvince(wo.getCustomerId().getStateProvince());
+            dat.setMobileNum(wo.getCustomerId().getMobileNum());            
+            dat.setNotes(wo.getNotes());            
+            dat.setWorkOrderId(wo.getWorkOrderId());            
+            
+            if(Utils.notEmpty(wo.getCustomerId().getCustomerVehicles())){
+                Vehicle veh = wo.getCustomerId().getCustomerVehicles().get(0);
+                dat.setMake(veh.getMake());            
+                dat.setMileage(veh.getMileage());            
+                dat.setModel(veh.getModel());            
+                dat.setVin(veh.getVin());            
+                dat.setYear(veh.getYear());
+            }
+            
+            dataList.add(dat);
+        }
+        return dataList;
+    }
+        
+    private static <T> void streamPdf(T obj, Boolean download) throws IOException {
+        byte[] pdfByteArray = null;
+        String type = "";
+        if(obj instanceof Invoice){
+            type = "Invoice";
+            pdfByteArray = generatePdfFromJasperTemplate(buildDataListForInvoiceReport((Invoice)obj), "saakeInvoice.jasper");
+        }
+        else if(obj instanceof WorkOrder){
+            type = "WorkOrder";
+            pdfByteArray = generatePdfFromJasperTemplate(buildDataListForWorkOrderReport((WorkOrder)obj), "saakeWorkOrder.jasper");
+        } 
 
         if (pdfByteArray != null && pdfByteArray.length > 0) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -105,7 +156,7 @@ public class ReportHelper {
                 ec.setResponseContentType("application/pdf");
                 ec.setResponseContentLength(baos.size());
                 if(download){
-                    ec.setResponseHeader("Content-Disposition", "attachment; filename=saake-invoice.pdf");
+                    ec.setResponseHeader("Content-Disposition", "attachment; filename=saake-"+type+".pdf");
                 }
                 ec.setResponseHeader("Expires", "0");
                 ec.setResponseHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
@@ -119,11 +170,7 @@ public class ReportHelper {
                 baos.close();
             }
         }
-    }
-    
-    public static void downloadPDF(Invoice inv) throws IOException {
-        streamPdf(inv, Boolean.TRUE);
-    }
+    }    
     
     public static <T> byte[] generatePdfFromJasperTemplate(List<T> dataList, String template) {
         byte[] pdfByteArray = null;
@@ -211,8 +258,7 @@ public class ReportHelper {
 
     }
      
-    public static void printJasperReport(JasperPrint jasperPrint) throws Exception {
-        
+    public static void printJasperReport(JasperPrint jasperPrint) throws Exception {        
         try {
 
             PrinterJob job = PrinterJob.getPrinterJob();
@@ -266,11 +312,36 @@ public class ReportHelper {
             throw new Exception("Error exporting pdf", e);
         }
     }
+    
+    public static void printWorkOrder(WorkOrder wo) throws Exception{
+        try {
+            JasperPrint jasperPrint = 
+                    fillJasperTemplate("saakeWorkOrder.jasper", "JAVABEAN", buildDataListForWorkOrderReport(wo), null);
 
-    public static void viewPDF(Invoice inv) throws IOException {
+            if (jasperPrint != null) {
+                printJasperReport(jasperPrint);
+            }
+        } catch (Exception e) {
+            throw new Exception("Error exporting pdf", e);
+        }
+    }
+
+    public static void viewInvoicePDF(Invoice inv) throws IOException {
         streamPdf(inv, Boolean.FALSE);
     }
 
+    public static void downloadInvoicePDF(Invoice inv) throws IOException {
+        streamPdf(inv, Boolean.TRUE);
+    }
+    
+    public static void viewWorkOrderPDF(WorkOrder wo) throws IOException {
+        streamPdf(wo, Boolean.FALSE);
+    }
+
+    public static void downloadWorkOrderPDF(WorkOrder wo) throws IOException {
+        streamPdf(wo, Boolean.TRUE);
+    }
+    
     private static List<InvoiceItemsData> convertInvoiceItems(List<InvoiceItems> invoiceItems) {
         List<InvoiceItemsData> list = new ArrayList<>();
         
@@ -278,9 +349,9 @@ public class ReportHelper {
             InvoiceItemsData itData = new InvoiceItemsData();
             
             itData.setAmount(invItem.getAmount());
-            itData.setDescription(invItem.getItem().getDescription());
+            itData.setDescription(invItem.getDescription());
             itData.setQuantity(invItem.getQuantity());
-            itData.setUnitCost(invItem.getItem().getUnitCost());
+            itData.setUnitCost(invItem.getUnitPrice());
             
             list.add(itData);
         }
@@ -301,4 +372,21 @@ public class ReportHelper {
             }
         }
     };
+
+    private static List<InvoiceItemsData> convertWorkOrderItems(Collection<WorkOrderItems> workOrderItems) {
+       List<InvoiceItemsData> list = new ArrayList<>();
+        
+        for(WorkOrderItems invItem : workOrderItems){
+            InvoiceItemsData itData = new InvoiceItemsData();
+            
+            itData.setAmount(invItem.getAmount());
+            itData.setDescription(invItem.getDescription());
+            itData.setQuantity(invItem.getQuantity());
+            itData.setUnitCost(invItem.getUnitPrice());
+            
+            list.add(itData);
+        }
+        
+        return list;
+    }
 }

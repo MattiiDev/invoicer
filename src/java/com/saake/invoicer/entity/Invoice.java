@@ -4,6 +4,9 @@
  */
 package com.saake.invoicer.entity;
 
+import com.google.common.base.Objects;
+import com.saake.invoicer.util.InvoiceStatusEnum;
+import com.saake.invoicer.util.TransTypeEnum;
 import com.saake.invoicer.util.Utils;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +18,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,6 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,7 +42,7 @@ import org.primefaces.model.SelectableDataModel;
  * @author jn
  */
 @Entity
-@Table(name = "simple_invoice")
+@Table(name = "invoice")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Invoice.findAll", query = "SELECT i FROM Invoice i"),
@@ -46,39 +51,53 @@ import org.primefaces.model.SelectableDataModel;
     @NamedQuery(name = "Invoice.findByInvoiceDetails", query = "SELECT i FROM Invoice i WHERE i.invoiceDetails = :invoiceDetails"),
     @NamedQuery(name = "Invoice.findByInvoiceDate", query = "SELECT i FROM Invoice i WHERE i.invoiceDate = :invoiceDate")})
 public class Invoice implements Serializable, SelectableDataModel<Invoice> {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Basic(optional = false)
-//    @NotNull
     @Column(name = "INVOICE_ID")
     private Integer invoiceId;
     
     @Column(name = "INVOICE_NUM")
     private String invoiceNum;
     
-//    @Size(max = 250)
     @Column(name = "INVOICE_DETAILS")
     private String invoiceDetails;
     
     @Column(name = "STATUS")
     private String status;
     
-//    @Basic(optional = false)
-//    @NotNull
     @Column(name = "INVOICE_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)       
     private Date invoiceDate;
     
-    @Column(name = "DISCOUNT")
+    @Column(name = "DISCOUNT")    
     private Double discount;
     
     @Column(name = "AMOUNT")
     private Double amount;
     
-//    @OneToMany(mappedBy = "invoiceId")
-//    private Collection<Transactions> transactions;
-//    
+    @Column(name = "ADVANCE_AMT")
+    private Double advanceAmount;
+    
+    @Column(name = "CREATE_TS")
+    @Temporal(TemporalType.TIMESTAMP)
+    
+    private Date createTs;
+    @Column(name = "UPDATE_TS")
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTs;
+    
+    @Column(name = "CREATED_BY")
+    private String createdBy;
+    
+    @Column(name = "UPDATED_BY")
+    private String updatedBy;
+    
+    @OneToMany(mappedBy = "invoiceId", cascade = CascadeType.ALL)
+    private Collection<Transaction> transactions;
+    
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
     private Collection<InvoiceItems> invoiceItems;
     
@@ -86,9 +105,13 @@ public class Invoice implements Serializable, SelectableDataModel<Invoice> {
     @ManyToOne
     private Customer customerId;
     
-//    @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID")
-//    @ManyToOne
-//    private Orders order;
+    @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
+    @ManyToOne
+    private Vehicle vehicle;
+    
+    @JoinColumn(name = "WORK_ORDER_ID", referencedColumnName = "WORK_ORDER_ID")
+    @OneToOne
+    private WorkOrder workOrder;
 
     public Invoice() {
     }
@@ -134,21 +157,22 @@ public class Invoice implements Serializable, SelectableDataModel<Invoice> {
         this.invoiceDate = invoiceDate;
     }
 
-    //    @XmlTransient
-    //    public Collection<Transactions> getTransactionCollection() {
-    //        return transactions;
-    //    }
-    //
-    //    public void setTransactionCollection(Collection<Transactions> transactions) {
-    //        this.transactions = transactions;
-    //    }
-    //    public Orders getOrder() {
-    //        return order;
-    //    }
-    //
-    //    public void setOrder(Orders order) {
-    //        this.order = order;
-    //    }
+    public Collection<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(Collection<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    public WorkOrder getWorkOrder() {
+        return workOrder;
+    }
+
+    public void setWorkOrder(WorkOrder workOrder) {
+        this.workOrder = workOrder;
+    }
+
     public Double getDiscount() {
         return discount;
     }
@@ -172,7 +196,7 @@ public class Invoice implements Serializable, SelectableDataModel<Invoice> {
     public void setCustomerId(Customer customerId) {
         this.customerId = customerId;
     }
-    
+
     public Collection<InvoiceItems> getInvoiceItems() {
         return invoiceItems;
     }
@@ -183,7 +207,11 @@ public class Invoice implements Serializable, SelectableDataModel<Invoice> {
 
     public void setInvoiceItems(Collection<InvoiceItems> invoiceItems) {
         this.invoiceItems = invoiceItems;
-    }        
+    }
+
+    public String getStatusDisplay() {
+        return Utils.notBlank(status)? InvoiceStatusEnum.valueOf(status).getValue() : "";
+    }
 
     public String getStatus() {
         return status;
@@ -192,7 +220,55 @@ public class Invoice implements Serializable, SelectableDataModel<Invoice> {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public Date getCreateTs() {
+        return createTs;
+    }
+
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
+    }
+
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Double getAdvanceAmount() {
+        return advanceAmount;
+    }
+
+    public void setAdvanceAmount(Double advanceAmount) {
+        this.advanceAmount = advanceAmount;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -217,17 +293,35 @@ public class Invoice implements Serializable, SelectableDataModel<Invoice> {
     public String toString() {
         return "com.saake.invoicer.entity.Invoice[ invoiceId=" + invoiceId + " ]";
     }
-    
-    public Double getItemTotalAmount(){
+
+    public Double getItemTotalAmount() {
         Double tot = 0.0;
-         for (InvoiceItems oItm : getInvoiceItems()) {
-            if (oItm.getAmount()!= null) {
+        for (InvoiceItems oItm : getInvoiceItems()) {
+            if (oItm.getAmount() != null) {
                 tot = tot + oItm.getAmount();
             }
         }
-         
-         return tot;
-    }    
+
+        return tot;
+    }
+
+    public Double getTransactionAmount() {
+        Double tot = 0.0;
+        if (getTransactions() != null) {
+            for (Transaction trans : getTransactions()) {
+                if (trans.getTransType().equals(TransTypeEnum.PAYMENT.getValue())) {
+                    if (trans.getAmount() != null) {
+                        tot = tot + trans.getAmount();
+                    }
+                }
+                if (trans.getTransType().equals(TransTypeEnum.REFUND.getValue())) {
+                    tot = tot - trans.getAmount();
+                }
+            }
+        }
+
+        return tot;
+    }
 
     @Override
     public Object getRowKey(Invoice t) {
@@ -240,8 +334,27 @@ public class Invoice implements Serializable, SelectableDataModel<Invoice> {
     }
 
     public boolean isEmpty() {
-        return  this.customerId == null && (this.amount == null || this.amount == 0) && this.invoiceDate == null && (this.discount == null ||  this.discount == 0)
-                && Utils.isBlank(this.invoiceDetails) && this.invoiceId == null && Utils.isEmpty(this.invoiceItems) && this.invoiceNum == null &&
-                Utils.isBlank(this.status);
+        return this.customerId == null && this.vehicle == null && (this.amount == null || this.amount == 0) && this.invoiceDate == null && (this.discount == null || this.discount == 0)
+                && Utils.isBlank(this.invoiceDetails) && this.invoiceId == null && Utils.isEmpty(this.invoiceItems) && this.invoiceNum == null
+                && Utils.isBlank(this.status);
+    }
+    
+        
+    public boolean isPaid(){
+        return Objects.equal(status,InvoiceStatusEnum.PAID.name());
+    }
+    
+    public boolean isDraft(){
+        return Objects.equal(status,InvoiceStatusEnum.DRAFT.name());
+    }
+    
+    public String getStatusColor(){
+        return Utils.notBlank(status)? 
+                status.equals(InvoiceStatusEnum.DRAFT.name())? "navy":
+                status.equals(InvoiceStatusEnum.DELETED.name())? "gray":
+                status.equals(InvoiceStatusEnum.CLOSED.name())? "gray":
+                status.equals(InvoiceStatusEnum.OVERPAY.name())? "red":
+                status.equals(InvoiceStatusEnum.PARTIALPAY.name())? "orange":
+                status.equals(InvoiceStatusEnum.PAID.name())? "limegreen": "blue":"";
     }
 }

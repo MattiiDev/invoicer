@@ -4,66 +4,92 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
 
     <ui:composition template="/template/template.xhtml">       
         <ui:define name="title">
             <h:outputText value="View Invoice"></h:outputText>
         </ui:define>
-        <ui:define name="sidebar-right">
-            <p:spacer height="150px"/>
 
-            <h:form>
-                <div class="list-link sidebar-right-round" style="float:left">
-                    <h:commandLink action="#{invoiceCtrl.redirectToList}">
-                        <h:graphicImage id="list-img" styleClass="list-img" url="/resources/images/back_arrow.png" alt="List"/>
-                        <p:tooltip for="list-img" value="Back To List" />
-                    </h:commandLink> 
-                </div>
-                <div class="edit-link sidebar-right-round" style="float:left; clear:left">
-                    <h:commandLink action="#{invoiceCtrl.prepareEdit}">
-                        <h:graphicImage id="edit-img" styleClass="edit-img" url="/resources/images/edit-black-2.png" alt="Edit"/>
-                        <p:tooltip for="edit-img" value="Edit Invoice" />
-                    </h:commandLink> 
-                </div>
-                <div class="print-link sidebar-right-round" style="float:left; clear:left">
-                    <h:commandLink action="#{invoiceCtrl.printInvoice}" >
-                        <h:graphicImage id="print-img" url="/resources/images/print.png" alt="Print" width="24" height="24" styleClass="print-img" style="padding-top: 24px;padding-left:5px"  />
-                        <p:tooltip for="print-img" value="Print Invoice" />
-                    </h:commandLink> 
-                </div>
-                <div class="pdf-link sidebar-right-round" style="float:left;clear:left">
-                    <h:commandLink action="#{invoiceCtrl.viewPdf}" target="_new" >
-                        <h:graphicImage id="pdf-img" url="/resources/images/pdficon_large.png" alt="PDF" styleClass="pdf-img" style="padding-top: 20px;vertical-align: middle"  />
-                        <p:tooltip for="pdf-img" value="View Invoice as PDF" />
-                    </h:commandLink> 
-                </div>                
-            </h:form>
-        </ui:define>  
         <ui:define name="content">  
             <ui:include src="/template/messages.xhtml">
                 <ui:param name="source" value="viewInvoice"/>
             </ui:include>
 
-            <h:form prependId="false">  
+            <h:form prependId="false"> 
+                <!--                <div >
+                                    <div class="invoice-status borderRound15" style="background-color: #e6e6e6; width: 10%; text-align: center">
+                                        <h:outputText value="#{invoiceCtrl.current.statusDisplay}" style="color:#{invoiceCtrl.current.statusColor}; " styleClass="label2" />
+                                    </div>
+                                </div>-->
+                <div class="right-tab" style="top: 10%;">
+                    <h:commandLink action="#{invoiceCtrl.redirectToList}" styleClass="sidebar-right-round">
+                        <h:graphicImage id="list-img" styleClass="list-img" url="/resources/images/back_arrow.png" alt="List"/>
+                        <p:tooltip for="list-img" value="Back To List" />
+                    </h:commandLink> 
+                    <h:commandLink action="#{invoiceCtrl.prepareEdit}" styleClass="sidebar-right-round" style="margin-top:75px;margin-right:-50px">
+                        <h:graphicImage id="edit-img" styleClass="edit-img" url="/resources/images/edit-black-2.png" alt="Edit"/>
+                        <p:tooltip for="edit-img" value="Edit Invoice" />
+                    </h:commandLink> 
+                    <p:commandLink styleClass="sidebar-right-round" style="margin-top:150px;margin-right:-50px;"
+                                   oncomplete="addPmtPopup.show()" actionListener="#{invoiceCtrl.initCurrentTransaction}">
+                        <h:graphicImage id="pay-img" styleClass="pay-img" url="/resources/images/pay-notes.png" alt="Pay" 
+                                        style="margin-right:12px;padding-top: 15px;color: green" />
+                        <p:tooltip for="pay-img" value="Pay Invoice" />
+                        <h:graphicImage style="float:right; margin-top: 5px; margin-left: -22px " alt="Add" url="/resources/images/green_tick_16.png" rendered="#{invoiceCtrl.current.paid}"/>
+                        
+                    </p:commandLink> 
+                    <!--                    <div class="pay-div sidebar-right-round" style="margin-top:150px;margin-right:-50px;cursor: pointer">
+                                            <div class="payFullAmtClass floatLeft hidden">
+                                            <h:commandLink value="Pay Full" />
+                                            <br/>
+                                            <br/>
+                                            <p:commandLink value="Pay Part"  />
+                                            </div>
+                                                <h:graphicImage id="pay-img" styleClass="pay-img" 
+                                                                onclick="jQuery('.pay-div').css('margin-right', '-150px');jQuery('.pay-div').css('width', '150px');jQuery('.payFullAmtClass').removeClass('hidden')" 
+                                                                ondblclick="jQuery('.pay-div').css('margin-right', '-50px');jQuery('.pay-div').css('width', '50px');jQuery('.payFullAmtClass').addClass('hidden')" 
+                                                                url="/resources/images/pay-notes.png" alt="Pay" style="margin-right:12px;padding-top: 15px;" />
+                                                <p:tooltip for="pay-img" value="Pay Invoice" />
+                                        </div>-->
+                    <h:commandLink action="#{invoiceCtrl.printInvoice}" styleClass="sidebar-right-round" style="margin-top:225px;margin-right:-50px" >
+                        <h:graphicImage id="print-img" url="/resources/images/print.png" alt="Print" width="24" height="24" styleClass="print-img" style="padding-top: 24px;padding-left:5px" />
+                        <p:tooltip for="print-img" value="Print Invoice" />
+                    </h:commandLink> 
+                    <h:commandLink action="#{invoiceCtrl.viewPdf}" target="_new" styleClass="sidebar-right-round" style="margin-top:300px;margin-right:-50px">
+                        <h:graphicImage id="pdf-img" url="/resources/images/pdficon_large.png" alt="PDF" styleClass="pdf-img" style="padding-top: 20px;vertical-align: middle"  />
+                        <p:tooltip for="pdf-img" value="View Invoice as PDF" />
+                    </h:commandLink>                      
+                </div>
                 <f:metadata>
                     <f:viewParam name="id" value="#{invoiceCtrl.current.invoiceId}" />
                 </f:metadata>
-                <p:panel styleClass="noBorder" style="color: #1584de;background: #e6e6e6 url('');">                  
+                <p:panel id="invoicePanel" styleClass="noBorder" style="color: #1584de;background: #e6e6e6 url('');">     
+
                     <h:panelGrid width="100%" columns="1" >                        
-                        <h:panelGrid width="66%" columns="2" cellpadding="3" style="margin:auto auto;" columnClasses="label5 textAlignRight noBorder,noBorder" >                        
-                            <h:outputText value="Invoice" />
+                        <h:panelGroup layout="block" style="text-align: center;">
+                            <h:outputText value="Invoice" styleClass="label5 padRight10" />
                             <h:panelGroup>
                                 <h:outputText id="invoiceId" value="#{invoiceCtrl.current.invoiceId}" styleClass="font20"/>
                                 <h:outputText value=" - " rendered="#{not empty invoiceCtrl.current.invoiceNum}" styleClass="font20"/>
                                 <h:outputText id="invoiceNum" value="#{invoiceCtrl.current.invoiceNum}" styleClass="font20"/>
                             </h:panelGroup>
-                            <h:outputText value="Date of Invoice" styleClass="label3 textAlignRight" />
-                            <h:outputText value="#{invoiceCtrl.current.invoiceDate}" styleClass="font16">
-                                <f:convertDateTime type="date"/>
-                            </h:outputText>
-                        </h:panelGrid>
+                        </h:panelGroup>
                         <p:separator style="margin: 5px 0 5px 0" />
+
+                        <h:panelGroup layout="block" style="text-align: center;margin: auto auto;width: 98%; " styleClass="borderRound10 floatLeft viewInfo" >
+                            <h:panelGroup layout="block" style="float:left">
+                                <h:outputText value="Date " styleClass="label3 padRight10" />
+                                <h:outputText value="#{invoiceCtrl.current.invoiceDate}" styleClass="font16">
+                                    <f:convertDateTime type="date"/>
+                                </h:outputText>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" style="float:right">
+                                <h:outputText value="Status" styleClass="label3 padRight10" />
+                                <h:outputText value="#{invoiceCtrl.current.statusDisplay}" style="color:#{invoiceCtrl.current.statusColor}; " styleClass="font16 bold" />
+                            </h:panelGroup>
+                        </h:panelGroup>
                         <h:panelGroup>
                             <h:panelGrid width="49%" columns="1" columnClasses="noBorder" styleClass="borderRound10 floatLeft viewInfo" style="height: 140px" >                        
                                 <h:outputText value="TO" styleClass="font14 bold"/>
@@ -86,100 +112,156 @@
                         </h:panelGroup>         
                         <h:panelGrid width="100%" columns="6" columnClasses="noBorder bold,noBorder textAlignLeft,noBorder bold,noBorder textAlignLeft,noBorder bold ,noBorder textAlignLeft" styleClass="borderRound10 viewInfo" >                                                     
                             <h:outputText value="Year" />
-                            <h:outputText value="#{invoiceCtrl.custVehicle.year}" />
+                            <h:outputText value="#{invoiceCtrl.current.vehicle.year}" />
                             <h:outputText value="Make" />
-                            <h:outputText value="BMW" />
+                            <h:outputText value="#{invoiceCtrl.current.vehicle.make}" />
                             <h:outputText value="Model" />
-                            <h:outputText value="#{invoiceCtrl.custVehicle.model}" />
+                            <h:outputText value="#{invoiceCtrl.current.vehicle.model}" />
                             <h:outputText value="Mileage" />
-                            <h:outputText value="#{invoiceCtrl.custVehicle.mileage}"/>
+                            <h:outputText value="#{invoiceCtrl.current.vehicle.mileage}"/>
                             <h:outputText value="VIN #" />
-                            <h:outputText value="#{invoiceCtrl.custVehicle.vin}"/>
+                            <h:outputText value="#{invoiceCtrl.current.vehicle.vin}"/>
                         </h:panelGrid>
                     </h:panelGrid>
-                    <p:spacer height="10px"/>                    
+                    <p:spacer height="10px"/>      
+                    <h:panelGrid width="100%" columns="1" columnClasses="noBorder" styleClass="borderRound10 viewInfo" >                        
+                        <h:outputText value="Invoice Notes" styleClass="font14 bold"/>
+                        <h:outputText value="#{invoiceCtrl.current.invoiceDetails}"/>
+                    </h:panelGrid> 
+                    <p:spacer height="10px"/> 
                     <p:dataTable style="width: 100%;" styleClass="invoiceItemClass" 
                                  value="#{invoiceCtrl.current.invoiceItemsAsList}" var="invItem"
                                  rowIndexVar="row">
-                        <p:column >
-                            <p:spacer/>
+                        <p:column headerText="#" >
+                            <h:outputText value="#{row + 1}" style="font-size: 10px; color: steelblue" />                            
+                        </p:column>                        
+                        <p:column headerText="Description" width="70%" >
+                            <h:outputText value="#{invItem.description}" style="width:100%"/>
                         </p:column>
                         <p:column headerText="Qty" >
                             <h:outputText value="#{invItem.quantity}" />                            
                         </p:column>
-                        <p:column headerText="Description" width="70%" >
-                            <h:outputText value="#{invItem.item.description}" style="width:100%"/>
-                        </p:column>
                         <p:column headerText="Unit Price" width="20%" >
-                            <h:outputText value="#{invItem.item.unitCost}" />                             
+                            <h:outputText value="#{invItem.unitPrice}" />                             
                         </p:column>
                         <p:column headerText="Amount" width="20%" style="text-align:right;padding-right: 20px">
                             <h:outputText value="#{invItem.amount}"/>
                         </p:column>                        
                         <f:facet name="footer">     
                             <table class="invoiceTableFooter" cellpadding="0" cellspacing="0" width="100%">
-                            <tfoot style="color:#2e6e9e">
-                                <tr style="border-bottom: 1px solid lightsteelblue;" >
-                                    <td >
-                                         <span></span>
-                                    </td>
-                                    <td >
-                                        <span></span>
-                                    </td>
-                                    <td style="width:80%">
-                                        <span></span>
-                                    </td>
-                                    <td style="width:10%;text-align: right">
-                                        <h:outputText value="Subtotal"/>                                        
-                                    </td>
-                                    <td style="width:10%;text-align: right;">
-                                        <h:outputText value="#{invoiceCtrl.current.itemTotalAmount}"/>
-                                    </td>
-                                </tr>                                
-                                <tr >
-                                     <td  style="width:80%">
-                                        <span></span>
-                                    </td>
-                                    <td style="width:20%;text-align: right">
-                                        <h:outputText value="Discount"/>
-                                    </td>
-                                    <td style="width:20%;text-align: right">
-                                        <h:outputText value="#{invoiceCtrl.current.discount}">
-                                        <f:convertNumber maxFractionDigits="2" groupingUsed="true"/>
-                                    </h:outputText>
-                                    </td>
-                                    <td style="width:20%;text-align: right; font-size: 16px">
-                                        <h:outputText value="Total"/>
-                                    </td>                                    
-                                     <td width="14%" style="width:20%;text-align: right;font-weight: bold;font-size: 16px; color:midnightblue">
-                                    <h:outputText value="#{invoiceCtrl.current.amount}">
-                                        <f:convertNumber currencyCode="SAR" maxFractionDigits="2" groupingUsed="true" type="currency" currencySymbol="SAR"/>
-                                    </h:outputText>
-                                </td>
-                                </tr>
-                            </tfoot>                                                      
-                        </table>                                                                                                                 
+                                <tfoot style="color:#2e6e9e">
+                                    <tr style="border-bottom: 1px solid lightsteelblue;" >
+                                        <td >
+                                            <span></span>
+                                        </td>
+                                        <td >
+                                            <span></span>
+                                        </td>
+                                        <td style="width:80%">
+                                            <span></span>
+                                        </td>
+                                        <td style="width:10%;text-align: right">
+                                            <h:outputText value="Subtotal"/>                                        
+                                        </td>
+                                        <td style="width:10%;text-align: right;">
+                                            <h:outputText value="#{invoiceCtrl.current.itemTotalAmount}"/>
+                                        </td>
+                                    </tr>                                
+                                    <tr >
+                                        <td  style="width:80%">
+                                            <span></span>
+                                        </td>
+                                        <td style="width:20%;text-align: right">
+                                            <h:outputText value="Discount"/>
+                                        </td>
+                                        <td style="width:20%;text-align: right">
+                                            <h:outputText value="SAR "/>
+                                            <h:outputText value="#{invoiceCtrl.current.discount}">
+                                                <f:convertNumber maxFractionDigits="2" groupingUsed="true"/>
+                                            </h:outputText>
+                                        </td>
+                                        <td style="width:20%;text-align: right; font-size: 16px">
+                                            <h:outputText value="Total"/>
+                                        </td>                                    
+                                        <td width="14%" style="width:20%;text-align: right;font-weight: bold;font-size: 16px; color:midnightblue">
+                                            <h:outputText value="SAR "/>
+
+                                            <h:outputText value="#{invoiceCtrl.current.amount}">
+                                                <f:convertNumber maxFractionDigits="2" groupingUsed="true"/>
+                                            </h:outputText>
+                                        </td>
+                                    </tr>
+                                    <c:if test="#{invoiceCtrl.current.status == 'OVERPAY' or invoiceCtrl.current.status == 'PAID' or invoiceCtrl.current.status == 'PARTIALPAY'}">                                        
+                                        <tr >
+                                            <td  style="width:80%">
+                                                <span></span>
+                                            </td>
+                                            <td  style="width:20%">
+                                                <span></span>
+                                            </td>
+                                            <td  style="width:20%">
+                                                <span></span>
+                                            </td>
+                                            <td style="width:20%;text-align: right">
+                                                <h:outputText value="Paid"/>
+                                            </td>
+                                            <td style="width:20%;width:20%;text-align: right;font-weight: bold;font-size: 16px; color: lightseagreen">
+                                                <h:outputText value="SAR "/>
+                                                <h:outputText value="#{invoiceCtrl.current.transactionAmount}">
+                                                    <f:convertNumber maxFractionDigits="2" groupingUsed="true"/>
+                                                </h:outputText>
+                                            </td>                                    
+                                        </tr>
+                                    </c:if>
+                                    <c:if test="#{invoiceCtrl.current.status == 'OVERPAY' or invoiceCtrl.current.status == 'PARTIALPAY'}">
+                                        <tr >
+                                            <td  style="width:80%">
+                                                <span></span>
+                                            </td>
+                                            <td  style="width:20%">
+                                                <span></span>
+                                            </td>
+                                            <td  style="width:20%">
+                                                <span></span>
+                                            </td>
+                                            <td style="width:20%;text-align: right">
+                                                <h:outputText value="Balance"/>
+                                            </td>
+                                            <td style="width:20%;width:20%;text-align: right;font-weight: bold;font-size: 16px; color: lightcoral">
+                                                <h:outputText value="SAR "/>
+                                                <h:outputText value="#{invoiceCtrl.current.amount - invoiceCtrl.current.transactionAmount}">
+                                                    <f:convertNumber maxFractionDigits="2" groupingUsed="true"/>
+                                                </h:outputText>
+                                            </td>                                    
+                                        </tr>
+                                    </c:if>
+                                </tfoot>                                                      
+                            </table>                                                                                                                 
                         </f:facet>                        
-                    </p:dataTable>          
-                    <p:spacer height="20px"/>      
-                    <h:panelGrid width="100%" columns="1" columnClasses="noBorder" styleClass="borderRound10 viewInfo" >                        
-                        <h:outputText value="Invoice Notes" styleClass="font14 bold"/>
-                        <h:outputText value="#{invoiceCtrl.current.invoiceDetails}"/>
-                    </h:panelGrid>                                       
+                    </p:dataTable>   
+                    <p:spacer height="20px"/>        
+
                 </p:panel>
-                 <h:panelGroup style="width:35%; margin:auto auto; overflow: hidden;" layout="block">
-                     <p:commandButton style="font-size:18px;float: right;margin-top: 10px;vertical-align: middle " ajax="true" rendered="false"
-                                         action="#{invoiceCtrl.prepareList()}" value="Back to List" icon="ui-icon-circle-arrow-w"  />
-                        <p:commandButton style="font-size:18px;float: left;margin-top: 10px;vertical-align: middle " value="Print" icon="ui-icon-print"
-                                         oncomplete="window.location.href = '/invoicer/viewDocument.content?generateInvoicePdf=Y'"
-                                         action="#{invoiceCtrl.generateInvoicePdfAction}" rendered="false"/>                       
-                        
-                        <p:commandButton style="font-size:18px;float: left;margin-top: 10px;vertical-align: middle " value="PDF" icon="ui-icon-print" ajax="false"
-                                         action="#{invoiceCtrl.downloadPdf}" rendered="false"/>
-                        <p:commandButton style="font-size:18px;float: left;margin-top: 10px;vertical-align: middle " value="Print" icon="ui-icon-print" ajax="false"
-                                         action="#{invoiceCtrl.printInvoice}" rendered="false" />
-                      
-                    </h:panelGroup>
+                <h:panelGroup style="width:35%; margin:auto auto; overflow: hidden;" layout="block">
+                    <p:commandButton style="font-size:18px;float: right;margin-top: 10px;vertical-align: middle " ajax="true" rendered="false"
+                                     action="#{invoiceCtrl.prepareList()}" value="Back to List" icon="ui-icon-circle-arrow-w"  />
+                    <p:commandButton style="font-size:18px;float: left;margin-top: 10px;vertical-align: middle " value="Print" icon="ui-icon-print"
+                                     oncomplete="window.location.href = '/invoicer/viewDocument.content?generateInvoicePdf=Y'"
+                                     action="#{invoiceCtrl.generateInvoicePdfAction}" rendered="false"/>                       
+
+                    <p:commandButton style="font-size:18px;float: left;margin-top: 10px;vertical-align: middle " value="PDF" icon="ui-icon-print" ajax="false"
+                                     action="#{invoiceCtrl.downloadPdf}" rendered="false"/>
+                    <p:commandButton style="font-size:18px;float: left;margin-top: 10px;vertical-align: middle " value="Print" icon="ui-icon-print" ajax="false"
+                                     action="#{invoiceCtrl.printInvoice}" rendered="false" />
+
+                </h:panelGroup>
+
+                <p:dialog id="addPmtDg" dynamic="true" widgetVar="addPmtPopup" modal="true" width="600" height="350" showEffect="clip" >  
+
+                    <ui:include src="/invoice/inc_createTransaction.xhtml">
+                        <ui:param name="controller" value="#{invoiceCtrl}"/>
+                    </ui:include>
+                </p:dialog> 
             </h:form>  
         </ui:define>                           
     </ui:composition>

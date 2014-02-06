@@ -9,6 +9,7 @@ import com.saake.invoicer.entity.UserLogin;
 import com.saake.invoicer.entity.UserUuidMap;
 import com.saake.invoicer.util.Utils;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -89,5 +90,16 @@ public class UserFacade{
     public void register(UserLogin userLogin) {
         userLogin.setCreateTs(new Date());
         em.persist(userLogin);
+    }
+
+    public List<User> findAll() {
+        try{
+            return em.createNamedQuery("User.findAll").getResultList();
+        }
+        catch(Exception e){
+            log.error("Error finding all users", e);
+        }
+        
+        return null;
     }
 }

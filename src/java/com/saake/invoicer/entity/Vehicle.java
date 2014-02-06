@@ -4,6 +4,7 @@
  */
 package com.saake.invoicer.entity;
 
+import com.google.common.base.Objects;
 import com.saake.invoicer.util.Utils;
 import java.io.Serializable;
 import java.util.Date;
@@ -29,24 +30,24 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author jn
  */
 @Entity
-@Table(name = "customer_vehicle")
+@Table(name = "vehicle")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CustomerVehicle.findAll", query = "SELECT c FROM CustomerVehicle c"),
-    @NamedQuery(name = "CustomerVehicle.findByCustVehicleId", query = "SELECT c FROM CustomerVehicle c WHERE c.custVehicleId = :custVehicleId"),
-    @NamedQuery(name = "CustomerVehicle.findByMake", query = "SELECT c FROM CustomerVehicle c WHERE c.make = :make"),
-    @NamedQuery(name = "CustomerVehicle.findByModel", query = "SELECT c FROM CustomerVehicle c WHERE c.model = :model"),
-    @NamedQuery(name = "CustomerVehicle.findByVin", query = "SELECT c FROM CustomerVehicle c WHERE c.vin = :vin"),
-    @NamedQuery(name = "CustomerVehicle.findByCreateTs", query = "SELECT c FROM CustomerVehicle c WHERE c.createTs = :createTs"),
-    @NamedQuery(name = "CustomerVehicle.findByUpdateTs", query = "SELECT c FROM CustomerVehicle c WHERE c.updateTs = :updateTs"),
-    @NamedQuery(name = "CustomerVehicle.findByCreatedBy", query = "SELECT c FROM CustomerVehicle c WHERE c.createdBy = :createdBy"),
-    @NamedQuery(name = "CustomerVehicle.findByUpdatedBy", query = "SELECT c FROM CustomerVehicle c WHERE c.updatedBy = :updatedBy")})
-public class CustomerVehicle implements Serializable {
+    @NamedQuery(name = "Vehicle.findAll", query = "SELECT c FROM Vehicle c"),
+    @NamedQuery(name = "Vehicle.findByCustVehicleId", query = "SELECT c FROM Vehicle c WHERE c.vehicleId = :vehicleId"),
+    @NamedQuery(name = "Vehicle.findByMake", query = "SELECT c FROM Vehicle c WHERE c.make = :make"),
+    @NamedQuery(name = "Vehicle.findByModel", query = "SELECT c FROM Vehicle c WHERE c.model = :model"),
+    @NamedQuery(name = "Vehicle.findByVin", query = "SELECT c FROM Vehicle c WHERE c.vin = :vin"),
+    @NamedQuery(name = "Vehicle.findByCreateTs", query = "SELECT c FROM Vehicle c WHERE c.createTs = :createTs"),
+    @NamedQuery(name = "Vehicle.findByUpdateTs", query = "SELECT c FROM Vehicle c WHERE c.updateTs = :updateTs"),
+    @NamedQuery(name = "Vehicle.findByCreatedBy", query = "SELECT c FROM Vehicle c WHERE c.createdBy = :createdBy"),
+    @NamedQuery(name = "Vehicle.findByUpdatedBy", query = "SELECT c FROM Vehicle c WHERE c.updatedBy = :updatedBy")})
+public class Vehicle implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cust_vehicle_id")
-    private Integer custVehicleId;
+    @Column(name = "vehicle_id")
+    private Integer vehicleId;
     
     @Column(name = "year")
     private String year;
@@ -81,25 +82,25 @@ public class CustomerVehicle implements Serializable {
     @ManyToOne
     private Customer customerId;
 
-    public CustomerVehicle() {
+    public Vehicle() {
     }
 
-    public CustomerVehicle(Integer custVehicleId) {
-        this.custVehicleId = custVehicleId;
+    public Vehicle(Integer custVehicleId) {
+        this.vehicleId = custVehicleId;
     }
 
-    public CustomerVehicle(Integer custVehicleId, Date createTs, Date updateTs) {
-        this.custVehicleId = custVehicleId;
+    public Vehicle(Integer custVehicleId, Date createTs, Date updateTs) {
+        this.vehicleId = custVehicleId;
         this.createTs = createTs;
         this.updateTs = updateTs;
     }
 
     public Integer getCustVehicleId() {
-        return custVehicleId;
+        return vehicleId;
     }
 
     public void setCustVehicleId(Integer custVehicleId) {
-        this.custVehicleId = custVehicleId;
+        this.vehicleId = custVehicleId;
     }
 
     public String getMake() {
@@ -181,33 +182,54 @@ public class CustomerVehicle implements Serializable {
     public void setMileage(String mileage) {
         this.mileage = mileage;
     }
-    
+
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (custVehicleId != null ? custVehicleId.hashCode() : 0);
+        int hash = 7;
+        hash = 31 * hash + java.util.Objects.hashCode(this.vehicleId);
+        hash = 31 * hash + java.util.Objects.hashCode(this.year);
+        hash = 31 * hash + java.util.Objects.hashCode(this.make);
+        hash = 31 * hash + java.util.Objects.hashCode(this.model);
+        hash = 31 * hash + java.util.Objects.hashCode(this.mileage);
+        hash = 31 * hash + java.util.Objects.hashCode(this.vin);
+        hash = 31 * hash + java.util.Objects.hashCode(this.customerId);
         return hash;
     }
-
+    
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CustomerVehicle)) {
+        if (!(object instanceof Vehicle)) {
             return false;
         }
-        CustomerVehicle other = (CustomerVehicle) object;
-        if ((this.custVehicleId == null && other.custVehicleId != null) || (this.custVehicleId != null && !this.custVehicleId.equals(other.custVehicleId))) {
+        Vehicle other = (Vehicle) object;
+        if ((this.vehicleId == null && other.vehicleId != null) || (this.vehicleId != null && !this.vehicleId.equals(other.vehicleId))) {
             return false;
+        }
+        else{
+            if(!Objects.equal(this.make, other.make) || !Objects.equal(this.model, other.model) || !Objects.equal(this.year, other.year) ||
+                    !!Objects.equal(this.vin, other.vin) || !!Objects.equal(this.mileage, other.mileage)){
+                return false;
+            }
         }
         return true;
     }
 
     @Override
     public String toString() {
-        return "com.saake.invoicer.entity.CustomerVehicle[ custVehicleId=" + custVehicleId + " ]";
+        return "com.saake.invoicer.entity.CustomerVehicle[ custVehicleId=" + vehicleId + " ]";
     }    
 
     public boolean isEmpty() {
-        return Utils.isBlank(vin) && Utils.isBlank(make) && Utils.isBlank(model) && Utils.isBlank(year) && Utils.isBlank(mileage); 
+        return 
+//                Utils.isBlank(vin) || 
+//                Utils.isBlank(make) || 
+                Utils.isBlank(model) && Utils.isBlank(year) 
+//                || Utils.isBlank(mileage)
+                ; 
+    }
+    
+    public boolean getIsEmpty() {
+        return isEmpty();
     }
 }

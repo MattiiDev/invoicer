@@ -6,6 +6,7 @@ package com.saake.invoicer.entity;
 
 import com.saake.invoicer.util.Utils;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,6 +19,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -49,7 +53,7 @@ public class InvoiceItems implements Serializable,Comparable {
     private String description;
     
     
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "ITEM_ID")
     private Item item;
     
@@ -63,10 +67,27 @@ public class InvoiceItems implements Serializable,Comparable {
     @Column(name = "AMOUNT")
     private Double amount;
     
+    @Column(name = "create_ts")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createTs;
+
+    @Column(name = "update_ts")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTs;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+    
     @JoinColumn(name = "INVOICE_ID", referencedColumnName = "INVOICE_ID")
     @ManyToOne
     private Invoice invoice;
 
+    @Transient
+    private boolean addItem = false;
+    
     public InvoiceItems() {
     }
 
@@ -136,6 +157,38 @@ public class InvoiceItems implements Serializable,Comparable {
 
     public void setItem(Item item) {
         this.item = item;
+    }
+
+    public Date getCreateTs() {
+        return createTs;
+    }
+
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
+    }
+
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
     
     @Override
@@ -224,12 +277,31 @@ public class InvoiceItems implements Serializable,Comparable {
         return val;
     }
 
-    public boolean isEmpty() {
-        return (amount == null || amount == 0.0)  && (discount == null || discount == 0.0) && invoiceItemId == null && Utils.isBlank(description) && 
-                (item == null || item.getItemId() == null ) && 
-                //(quantity == null || quantity == 0)  &&
-                 (unitPrice == null || unitPrice == 0.0);
+    public boolean isEmptyForUse() {
+        return (amount == null || amount == 0.0)  
+//                && (discount == null || discount == 0.0) 
+//                && invoiceItemId == null 
+                && Utils.isBlank(description) 
+//                && (item == null || item.getItemId() == null ) && 
+                //(quantity == null || quantity == 0)  
+                && (unitPrice == null || unitPrice == 0.0);
+    }        
+
+    public boolean isAddItem() {
+        return addItem;
     }
-        
-   
+
+    public void setAddItem(boolean addItem) {
+        this.addItem = addItem;
+    }
+
+    public void reset(){
+        this.setDescription(null);
+        this.setUnitPrice(0.0);
+        this.setAmount(0.0);
+        this.setQuantity(1);
+        this.setItem(null);
+        this.setAddItem(false);
+    }
+    
 }

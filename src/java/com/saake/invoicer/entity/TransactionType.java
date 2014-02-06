@@ -36,7 +36,7 @@ public class TransactionType implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "TRAN_TYPE_ID")
+    @Column(name = "TRANS_TYPE_ID")
     private Integer tranTypeId;
     @Size(max = 25)
     @Column(name = "CODE")
@@ -44,9 +44,7 @@ public class TransactionType implements Serializable {
     @Size(max = 50)
     @Column(name = "NAME")
     private String name;
-    @OneToMany(mappedBy = "tranTypeId")
-    private Collection<Transactions> transactionCollection;
-
+   
     public TransactionType() {
     }
 
@@ -76,15 +74,6 @@ public class TransactionType implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @XmlTransient
-    public Collection<Transactions> getTransactionCollection() {
-        return transactionCollection;
-    }
-
-    public void setTransactionCollection(Collection<Transactions> transactionCollection) {
-        this.transactionCollection = transactionCollection;
     }
 
     @Override

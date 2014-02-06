@@ -17,72 +17,100 @@
 
                 <p:toolbar styleClass="noBorder invoiceListToolbar noBottomBorderRadius">
                     <p:toolbarGroup align="left">  
-                        <p:commandButton value="New Customer" icon="ui-icon-person" styleClass="newInvoiceBtn"
-                                         action="#{customerController.prepareCreate}" />                          
+                        <p:button value="New Customer" icon="ui-icon-person" styleClass="newInvoiceBtn" outcome="create" />                          
                     </p:toolbarGroup>                                       
                     <p:toolbarGroup align="right" style="margin-right: 10px" rendered="false">                                           
-                        <p:commandButton type="button" value="Filter" icon="ui-icon-search" onclick="searchPanel.toggle();advSearchPanel.collapse();" /> 
+                        <p:commandButton type="button" value="Filter" icon="ui-icon-search" onclick="searchPanel.toggle();
+                                advSearchPanel.collapse();" /> 
                         <p:separator/>
                         <p:spacer/> 
                     </p:toolbarGroup>
                 </p:toolbar>
-                
-                <p:dataTable id="customerTable" value="#{customerController.items}" var="item" rowStyleClass="jsfcrud_even_row" 
-                             paginator="true" rows="10"
-                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                             rowsPerPageTemplate="5,10,15">
-                    <p:column sortBy="#{item.lastName}" headerText="Customer Name">
+                <p:spacer height="10"/>
+
+                <p:dataTable id="customerTable" value="#{customerController.items}" var="cust" styleClass="invoiceList dataListStyle1 font16"
+                             rowIndexVar="rows" 
+                             paginator="true" rows="10" paginatorAlwaysVisible="true" paginatorPosition="bottom" 
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                             rowsPerPageTemplate="5,10,15,20,25,50,100" widgetVar="customerTable"  >                      
+                    <p:column sortBy="#{cust.customerId}" headerText="Customer Id" width="5%" >  
                         <f:facet name="header">
-                            <h:outputText value="Customer Name"/>
+                            <h:outputText value="Id"/>
                         </f:facet>
-                        <h:outputText value="#{item.firstName}"/>
-                        <h:outputText value="#{item.middleName}"/>
-                        <h:outputText value="#{item.lastName}"/>
-                    </p:column>                       
-                    <p:column sortBy="#{item.companyName}" headerText="Company Name">  
-                        <f:facet name="header">
-                            <h:outputText value="Company Name"/>
-                        </f:facet>
-                        <h:outputText value="#{item.companyName}"/>
+                        <h:outputText value="#{cust.customerId}" />
                     </p:column>
-                    <p:column sortBy="item.addressLine1" headerText="Address">  
+                    <p:column sortBy="#{cust.lastName}" headerText="Customer Name" width="15%">
+                        <f:facet name="header">
+                            <h:outputText value="Name"/>
+                        </f:facet>
+                        <h:outputText value="#{cust.firstName}"/>
+                        <h:outputText value="#{cust.middleName}"/>
+                        <h:outputText value="#{cust.lastName}"/>
+                        <br/>
+                        <h:outputText value="#{cust.companyName}" style="color: maroon"/>
+                    </p:column>                       
+                  
+                    <p:column sortBy="item.addressLine1" headerText="Address" width="40%">  
                         <f:facet name="header">
                             <h:outputText value="Address"/>
                         </f:facet>
-                        <h:outputText value="#{item.addressLine1}"/>
-                        <h:outputText value="#{item.addressLine2}"/>
+                        <h:outputText value="#{cust.addressLine1}"/>
+                        <h:outputText value="#{cust.addressLine2}"/>
                         <br/>
-                        <h:outputText value="#{item.city}"/>
-                        <h:outputText value=", }" rendered="#{not empty item.stateProvince}"/>
-                        <h:outputText value="#{item.stateProvince}"/>
-                        <h:outputText value=", }" rendered="#{not empty item.country}"/>
-                        <h:outputText value="#{item.country}"/>
+                        <h:outputText value="#{cust.city}"/>
+                        <h:outputText value=", }" rendered="#{not empty cust.stateProvince}"/>
+                        <h:outputText value="#{cust.stateProvince}"/>
+                        <h:outputText value=", }" rendered="#{not empty cust.country}"/>
+                        <h:outputText value="#{cust.country}"/>
+                        <br/>
+                        <h:outputText value="#{cust.email}"/>
+                        <br/>
+                        <h:outputText value="#{cust.mobileNum}"/>
                     </p:column>                       
-                    <p:column sortBy="#{item.mobileNum}" headerText="Contact Info">
+                    <p:column headerText="Vehicles" width="10%" sortBy="#{fn:length(cust.invoices)}" >
                         <f:facet name="header">
-                            <h:outputText value="Contact Info"/>
+                            <h:outputText value="Vehicles"/>
                         </f:facet>
-                        <h:outputText value="#{item.email}"/>
-                        <br/>
-                        <h:outputText value="#{item.mobileNum}"/>                            
+                        <h:outputText value="#{fn:length(cust.customerVehicles)}"/>                                                   
                     </p:column>                                               
-                    <p:column>
+                    <p:column headerText="Invoices" width="10%" sortBy="#{fn:length(cust.invoices)}">
+                        <f:facet name="header">
+                            <h:outputText value="Invoices"/>
+                        </f:facet>
+                        <h:outputText value="#{fn:length(cust.invoices)}"/>                                                   
+                    </p:column>                                               
+                    <p:column  width="20%" style="font-size:10px" >
                         <f:facet name="header">
                             <h:outputText value="&nbsp;"/>
                         </f:facet>
-                        <h:commandLink action="#{customerController.prepareView}" >
-                            <h:graphicImage url="/resources/images/invoice.png" width="16" height="16" alt="View" />
-                        </h:commandLink> 
-                        <h:commandLink action="#{customerController.prepareEdit}" styleClass="editInvoice" >
-                            <h:graphicImage url="/resources/images/edit-black-2.png" width="16" height="16" alt="Edit" styleClass="editInvoice"/>
-                        </h:commandLink> 
-                        <p:commandLink action="#{customerController.destroy}" styleClass="editInvoice" onclick="window.confirm('Are you sure you want to delete this customer?');"
+                        <h:link value="View" outcome="view?faces-redirect=true" style="float: left"
+                                onmouseover="jQuery(this).addClass('bold')"
+                                onmouseout="jQuery(this).removeClass('bold')"
+                                styleClass="hoverActions padRight10" includeViewParams="true">                                                        
+                            <f:param name="id" value="#{cust.customerId}"/>
+                            <h:graphicImage url="/resources/images/invoice.png" width="16" height="16" alt="View" styleClass="hoverActions" rendered="false"/>
+                        </h:link>
+
+                        <h:link value="Edit" outcome="edit?faces-redirect=true" 
+                                onmouseover="jQuery(this).addClass('bold')"
+                                onmouseout="jQuery(this).removeClass('bold')"
+                                styleClass="hoverActions padRight10" includeViewParams="true" style="float: left;overflow: hidden">
+                            <f:param name="id" value="#{cust.customerId}"/>                            
+                            <h:graphicImage url="/resources/images/edit-black-2.png" width="16" height="16" alt="Edit" styleClass="hoverActions" rendered="false"/>
+                        </h:link>
+
+                        <p:commandLink value="Remove" action="#{customerController.softDelete}" style="float: left;overflow: hidden"
+                                       onmouseover="jQuery(this).addClass('bold')"
+                                       onmouseout="jQuery(this).removeClass('bold')"
+                                       styleClass="hoverActions" onclick="if(!confirm('Are you sure you want to delete ?')) return false;"
                                        update="customerTable">
-                            <h:graphicImage url="/resources/images/black_delete.png" width="12" height="12" alt="Delete" styleClass="editInvoice"/>
-                        </p:commandLink> 
-                    </p:column>
+                            <h:graphicImage url="/resources/images/black_delete.png" width="12" height="12" alt="Delete" styleClass="hoverActions" rendered="false"/>
+                            <f:setPropertyActionListener target="#{customerController.current}" value="#{cust}"/>
+
+                        </p:commandLink>  
+                    </p:column> 
                     <f:facet name="footer">  
-                        In total there are #{fn:length(customerController.items)} customers.
+                        Total #{fn:length(customerController.items)} Customers.
                     </f:facet>
                 </p:dataTable>
             </h:form>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"      
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewCustomerTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="content">
+            <ui:include src="/template/messages.xhtml">
+                <ui:param name="source" value="viewItem"/>
+            </ui:include>
+            <p:panel styleClass="noBorder" style="color: #1584de;background: #e6e6e6 url('');" >
+                <p:fieldset legend="Customer Info" toggleable="false" styleClass="noBackground">                                                
+                    <h:panelGrid columns="4" style="border:0px" columnClasses="noBackground bold textAlignRight noBorder, noBackground textAlignLeft noBorder padRight100
+                                 , noBackground bold textAlignRight noBorder, noBackground textAlignLeft noBorder" >
+                        <h:outputLabel value="First Name" for="firstName" styleClass="bold" />
+                        <h:outputText id="firstName" value="#{customerController.selected.firstName}"  styleClass="width98p" title="First Name" />
+
+                        <h:outputLabel value="Middle Name" for="middleName" />
+                        <h:outputText id="middleName" value="#{customerController.selected.middleName}" styleClass="width98p" title="Middle Name" />
+
+                        <h:outputLabel value="Last Name" for="lastName" styleClass="bold" />
+                        <h:outputText id="lastName" value="#{customerController.selected.lastName}" styleClass="width98p" title="Last Name" />
+
+                        <h:outputLabel value="Gender" for="gender" />
+                        <h:outputText id="gender" value="#{customerController.selected.gender}" styleClass="width98p" title="Gender" />
+
+                        <h:outputLabel value="Email" for="email" styleClass="bold" />
+                        <h:outputText id="email" value="#{customerController.selected.email}" styleClass="width98p" title="Email" />
+
+                        <h:outputLabel value="Cell Phone Number" for="mobileNum" styleClass="bold" />                            
+                        <h:outputText id="mobileNum" value="#{customerController.selected.mobileNum}" styleClass="width98p" title="Cell Phone Number" />
+
+                        <h:outputLabel value="Office Phone Number" for="officeNum" />                            
+                        <h:outputText id="officeNum" value="#{customerController.selected.officePhoneNum}" styleClass="width98p" title="Office Phone Number" />
+
+                        <p:outputLabel value="Company Name" for="companyName" styleClass="bold"/>
+                        <h:outputText id="companyName" value="#{customerController.selected.companyName}" title="Company Name"/>
+
+                        <h:outputLabel value="Address Line 1" for="addressLine1" />
+                        <h:outputText id="addressLine1" value="#{customerController.selected.addressLine1}" title="Address Line 1" />
+
+                        <h:outputLabel value="Address Line 2" for="addressLine2" />
+                        <h:outputText id="addressLine2" value="#{customerController.selected.addressLine2}" title="Address Line 2"/>
+
+                        <h:outputLabel value="City" for="city" />
+                        <h:outputText id="city" value="#{customerController.selected.city}" styleClass="width98p" title="City" />
+
+                        <h:outputLabel value="State/Province" for="stateProvince" />
+                        <h:outputText id="stateProvince" value="#{customerController.selected.stateProvince}" styleClass="width98p" title="State" />
+
+                        <h:outputLabel value="ZipCode" for="zipCode" />
+                        <h:outputText id="zipCode" value="#{customerController.selected.zipCode}" styleClass="width98p" title="ZipCode" />
+
+                        <h:outputLabel value="Country" for="country" />
+                        <h:outputText id="country" value="#{customerController.selected.country}" styleClass="width98p" title="Country" />
+                    </h:panelGrid>
+                </p:fieldset>                               
+                <br/>
+                <p:fieldset legend="Vehicles" toggleable="false" styleClass="noBackground">  
+                    <table>
+                        <tbody>                            
+                            <ui:repeat value="#{customerController.selected.customerVehicles}" var="veh" varStatus="status">
+                                <tr>
+                                    <td>
+                                        <h:outputText value="#{status.index + 1}." styleClass="padRight50" />
+                                    </td>
+                                    <td>
+                                        <h:outputLabel value="Year" styleClass="bold padRight10"  />
+                                        <h:outputText value="#{veh.year}" styleClass="padRight50"  />
+                                    </td>
+                                    <td>
+                                        <h:outputLabel value="Make" styleClass="bold padRight10" />
+                                        <h:outputText value="#{veh.make}" styleClass="padRight50" />
+                                    </td>
+                                    <td>
+                                        <h:outputLabel value="Model" styleClass="bold padRight10" />
+                                        <h:outputText value="#{veh.model}" styleClass="padRight50" />
+                                    </td>
+                                    <td>
+                                        <h:outputLabel value="VIN" styleClass="bold padRight10" />
+                                        <h:outputText value="#{veh.vin}" styleClass="padRight50" />
+                                    </td>
+                                    <td>
+                                        <h:outputLabel value="Mileage" styleClass="bold padRight10" />
+                                        <h:outputText value="#{veh.mileage}" />
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>                
+                </p:fieldset>  
+                <br/>
+                <p:fieldset legend="Invoices" toggleable="false" styleClass="noBackground">  
+                    <p:dataTable id="invoiceListTable" value="#{customerController.selected.invoices}" var="invoice" 
+                                 rowKey="#{invoice.invoiceId}" rowStyleClass="borderBottom"  rowIndexVar="rows"
+                                 styleClass="viewInvoiceItems invoiceItemClass font16 "
+                                 widgetVar="invoiceTable" >  
+                        <p:column width="2%" >  
+                            <f:facet name="header">
+                                <h:outputText value="#"/>
+                            </f:facet>
+                            <h:outputText value="#{rows + 1}." style="font-size: 10px; color: steelblue" />
+                        </p:column>
+                        <p:column sortBy="#{invoice.invoiceId}" headerText="ID" filterBy="invoiceId">                              
+                            <h:outputText value="#{invoice.invoiceId}"/>
+                        </p:column>
+                        <p:column sortBy="#{invoice.invoiceNum}" headerText="Invoice #" filterBy="invoiceNum">                              
+                            <h:outputText value="#{invoice.invoiceNum}"/>
+                        </p:column>
+                        <p:column sortBy="#{item.invoiceDate}" headerText="Date" filterBy="invoiceDate">                              
+                            <h:outputText value="#{invoice.invoiceDate}">
+                                <f:convertDateTime type="date" pattern="dd-MM-YYY"/>
+                            </h:outputText>
+                        </p:column>                    
+                        <p:column sortBy="#{invoice.amount}" headerText="Amount" filterBy="amount">                              
+                            <h:outputText value="#{invoice.amount}">
+                                <f:convertNumber type="currency" currencySymbol=" " />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Status" rendered="false">                              
+                            <h:outputText value=""/>
+                        </p:column>
+                        <p:column  width="5%">
+                            <f:facet name="header">
+                                <h:outputText value="&nbsp;"/>
+                            </f:facet>
+                            <h:link outcome="/invoice/view.jsf?faces-redirect=true" styleClass="editInvoice" includeViewParams="true">
+                                <f:param name="id" value="#{invoice.invoiceId}"/>
+                                View
+                            </h:link>                        
+                        </p:column>
+                        <!--                    <f:facet name="footer">  
+                                                Total #{fn:length(customerController.selected.invoices)} invoices.
+                                            </f:facet>-->
+                        <f:facet name="footer"> 
+                            <table class="invoiceTableFooter" cellpadding="0" cellspacing="0" width="100%">
+                                <tfoot style="color:#2e6e9e">                               
+                                    <tr >
+                                        <td  style="width:60%">
+                                            <span></span>
+                                        </td>
+                                        <td style="width:20%;text-align: right">
+                                            <span></span>
+                                        </td>
+                                        <td style="width:20%;text-align: right">
+                                            <span></span>
+                                        </td>
+                                        <td style="width:20%;text-align: right; font-size: 16px">
+                                            <h:outputText value="Total"/>
+                                        </td>                                    
+                                        <td width="14%" style="width:20%;text-align: right;font-weight: bold;font-size: 16px; color:midnightblue">
+                                            <h:outputText value="#{customerController.selected.totalInvoiceAmount}">
+                                                <f:convertNumber currencyCode="SAR" maxFractionDigits="2" groupingUsed="true" type="currency" currencySymbol="SAR"/>
+                                            </h:outputText>
+                                        </td>
+                                    </tr>
+                                </tfoot>                                                      
+                            </table>                           
+                        </f:facet>            
+                    </p:dataTable>
+                </p:fieldset>
+            </p:panel>
+
+            <br/>
+
+            <div style="border:1px groove lightgray"></div>
+
+
+            <br />                
+            <h:button value="Edit" outcome="edit?faces-redirect=true" includeViewParams="true">
+                <f:param name="id" value="#{customerController.selected.customerId}"/>
+            </h:button>
+
+            <h:link outcome="list?faces-redirect=true" value="Back to List" style="padding-left: 15px" />
+
+        </ui:define>        
+    </ui:composition>
+
+</html>

@@ -21,30 +21,27 @@
         <ui:define name="content">
             <h:form>
                 <ui:include src="/template/messages.xhtml"/>
-                                
-                <p:hotkey bind="alt+n" action="create.jsf?faces-redirect=true" /> 
 
-                <p:panel styleClass="noBorder noBottomBorderRadius textAlignCenter"  
-                         style="background: url('') #5c9ccc; overflow: hidden; width: 15%; margin: auto">
-                    <h:outputText value="Items" styleClass="font20" />                          
-                </p:panel>
+                <p:hotkey bind="alt+n" action="create.jsf?faces-redirect=true" /> 
+               
                 <p:toolbar styleClass="noBorder invoiceListToolbar noBottomBorderRadius">
                     <p:toolbarGroup align="left">  
-                        <p:commandButton value="New Invoice" icon="ui-icon-document" styleClass="newItemBtn"
+                        <p:commandButton value="New Item" icon="ui-icon-document" styleClass="newItemBtn"
                                          action="create.jsf?faces-redirect=true" />                          
                     </p:toolbarGroup>                                       
 
                     <p:toolbarGroup align="right" style="margin-right: 10px">                                           
-                        <p:commandButton type="button" value="Filter" icon="ui-icon-search" onclick="searchPanel.toggle();advSearchPanel.collapse();" /> 
+                        <p:commandButton type="button" value="Filter" icon="ui-icon-search" onclick="searchPanel.toggle();
+                    advSearchPanel.collapse();" /> 
                         <p:separator/>
                         <p:spacer/> 
                     </p:toolbarGroup>
                 </p:toolbar>
-                
+
                 <p:panel id="searchPanel" widgetVar="searchPanel" toggleable="true" collapsed="true" styleClass="noBorder noTopBorderRadius noBottomBorderRadius label6"  
                          style="background: url('') #5c9ccc; overflow: hidden; " rendered="false">
                     <p:separator/>
-                    
+
                     <h:panelGrid columns="7" width="100%" columnClasses="label6 vAlign textAlignRight,,label6 vAlign textAlignRight,,label6 vAlign textAlignRight,,label6">  
                         <h:outputText value="Period"  /> 
                         <p:selectOneMenu value="#{invoiceCtrl.filterCriteria.invoicePeriod}" style="width:111px" 
@@ -81,7 +78,7 @@
                                 </f:facet>
                                 <h:outputText value="#{cust.lastName}"/> 
                             </p:column>  
-                            
+
                         </p:autoComplete>
                         <h:outputText value="Status" />
                         <p:selectOneButton value="#{invoiceCtrl.filterCriteria.status}" 
@@ -91,9 +88,9 @@
                             <f:selectItem itemLabel="Draft" itemValue="draft" /> 
                         </p:selectOneButton>
                         <h:panelGroup>
-                        <p:commandButton type="link" value="Reset" icon="ui-icon-arrowrefresh-1-w" actionListener="#{invoiceCtrl.resetSearch}"
-                                         update="@form" alt="Reset" style="margin-right: 5px" /> 
-                        <p:commandLink type="button" value="Filter More.." onclick="advSearchPanel.toggle();" style="font-weight: 10px" />
+                            <p:commandButton type="link" value="Reset" icon="ui-icon-arrowrefresh-1-w" actionListener="#{invoiceCtrl.resetSearch}"
+                                             update="@form" alt="Reset" style="margin-right: 5px" /> 
+                            <p:commandLink type="button" value="Filter More.." onclick="advSearchPanel.toggle();" style="font-weight: 10px" />
 
                         </h:panelGroup>
                     </h:panelGrid>
@@ -102,107 +99,103 @@
                          style="background: url('') #5c9ccc; overflow: hidden " rendered="false">
 
                     <h:panelGrid columns="7" width="100%" columnClasses="label6 vAlign textAlignRight,,label6 vAlign textAlignRight,,label6 vAlign textAlignRight,,label6">  
-                    
+
                         <h:outputText value="Date Range" styleClass="label6" style="margin-right: 5px"/>
                         <h:panelGroup>
-                        <p:calendar value="#{invoiceCtrl.filterCriteria.fromDate}" size="8"/>
-                        <h:outputText value=" to "/> 
-                        <p:calendar value="#{invoiceCtrl.filterCriteria.toDate}" size="8"/>
+                            <p:calendar value="#{invoiceCtrl.filterCriteria.fromDate}" size="8"/>
+                            <h:outputText value=" to "/> 
+                            <p:calendar value="#{invoiceCtrl.filterCriteria.toDate}" size="8"/>
                         </h:panelGroup>
-                        
+
                         <h:outputText value="Amount from"/>
                         <h:panelGroup>
-                        <p:spinner value="#{invoiceCtrl.filterCriteria.fromAmount}" size="5" min="1" maxlength="5" />
-                        <h:outputText value=" to "/>
-                        <p:spinner value="#{invoiceCtrl.filterCriteria.toAmount}" size="5" min="1" maxlength="5" />
+                            <p:spinner value="#{invoiceCtrl.filterCriteria.fromAmount}" size="5" min="1" maxlength="5" />
+                            <h:outputText value=" to "/>
+                            <p:spinner value="#{invoiceCtrl.filterCriteria.toAmount}" size="5" min="1" maxlength="5" />
                         </h:panelGroup>
                         <p:spacer width="10px"/>
                         <p:commandButton type="link" value="Search" actionListener="#{invoiceCtrl.filterList}"
                                          update="invoiceListTable" alt="Search" />      
-                                                <p:spacer width="10px"/>
+                        <p:spacer width="10px"/>
 
                     </h:panelGrid>
                 </p:panel>
 
                 <p:spacer height="10"/>
-                <p:dataTable id="itemListTable" value="#{itemController.items}" var="item" 
-                             styleClass="invoiceList invoiceItemClass font16" 
-                             paginator="true" rows="15" paginatorAlwaysVisible="true" paginatorPosition="bottom" 
+                <p:dataTable id="itemListTable" value="#{itemController.items}" var="item"
+                             styleClass="invoiceList dataListStyle1 font16"
+                             paginator="true" rows="10" paginatorAlwaysVisible="true" paginatorPosition="bottom" 
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                              rowsPerPageTemplate="5,10,15,20,25,50,100" widgetVar="itemListTable"  >  
-                    <p:column sortBy="#{item.itemId}" headerText="Item Id">  
-                            <f:facet name="header">
-                                <h:outputText value="Item Id"/>
-                            </f:facet>
-                            <h:outputText value="#{item.itemId}"/>
-                        </p:column>
-                    <p:column sortBy="#{item.itemCategory}" headerText="Category">  
-                            <f:facet name="header">
-                                <h:outputText value="Category"/>
-                            </f:facet>
-                            <h:outputText value="#{item.itemCategory}"/>
-                                <br/>
-                                <h:outputText value="#{item.itemCategory}"/>
-                        </p:column>
-                    <p:column sortBy="#{item.description}" headerText="Description">
-                            <f:facet name="header">
-                                <h:outputText value="Description"/>
-                            </f:facet>
-                            <h:outputText value="#{item.description}"/>
-                        </p:column>
-                        <p:column sortBy="#{item.unitCost}" headerText="Unit Cost">
-                            <f:facet name="header">
-                                <h:outputText value="Unit Cost"/>
-                            </f:facet>
-                            <h:outputText value="#{item.unitCost}"/>
-                        </p:column>
-                        
-                    <p:column  width="5%">
+                    <p:column sortBy="#{item.itemId}" headerText="Item Id" width="10%" >  
                         <f:facet name="header">
-                            <h:outputText value="&nbsp;"/>
+                            <h:outputText value="Item Id"/>
                         </f:facet>
-                        <h:link outcome="view?faces-redirect=true" styleClass="editInvoice" includeViewParams="true">
-                            <f:param name="id" value="#{item.itemId}"/>
-                            <h:graphicImage url="/resources/images/invoice.png" width="16" height="16" alt="View" styleClass="editInvoice"/>
-
-                        </h:link>
+                        <h:outputText value="#{item.itemId}" />
                     </p:column>
-                    <p:column width="5%" style="float:middle">
+                    <p:column sortBy="#{item.itemCategory}" headerText="Category"  width="10%" >  
                         <f:facet name="header">
-                            <h:outputText value="&nbsp;"/>
+                            <h:outputText value="Category"/>
                         </f:facet>
-
-                        <h:link outcome="edit?faces-redirect=true" styleClass="editInvoice" includeViewParams="true">
-                            <f:param name="id" value="#{item.itemId}"/>
-                            <h:graphicImage url="/resources/images/edit-black-2.png" width="16" height="16" alt="Edit" styleClass="editInvoice"/>
-                        </h:link>
+                        <h:outputText value="#{item.itemCategory}" />                                
                     </p:column>
-                    <p:column  width="5%">
+                    <p:column sortBy="#{item.description}" headerText="Description" width="40%" >
+                        <f:facet name="header">
+                            <h:outputText value="Description"/>
+                        </f:facet>
+                        <h:outputText value="#{item.description}"/>
+                    </p:column>
+                    <p:column sortBy="#{item.unitPrice}" headerText="Unit Price" width="10%" >
+                        <f:facet name="header">
+                            <h:outputText value="Unit Price"/>
+                        </f:facet>
+                        <h:outputText value="#{item.unitPrice}"/>
+                    </p:column>
+
+                    <p:column  width="30%" >
                         <f:facet name="header">
                             <h:outputText value="&nbsp;"/>
                         </f:facet>
+                        <h:link value="View" outcome="view?faces-redirect=true" style="float: left"
+                                onmouseover="jQuery(this).addClass('bold')"
+                                onmouseout="jQuery(this).removeClass('bold')"
+                                styleClass="hoverActions padRight10" includeViewParams="true">                                                        
+                            <f:param name="id" value="#{item.itemId}"/>
+                            <h:graphicImage url="/resources/images/invoice.png" width="16" height="16" alt="View" styleClass="hoverActions" rendered="false"/>
+                        </h:link>
 
-                        <p:commandLink action="#{itemController.destroy}" styleClass="editInvoice" onclick="window.confirm('Are you sure you want to delete this invoice?');"
+                        <h:link value="Edit" outcome="edit?faces-redirect=true" 
+                                onmouseover="jQuery(this).addClass('bold')"
+                                onmouseout="jQuery(this).removeClass('bold')"
+                                styleClass="hoverActions padRight10" includeViewParams="true" style="float: left;overflow: hidden">
+                            <f:param name="id" value="#{item.itemId}"/>                            
+                            <h:graphicImage url="/resources/images/edit-black-2.png" width="16" height="16" alt="Edit" styleClass="hoverActions" rendered="false"/>
+                        </h:link>
+
+                        <p:commandLink value="Remove" action="#{itemController.softDelete}" style="float: left;overflow: hidden"
+                                       onmouseover="jQuery(this).addClass('bold')"
+                                onmouseout="jQuery(this).removeClass('bold')"
+                                       styleClass="hoverActions" onclick="if(!confirm('Are you sure you want to delete ?')) return false;"
                                        update="itemListTable">
-                            <h:graphicImage url="/resources/images/black_delete.png" width="12" height="12" alt="Delete" styleClass="editInvoice"/>
+                            <h:graphicImage url="/resources/images/black_delete.png" width="12" height="12" alt="Delete" styleClass="hoverActions" rendered="false"/>
                             <f:setPropertyActionListener target="#{itemController.current}" value="#{item}"/>
 
                         </p:commandLink>  
-                    </p:column>
-                    <!--                    <f:facet name="footer">  
-                                            Total #{fn:length(itemController.items)} invoices.
-                                        </f:facet>-->
+                    </p:column>  
+                    <f:facet name="footer">  
+                        Total #{fn:length(itemController.items)} Items.
+                    </f:facet>
                     <p:ajax rendered="false" event="rowDblselect" listener="#{invoiceCtrl.redirectToView(invoice.invoiceId)}">
                     </p:ajax>
                 </p:dataTable>
-                
+
                 <p:contextMenu for="invoiceListTable" rendered="false">  
                     <p:menuitem value="View" action="#{invoiceCtrl.redirectToView(null)}" includeViewParams="true" 
                                 style="background: url('../resources/images/invoice.png') no-repeat; background-size: 16px 16px; padding-left: 20px; "/>
                     <p:menuitem value="Edit" action="#{invoiceCtrl.prepareEdit}" includeViewParams="true" 
                                 style="background: url('../resources/images/edit-black-2.png') no-repeat ;background-size: 16px 16px; padding-left: 20px; "/>
                 </p:contextMenu> 
-                
+
             </h:form>
         </ui:define>
     </ui:composition>

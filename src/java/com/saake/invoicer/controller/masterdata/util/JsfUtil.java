@@ -1,7 +1,6 @@
 package com.saake.invoicer.controller.masterdata.util;
 
 import com.saake.invoicer.entity.Invoice;
-import static com.saake.invoicer.util.JsfUtil.addErrorMessage;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;

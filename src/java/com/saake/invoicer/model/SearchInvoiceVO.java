@@ -19,6 +19,8 @@ public class SearchInvoiceVO implements Serializable{
     private Integer invoiceId;
     private String invoiceNum;
     private String status;
+    private String searchText;
+    private String vin;
     private String invoicePeriod;
     private Customer customer ;
     private Double fromAmount;
@@ -95,11 +97,27 @@ public class SearchInvoiceVO implements Serializable{
     public void setInvoicePeriod(String invoicePeriod) {
         this.invoicePeriod = invoicePeriod;
     }
+
+    public String getSearchText() {
+        return searchText;
+    }
+
+    public void setSearchText(String searchText) {
+        this.searchText = searchText;
+    }
+
+    public String getVin() {
+        return vin;
+    }
+
+    public void setVin(String vin) {
+        this.vin = vin;
+    }
     
     public boolean empty() {
         return (this.customer == null || this.customer.empty()) && this.fromAmount == null && this.toAmount == null
                 && this.fromDate == null && this.toDate == null && this.invoiceId == null && Utils.isBlank(this.invoiceNum) 
-                && Utils.isBlank(this.status) && Utils.isBlank(this.invoicePeriod);
+                && Utils.isBlank(this.searchText) && Utils.isBlank(this.vin) && Utils.isBlank(this.status) && Utils.isBlank(this.invoicePeriod);
                 
     } 
        

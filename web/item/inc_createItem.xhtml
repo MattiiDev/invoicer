@@ -13,26 +13,31 @@ and open the template in the editor.
         <ui:include src="/template/messages.xhtml">
             <ui:param name="source" value="createItem"/>
         </ui:include>
-        <p:fieldset legend="" style="layout:block" styleClass="noBackground">                                                
+        <p:fieldset legend="Item Info" style="layout:block" styleClass="noBackground">                                                
 
-            <h:panelGrid columns="2" style="border:0px" columnClasses="noBackground bold textRight noBorder, noBackground noBorder" width="100%" >
-                <h:outputLabel value="Category" for="category" />
+            <h:panelGrid columns="2" style="border:0px" columnClasses="noBackground textRight noBorder, noBackground noBorder" width="100%" >
+                <h:outputLabel value="Category" for="category" styleClass="bold" />
                 <h:selectOneMenu id="category" value="#{controller.selected.itemCategory}" title="Category" >
+                    <f:selectItem itemLabel=" -- " itemValue=""/>
                     <f:selectItem itemLabel="Product" itemValue="product"/>
                     <f:selectItem itemLabel="Service" itemValue="service"/>
                 </h:selectOneMenu>
 
+                <h:outputLabel value="Item Code" />
+                <h:inputText value="#{controller.selected.itemCode}" title="#{bundle.EditItemTitle_itemCode}" />
+                    
                 <p:outputLabel value="Name" for="name" styleClass="bold" rendered="false"/>
                 <h:inputText id="name" value="#{controller.current.name}" title="Name" rendered="false" />
 
                 <h:outputLabel value="Description" for="desc" />
                 <h:inputTextarea id="desc" value="#{controller.current.description}" title="Description" cols="35" rows="3"/>
 
-                <h:outputLabel value="Cost" for="cost" />
-                <p:spinner  id="cost" value="#{controller.current.unitCost}" size="5" min="1" maxlength="5"/>
+                <h:outputLabel value="Cost" for="cost" styleClass="bold" />
+                <p:spinner  id="cost" value="#{controller.current.costPrice}" size="5" min="0" maxlength="5"/>
 
-                <h:outputLabel value="Item Code" for="itemCode" rendered="false"/>
-                <h:inputText id="itemCode" value="#{controller.current.itemCode}" title="Item Code" rendered="false" />
+                    <h:outputLabel value="Price" for="price" styleClass="bold" />
+                <p:spinner  id="price" value="#{controller.current.unitPrice}" size="5" min="0" maxlength="5">
+                </p:spinner>
             </h:panelGrid>
 
         </p:fieldset>
