@@ -123,13 +123,19 @@
                             <h:outputText value="#{invoiceCtrl.current.vehicle.vin}"/>
                         </h:panelGrid>
                     </h:panelGrid>
-                    <p:spacer height="10px"/>      
+                    <p:spacer height="10px"/>    
+                    <h:panelGrid width="100%" columns="1" columnClasses="noBorder" styleClass="borderRound10 viewInfo" >                        
+                        <h:outputText value="Assignment" styleClass="font14 bold"/>
+                        <h:outputText value="#{invoiceCtrl.current.workOrder.assignedUser.firstName} #{invoiceCtrl.current.workOrder.assignedUser.lastName}" rendered="#{not empty invoiceCtrl.current.workOrder and invoiceCtrl.current.workOrder.assigned}"/>
+                        <h:outputText value="-- Not Assigned --" rendered="#{empty invoiceCtrl.current.workOrder and !invoiceCtrl.current.workOrder.assigned}"/>
+                    </h:panelGrid> 
+                    <p:spacer height="10px"/>                        
                     <h:panelGrid width="100%" columns="1" columnClasses="noBorder" styleClass="borderRound10 viewInfo" >                        
                         <h:outputText value="Invoice Notes" styleClass="font14 bold"/>
                         <h:outputText value="#{invoiceCtrl.current.invoiceDetails}"/>
                     </h:panelGrid> 
                     <p:spacer height="10px"/> 
-                    <p:dataTable style="width: 100%;" styleClass="invoiceItemClass" 
+                    <p:dataTable style="width: 100%;" styleClass="invoiceItemClass" sortBy="#{invItem.invoiceItemId}" 
                                  value="#{invoiceCtrl.current.invoiceItemsAsList}" var="invItem"
                                  rowIndexVar="row">
                         <p:column headerText="#" >

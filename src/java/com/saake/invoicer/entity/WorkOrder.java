@@ -8,8 +8,10 @@ import com.google.common.base.Objects;
 import com.saake.invoicer.util.Utils;
 import com.saake.invoicer.util.WorkOrderStatusEnum;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -45,6 +47,31 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "WorkOrder.findByWorkOrderNum", query = "SELECT w FROM WorkOrder w WHERE w.workOrderNum = :workOrderNum")})
 public class WorkOrder implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    public static WorkOrder copy(WorkOrder current, WorkOrder that) {
+        
+        current.workOrderId = that.workOrderId;
+        current.workOrderNum = that.workOrderNum;
+        current.notes = that.notes;
+        current.workOrderDate = that.workOrderDate;
+        current.discount = that.discount;
+        current.amount = that.amount;
+        current.customerId = that.customerId;
+        current.assignedUser = that.assignedUser;
+        current.vehicle = that.vehicle;
+        current.status = that.status;
+        current.isInvoiced = that.isInvoiced;
+        current.createTs = that.createTs;
+        current.updateTs = that.updateTs;
+        current.invoicedTs = that.invoicedTs;
+        current.createdBy = that.createdBy;
+        current.updatedBy = that.updatedBy;
+        current.workOrderItems = that.workOrderItems;
+        
+        return current;
+        
+    }
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "WORK_ORDER_ID")

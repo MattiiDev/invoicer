@@ -64,11 +64,15 @@
 
                     </div>
                    
-                    <h:commandLink action="#{workOrderCtrl.printWorkOrder}" styleClass="sidebar-right-round" style="margin-top:300px;margin-right:-50px" >
+                    <h:commandLink action="#{workOrderCtrl.copyWorkOrder}" styleClass="sidebar-right-round" style="margin-top:300px;margin-right:-50px" >
+                        <h:graphicImage id="copy-img" url="/resources/images/copy.png" alt="Copy" styleClass="copy-img" style="padding-top: 24px;padding-left:5px" />
+                        <p:tooltip for="copy-img" value="Copy WorkOrder" showEffect="size"/>
+                    </h:commandLink> 
+                    <h:commandLink action="#{workOrderCtrl.printWorkOrder}" styleClass="sidebar-right-round" style="margin-top:375px;margin-right:-50px" >
                         <h:graphicImage id="print-img" url="/resources/images/print.png" alt="Print" width="24" height="24" styleClass="print-img" style="padding-top: 24px;padding-left:5px" />
                         <p:tooltip for="print-img" value="Print WorkOrder" showEffect="size"/>
                     </h:commandLink> 
-                    <h:commandLink action="#{workOrderCtrl.viewPdf}" target="_new" styleClass="sidebar-right-round" style="margin-top:375px;margin-right:-50px">
+                    <h:commandLink action="#{workOrderCtrl.viewPdf}" target="_new" styleClass="sidebar-right-round" style="margin-top:450px;margin-right:-50px">
                         <h:graphicImage id="pdf-img" url="/resources/images/pdficon_large.png" alt="PDF" styleClass="pdf-img" style="padding-top: 20px;vertical-align: middle"  />
                         <p:tooltip for="pdf-img" value="View WorkOrder as PDF" showEffect="size"/>
                     </h:commandLink>                      
@@ -145,7 +149,7 @@
                     </h:panelGrid> 
                     <p:spacer height="10px"/> 
                         <p:dataTable style="width: 100%;" styleClass="estimateItemClass invoiceItemClass" 
-                                     value="#{workOrderCtrl.current.workOrderItems}" var="woItem"
+                                     value="#{workOrderCtrl.current.workOrderItems}" var="woItem"  sortBy="#{woItem.workOrderItemsId}" 
                                      rowIndexVar="row">
                             <p:column headerText="#" >
                                 <h:outputText value="#{row + 1}" style="font-size: 10px; color: steelblue"  />                            

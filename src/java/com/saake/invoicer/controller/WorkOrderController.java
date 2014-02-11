@@ -22,6 +22,7 @@ import com.saake.invoicer.sessionbean.WorkOrderFacade;
 import com.saake.invoicer.util.JsfUtil;
 import com.saake.invoicer.util.TransTypeEnum;
 import com.saake.invoicer.util.Utils;
+import com.saake.invoicer.util.WorkOrderStatusEnum;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -564,6 +565,28 @@ public class WorkOrderController implements Serializable {
             JsfUtil.addErrorMessage("Error printing invoice");
             log.error("Error printing invoice", e);
         }
+    }
+
+    public String copyWorkOrder() {
+        try {
+            if(current != null){
+                current = WorkOrder.copy(current, new WorkOrder());
+                current.setWorkOrderDate(new Date());
+                current.setCreateTs(new Date());
+                current.setWorkOrderId(null);
+                current.setInvoicedTs(null);
+                current.setIsInvoiced("N");
+                current.setStatus(WorkOrderStatusEnum.DRAFT.name());
+                
+                redirect = false;
+                
+            }
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage("Error printing invoice");
+            log.error("Error printing invoice", e);
+        }
+        return deriveReturnString("edit", true);
+
     }
 
     private String deriveReturnString(String viewString, boolean addId) {

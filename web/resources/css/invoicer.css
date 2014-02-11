@@ -588,6 +588,11 @@ a:hover .convert-img{
     height:34px!important;
 }
 
+a:hover .copy-img{
+    width:34px!important;
+    height:34px!important;
+}
+
 a:hover .pay-img{
     width:36px!important;
     height:36px!important;
@@ -752,6 +757,11 @@ div.list-link.sidebar-right-round{
 }
 
 .print-img{
+    /*padding-left: 8px;*/
+    padding-right: 15px;
+}
+
+.copy-img{
     /*padding-left: 8px;*/
     padding-right: 15px;
 }

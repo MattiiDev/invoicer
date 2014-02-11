@@ -27,7 +27,7 @@
                 <p:toolbar styleClass="noBorder invoiceListToolbar noBottomBorderRadius">
                     <p:toolbarGroup align="left">  
                         <p:commandButton value="New Invoice" icon="ui-icon-document" styleClass="newInvoiceBtn"
-                                         action="create.jsf?faces-redirect=true" />                          
+                                         action="create.jsf?faces-redirect=true" rendered="false" />                          
                     </p:toolbarGroup>                                       
                      <p:toolbarGroup align="right" style="margin-right: 10px">                                           
                          <p:inputText widgetVar="searchTxt" value="#{invoiceCtrl.filterCriteria.searchText}" styleClass="searchTxt hidden"/>
