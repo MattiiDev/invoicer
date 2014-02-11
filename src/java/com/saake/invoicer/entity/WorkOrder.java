@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlTransient;
 public class WorkOrder implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static WorkOrder copy(WorkOrder current, WorkOrder that) {
+    public static WorkOrder copy(WorkOrder that, WorkOrder current) {
         
         current.workOrderId = that.workOrderId;
         current.workOrderNum = that.workOrderNum;
@@ -66,10 +66,21 @@ public class WorkOrder implements Serializable {
         current.invoicedTs = that.invoicedTs;
         current.createdBy = that.createdBy;
         current.updatedBy = that.updatedBy;
-        current.workOrderItems = that.workOrderItems;
         
-        return current;
+        if(that.workOrderItems != null){
+            current.workOrderItems = new ArrayList<>();
+            for(WorkOrderItems woItems : that.workOrderItems){
+                WorkOrderItems thatItem = WorkOrderItems.copy(woItems, new WorkOrderItems());
+                thatItem.setWorkOrderItemsId(null);
+                thatItem.setAddItem(false);
+                thatItem.setCreateTs(new Date());
+                thatItem.setUpdateTs(null);
+                thatItem.setUpdatedBy(null);
+                current.workOrderItems.add(thatItem) ;                
+            }
+        }
         
+        return current;        
     }
     
     @Id
@@ -130,7 +141,7 @@ public class WorkOrder implements Serializable {
     private String updatedBy;
     
     @OneToMany(mappedBy = "workOrderId", cascade = CascadeType.ALL)
-    private Collection<WorkOrderItems> workOrderItems;
+    private List<WorkOrderItems> workOrderItems;
 
     public WorkOrder() {
     }
@@ -274,11 +285,11 @@ public class WorkOrder implements Serializable {
     }
 
     @XmlTransient
-    public Collection<WorkOrderItems> getWorkOrderItems() {
+    public List<WorkOrderItems> getWorkOrderItems() {
         return workOrderItems;
     }
 
-    public void setWorkOrderItems(Collection<WorkOrderItems> workOrderItems) {
+    public void setWorkOrderItems(List<WorkOrderItems> workOrderItems) {
         this.workOrderItems = workOrderItems;
     }
 

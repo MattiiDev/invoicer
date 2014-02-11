@@ -409,6 +409,13 @@ public class WorkOrderController implements Serializable {
         if (Utils.notBlank(id)) {
             current = getFacade().getWorkOrder(Integer.parseInt(id));
         }
+        else{
+            Object woCopy = JsfUtil.getAttributeFromSession("woCopy");
+            if(woCopy != null && woCopy instanceof WorkOrder){
+                current = (WorkOrder) woCopy;
+                JsfUtil.removeAttributeFromSession("woCopy");
+            }
+        }
 
         if (current != null) {
             if (current.getVehicle() == null) {
@@ -580,6 +587,7 @@ public class WorkOrderController implements Serializable {
                 
                 redirect = false;
                 
+                JsfUtil.addAttributeInSession("woCopy", current);
             }
         } catch (Exception e) {
             JsfUtil.addErrorMessage("Error printing invoice");

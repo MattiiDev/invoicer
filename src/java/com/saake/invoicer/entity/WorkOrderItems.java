@@ -39,6 +39,23 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "WorkOrderItems.findByWorkOrderItemsId", query = "SELECT w FROM WorkOrderItems w WHERE w.workOrderItemsId = :workOrderItemsId")})
 public class WorkOrderItems implements Serializable,Comparable {
     private static final long serialVersionUID = 1L;
+    
+    static WorkOrderItems copy(WorkOrderItems current, WorkOrderItems that) {
+        that.workOrderItemsId = current.workOrderItemsId;
+        that.quantity = current.quantity;
+        that.description = current.description;
+        that.unitPrice = current.unitPrice;
+        that.discount = current.discount;
+        that.amount = current.amount;
+        that.item = current.item;
+        that.createTs = current.createTs;
+        that.updateTs = current.updateTs;
+        that.createdBy = current.createdBy;
+        that.updatedBy = current.updatedBy;
+        that.workOrderId = current.workOrderId;
+        
+        return that;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "WORK_ORDER_ITEMS_ID")
