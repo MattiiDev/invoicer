@@ -85,6 +85,7 @@ public class ReportHelper {
             dat.setStateProvince(inv.getCustomerId().getStateProvince());
             dat.setMobileNum(inv.getCustomerId().getMobileNum());            
             dat.setInvoiceDetails(inv.getInvoiceDetails());            
+            dat.setAssignee(inv.getWorkOrder() != null && inv.getWorkOrder().getAssignedUser() != null? inv.getWorkOrder().getAssignedUser().getFirstLastName() : null);            
             
             if(Utils.notEmpty(inv.getCustomerId().getCustomerVehicles())){
                 Vehicle veh = inv.getCustomerId().getCustomerVehicles().get(0);
@@ -120,6 +121,8 @@ public class ReportHelper {
             dat.setMobileNum(wo.getCustomerId().getMobileNum());            
             dat.setNotes(wo.getNotes());            
             dat.setWorkOrderId(wo.getWorkOrderId());            
+            
+            dat.setAssignee(wo.getAssignedUser() != null? wo.getAssignedUser().getFirstLastName() : null);            
             
             if(Utils.notEmpty(wo.getCustomerId().getCustomerVehicles())){
                 Vehicle veh = wo.getCustomerId().getCustomerVehicles().get(0);

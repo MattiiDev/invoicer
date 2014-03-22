@@ -8,6 +8,7 @@ import com.saake.invoicer.entity.Invoice;
 import com.saake.invoicer.entity.InvoiceItems;
 import com.saake.invoicer.entity.Item;
 import com.saake.invoicer.entity.Transaction;
+import com.saake.invoicer.entity.WorkOrderItems;
 import com.saake.invoicer.reports.ReportHelper;
 import com.saake.invoicer.util.InvoiceStatusEnum;
 import com.saake.invoicer.util.Utils;
@@ -77,7 +78,23 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
         preSaveActions(invoice);
         
         invoice.setStatus(InvoiceStatusEnum.DRAFT.name());
-        create(invoice);   
+        //create(invoice);   
+        
+        List<InvoiceItems> items = invoice.getInvoiceItemsAsList();
+        invoice.setInvoiceItems(null);
+        
+        create(invoice);
+        em.flush();
+        
+        for(InvoiceItems woi: items){
+            woi.setInvoice(invoice);
+            em.persist(woi);
+            em.flush();
+        }
+        
+        invoice.setInvoiceItems(items);
+        
+        em.merge(invoice);
         
         return invoice;
         

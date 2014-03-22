@@ -79,7 +79,22 @@ public class WorkOrderFacade extends AbstractFacade<WorkOrder> {
         
         wo.setStatus(WorkOrderStatusEnum.DRAFT.name());
 
+        List<WorkOrderItems> items = wo.getWorkOrderItems();
+        wo.setWorkOrderItems(null);
+        
         create(wo);
+        em.flush();
+        
+        for(WorkOrderItems woi: items){
+            woi.setWorkOrderId(wo);
+            em.persist(woi);
+            em.flush();
+        }
+        
+        wo.setWorkOrderItems(items);
+        
+        em.merge(wo);
+        //em.flush();
         
         return wo;
 

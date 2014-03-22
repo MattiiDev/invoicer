@@ -158,4 +158,7 @@ public class User implements Serializable {
         return "com.saake.invoicer.entity.User[ userId=" + userId + " ]";
     }
     
+    public String getFirstLastName(){
+        return firstName + " " + lastName;
+    }
 }

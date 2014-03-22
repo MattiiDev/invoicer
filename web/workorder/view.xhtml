@@ -41,9 +41,9 @@
                     </h:commandLink> -->
                     
                     <div class="pay-div sidebar-right-round" style="margin-top:150px;margin-right:-50px;cursor: pointer">
-                        <div class="payFullAmtClass floatLeft hidden" >
+                        <div class="payFullAmtClass floatLeft hidden" style="float:left" >
                             <p:autoComplete id="userSugg" value="#{workOrderCtrl.current.assignedUser}" completeMethod="#{userCtrl.suggestUser}"  
-                                            var="user" itemLabel="#{user.firstName}" dropdown="true" itemValue="#{user}" size="10" 
+                                            var="user" itemLabel="#{user.firstName}" dropdown="true" itemValue="#{user}" size="8" 
                                                 queryDelay="2">                                        
                                 <p:column>  
                                     <f:facet name="header">

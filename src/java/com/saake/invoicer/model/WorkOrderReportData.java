@@ -42,6 +42,8 @@ public class WorkOrderReportData implements Serializable {
     private String model;
     private String mileage;
     private String vin;
+    
+    private String assignee;
 
     private List<InvoiceItemsData> workOrderItems;
 
@@ -244,5 +246,12 @@ public class WorkOrderReportData implements Serializable {
     public void setWorkOrderItems(List<InvoiceItemsData> workOrderItems) {
         this.workOrderItems = workOrderItems;
     }
-        
+
+    public String getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(String assignee) {
+        this.assignee = assignee;
+    }           
 }

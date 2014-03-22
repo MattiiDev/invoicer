@@ -44,6 +44,8 @@ public class InvoiceReportData implements Serializable {
     private String mileage;
     private String vin;
 
+    private String assignee;
+    
     private List<InvoiceItemsData> invoiceItems;
         
     public String getInvoiceNumber() {
@@ -253,5 +255,12 @@ public class InvoiceReportData implements Serializable {
     public void setBalanceAmount(Double balanceAmount) {
         this.balanceAmount = balanceAmount;
     }
-   
+
+    public String getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(String assignee) {
+        this.assignee = assignee;
+    }    
 }
